@@ -17,16 +17,19 @@
       --card-2:#1b1f2a;
       --accent:#3b82f6;
       --accent-2:#22c55e;
+      --accent-3:#8b5cf6;
       --border: #283042;
       --chip:#22314b;
       --chip-fg:#dbe8ff;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 14px;
-      --radius-sm: 10px;
+      --shadow-hover: 0 20px 50px rgba(59,130,246,.15);
+      --radius: 16px;
+      --radius-sm: 12px;
       --radius-xs: 8px;
-      --gap: 18px;
-      --card-padding: 14px;
+      --gap: 20px;
+      --card-padding: 16px;
       --maxw: 1200px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     @media (prefers-color-scheme: light){
       :root{
@@ -37,10 +40,12 @@
         --card-2:#f3f6fb;
         --accent:#2563eb;
         --accent-2:#16a34a;
+        --accent-3:#8b5cf6;
         --border:#e5e7eb;
         --chip:#e8f0ff;
         --chip-fg:#1e40af;
         --shadow:0 8px 24px rgba(0,0,0,.08);
+        --shadow-hover: 0 16px 40px rgba(37,99,235,.12);
       }
     }
     *{box-sizing:border-box}
@@ -56,9 +61,9 @@
     a{color:var(--accent); text-decoration:none}
     a:hover{text-decoration:underline}
     header{
-      position:sticky; top:0; z-index:100; backdrop-filter:saturate(120%) blur(8px);
-      background:linear-gradient(to bottom, rgba(10,12,16,.9), rgba(10,12,16,.85));
-      border-bottom:1px solid var(--border);
+      position:sticky; top:0; z-index:100; backdrop-filter:saturate(120%) blur(12px);
+      background:linear-gradient(to bottom, rgba(10,12,16,.92), rgba(10,12,16,.88));
+      border-bottom:1px solid var(--border); transition: var(--transition);
     }
     @media (prefers-color-scheme: light){
       header{ background:linear-gradient(to bottom, rgba(255,255,255,.9), rgba(255,255,255,.85)); }
@@ -71,8 +76,16 @@
       display:flex; align-items:center; gap:14px; flex:1 1 420px;
     }
     .logo{
-      width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      width:56px; height:56px; border-radius:16px; background:linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3));
       box-shadow: var(--shadow); display:grid; place-items:center; color:white; font-weight:800; letter-spacing:.5px;
+      position: relative; overflow: hidden;
+    }
+    .logo::before{
+      content: ''; position: absolute; inset: 0; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: translateX(-100%); transition: transform 0.6s;
+    }
+    .logo:hover::before{
+      transform: translateX(100%);
     }
     .logo span{font-size:22px}
     h1{margin:0; font-size: clamp(22px, 3.2vw, 34px); line-height:1.15}
@@ -80,40 +93,96 @@
     .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
     .control{
       display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border);
-      padding:8px 10px; border-radius:var(--radius-sm);
+      padding:10px 12px; border-radius:var(--radius-sm); transition: var(--transition);
+    }
+    .control:hover{
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
     input[type="search"]{
-      border:none; background:transparent; color:var(--fg); outline:none; width:240px; font-size:14px;
+      border:none; background:transparent; color:var(--fg); outline:none; width:260px; font-size:14px;
+      transition: var(--transition);
+    }
+    input[type="search"]:focus{
+      width:300px;
+    }
+    input[type="search"]::placeholder{
+      color:var(--muted);
+      transition: opacity 0.3s;
+    }
+    input[type="search"]:focus::placeholder{
+      opacity: 0.5;
     }
     select, button{
       border:1px solid var(--border); background:var(--card); color:var(--fg);
-      padding:8px 10px; border-radius:var(--radius-sm); font-size:14px; cursor:pointer;
+      padding:10px 12px; border-radius:var(--radius-sm); font-size:14px; cursor:pointer;
+      transition: var(--transition); position: relative; overflow: hidden;
     }
-    button:hover{filter:brightness(1.05)}
+    select:hover, button:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      filter:brightness(1.05);
+    }
+    select:focus, button:focus{
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
     main{ max-width:var(--maxw); margin:18px auto; padding:0 16px 96px; }
     .chips{ display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 6px; }
     .chip{
-      padding:6px 10px; background:var(--chip); color:var(--chip-fg); border-radius:999px; font-size:12px;
-      border:1px solid rgba(255,255,255,.1); cursor:pointer; user-select:none;
+      padding:8px 12px; background:var(--chip); color:var(--chip-fg); border-radius:999px; font-size:12px;
+      border:1px solid rgba(255,255,255,.1); cursor:pointer; user-select:none; transition: var(--transition);
+      position: relative; overflow: hidden;
     }
-    .chip[aria-pressed="true"]{ background:var(--accent); color:white; }
+    .chip::before{
+      content: ''; position: absolute; inset: 0; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: translateX(-100%); transition: transform 0.4s;
+    }
+    .chip:hover::before{
+      transform: translateX(100%);
+    }
+    .chip:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .chip[aria-pressed="true"]{ 
+      background:linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3)); 
+      color:white; 
+      border-color: transparent;
+      box-shadow: 0 2px 12px rgba(59,130,246,0.3);
+    }
     .grid{
-      display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap:var(--gap); margin-top:16px;
+      display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap:var(--gap); margin-top:20px;
     }
     .card{
       background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
-      overflow:hidden; box-shadow: var(--shadow); display:flex; flex-direction:column; min-height:360px;
-      transition:transform .12s ease, box-shadow .12s ease;
+      overflow:hidden; box-shadow: var(--shadow); display:flex; flex-direction:column; min-height:380px;
+      transition:var(--transition); position: relative;
     }
-    .card:hover{ transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,0,0,.30); }
+    .card::before{
+      content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, rgba(59,130,246,0.05));
+      opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+    }
+    .card:hover{ 
+      transform: translateY(-4px) scale(1.02); 
+      box-shadow: var(--shadow-hover);
+      border-color: var(--accent);
+    }
+    .card:hover::before{
+      opacity: 1;
+    }
     .thumb{
-      position:relative; height:168px; background:var(--card-2); overflow:hidden;
+      position:relative; height:180px; background:var(--card-2); overflow:hidden;
     }
     .thumb img{
-      width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .35s ease;
+      width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity 0.5s ease, transform 0.3s ease;
     }
     .thumb img.loaded{ opacity:1; }
+    .card:hover .thumb img{
+      transform: scale(1.05);
+    }
     .badge{
       position:absolute; left:10px; top:10px; font-size:11px; background:rgba(0,0,0,.55);
       padding:6px 8px; border-radius:999px; color:#fff; border:1px solid rgba(255,255,255,.15);
@@ -130,23 +199,53 @@
     .tag{ font-size:11px; padding:4px 8px; border-radius:999px; border:1px dashed var(--border); color:var(--muted); }
     .actions{ display:flex; gap:10px; margin-top:8px; }
     .btn{
-      display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:10px;
+      display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px;
       background:var(--card-2); border:1px solid var(--border); color:var(--fg); font-size:13px;
-      text-decoration:none;
+      text-decoration:none; transition: var(--transition); position: relative; overflow: hidden;
     }
-    .btn.primary{ background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#fff; border:none; }
+    .btn::before{
+      content: ''; position: absolute; inset: 0; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: translateX(-100%); transition: transform 0.4s;
+    }
+    .btn:hover::before{
+      transform: translateX(100%);
+    }
+    .btn.primary{ background:linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3)); color:#fff; border:none; }
+    .btn.primary:hover{ 
+      box-shadow: 0 4px 20px rgba(59,130,246,0.3);
+      transform: translateY(-1px);
+    }
+    .btn:hover{ 
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
     .meta{ margin-top:20px; color:var(--muted); font-size:12px; }
     .footer{
-      border-top:1px solid var(--border); padding:24px 16px; color:var(--muted); text-align:center;
-      background:linear-gradient(to top, rgba(0,0,0,.08), transparent);
+      border-top:1px solid var(--border); padding:32px 16px; color:var(--muted); text-align:center;
+      background:linear-gradient(to top, rgba(0,0,0,.12), transparent);
     }
     .skeleton{
       background:linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.12), rgba(255,255,255,.06));
-      background-size:200% 100%; animation:shimmer 1.2s infinite;
+      background-size:200% 100%; animation:shimmer 1.5s infinite;
     }
     @keyframes shimmer { to{ background-position:-200% 0; } }
-    .skeleton.text{ height:12px; border-radius:6px; opacity:.6 }
-    .skeleton.thumb{ height:168px; }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .logo:hover{
+      animation: pulse 2s infinite;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card{
+      animation: fadeIn 0.6s ease-out forwards;
+      animation-delay: calc(var(--index, 0) * 0.1s);
+    }
+    .skeleton.text{ height:12px; border-radius:6px; opacity:.7 }
+    .skeleton.thumb{ height:180px; }
     .toolbar{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; }
     .notice{ font-size:12px; color:var(--muted); }
   </style>
@@ -215,7 +314,12 @@
       { title: "Palm Coast, FL — Capital Projects", url: "https://www.palmcoast.gov/capitalprojects", tags:["Public CIP"] },
       { title: "Jacksonville, FL — CIP Dashboard", url: "https://www.jacksonville.gov/mayor/mayor-s-transparency-dashboards/capital-improvement-projects-dashboard", tags:["Public CIP"] },
       { title: "Stuart, FL — Capital Improvement Projects", url: "https://www.stuartfl.gov/532/Capital-Improvement-Projects-Dashboard", tags:["Public CIP"] },
-      { title: "Austin, TX — Capital Projects Explorer", url: "https://capitalprojects.austintexas.gov/", tags:["Public CIP"] },
+      { title: "Ann Arbor, MI — FY2026-2031 Capital Improvements Plan", url: "http://a2gov.org/a2cipmap", tags:["Public CIP"] },
+      { title: "San Diego County, CA — 2025-2030 Capital Plan", url: "https://engage.sandiegocounty.gov/capitalplan25-30", tags:["Public CIP"] },
+      { title: "Baltimore City, MD — FY25-30 Capital Improvement Program", url: "https://planning.baltimorecity.gov/sites/default/files/FY2530_CIP-Recommendation-Report_final_0.pdf", tags:["Public CIP"] },
+      { title: "Deerfield Beach, FL — Capital Project Dashboard", url: "https://www.arcgis.com/apps/dashboards/9aecec5400934abfac6f163132def27f", tags:["Public CIP"] },
+      { title: "Lawrence, KS — Capital Improvement Project Map", url: "https://lawrenceks.maps.arcgis.com/apps/dashboards/326b2951772a468a9d139787d19dc3f4", tags:["Public CIP"] },
+      { title: "Morristown, TN — Capital Projects StoryMap", url: "https://storymaps.arcgis.com/stories/d83accd2177545c8a05ef4f12b8d2f22", tags:["Public CIP"] },
       { title: "Los Angeles County DPW — Projects", url: "https://dpw.lacounty.gov/projects/", tags:["Public CIP"] },
       { title: "Torrance, CA — CIP Dashboard", url: "https://www.torranceca.gov/government/city-departments/finance/financial-documents/capital-improvement-plan-dashboard", tags:["Public CIP"] },
       { title: "Normal, IL — Community Investment Plan", url: "https://www.normalil.gov/1006/Community-Investment-Plan", tags:["Public CIP"] },
@@ -296,9 +400,9 @@
           </div>
           <div class="domain">${host}</div>
           <div class="blurb">
-            <div class="skeleton text" style="width:85%"></div>
-            <div class="skeleton text" style="width:70%"></div>
-            <div class="skeleton text" style="width:60%"></div>
+            <div class="skeleton text" style="width:85%; margin-bottom:8px;"></div>
+            <div class="skeleton text" style="width:70%; margin-bottom:8px;"></div>
+            <div class="skeleton text" style="width:60%;"></div>
           </div>
           <div class="tags">${(item.tags||[]).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>
           <div class="actions">
@@ -312,7 +416,11 @@
 
     function build(){
       grid.innerHTML = '';
-      SITES.forEach(item => grid.appendChild(cardTemplate(item)));
+      SITES.forEach((item, index) => {
+        const card = cardTemplate(item);
+        card.style.setProperty('--index', index);
+        grid.appendChild(card);
+      });
       setupLazyImages();
       hydrateBlurbs();
     }
