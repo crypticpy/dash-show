@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project Prioritization Dashboard Showcase</title>
+  <meta name="description" content="Curated showcase of municipal CIP, Power BI reports, and visualization patterns for project prioritization and ranking.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #0f1115;
+      --fg: #e8eaed;
+      --muted:#9aa0a6;
+      --card:#171a21;
+      --card-2:#1b1f2a;
+      --accent:#3b82f6;
+      --accent-2:#22c55e;
+      --border: #283042;
+      --chip:#22314b;
+      --chip-fg:#dbe8ff;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --radius-xs: 8px;
+      --gap: 18px;
+      --card-padding: 14px;
+      --maxw: 1200px;
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f6f8fb;
+        --fg:#1f2937;
+        --muted:#4b5563;
+        --card:#ffffff;
+        --card-2:#f3f6fb;
+        --accent:#2563eb;
+        --accent-2:#16a34a;
+        --border:#e5e7eb;
+        --chip:#e8f0ff;
+        --chip-fg:#1e40af;
+        --shadow:0 8px 24px rgba(0,0,0,.08);
+      }
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      padding:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      background:radial-gradient(1200px 600px at 80% -10%, rgba(59,130,246,.12), transparent 70%), var(--bg);
+      color:var(--fg);
+      line-height:1.5;
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{
+      position:sticky; top:0; z-index:100; backdrop-filter:saturate(120%) blur(8px);
+      background:linear-gradient(to bottom, rgba(10,12,16,.9), rgba(10,12,16,.85));
+      border-bottom:1px solid var(--border);
+    }
+    @media (prefers-color-scheme: light){
+      header{ background:linear-gradient(to bottom, rgba(255,255,255,.9), rgba(255,255,255,.85)); }
+    }
+    .wrap{ max-width:var(--maxw); margin:0 auto; padding: 18px 16px; }
+    .hero{
+      display:flex; align-items:center; gap:20px; flex-wrap:wrap; justify-content:space-between;
+    }
+    .title{
+      display:flex; align-items:center; gap:14px; flex:1 1 420px;
+    }
+    .logo{
+      width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: var(--shadow); display:grid; place-items:center; color:white; font-weight:800; letter-spacing:.5px;
+    }
+    .logo span{font-size:22px}
+    h1{margin:0; font-size: clamp(22px, 3.2vw, 34px); line-height:1.15}
+    .subtitle{margin:6px 0 0; color:var(--muted); font-size:14px}
+    .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .control{
+      display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border);
+      padding:8px 10px; border-radius:var(--radius-sm);
+    }
+    input[type="search"]{
+      border:none; background:transparent; color:var(--fg); outline:none; width:240px; font-size:14px;
+    }
+    select, button{
+      border:1px solid var(--border); background:var(--card); color:var(--fg);
+      padding:8px 10px; border-radius:var(--radius-sm); font-size:14px; cursor:pointer;
+    }
+    button:hover{filter:brightness(1.05)}
+    main{ max-width:var(--maxw); margin:18px auto; padding:0 16px 96px; }
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 6px; }
+    .chip{
+      padding:6px 10px; background:var(--chip); color:var(--chip-fg); border-radius:999px; font-size:12px;
+      border:1px solid rgba(255,255,255,.1); cursor:pointer; user-select:none;
+    }
+    .chip[aria-pressed="true"]{ background:var(--accent); color:white; }
+    .grid{
+      display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap:var(--gap); margin-top:16px;
+    }
+    .card{
+      background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+      overflow:hidden; box-shadow: var(--shadow); display:flex; flex-direction:column; min-height:360px;
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+    .card:hover{ transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,0,0,.30); }
+    .thumb{
+      position:relative; height:168px; background:var(--card-2); overflow:hidden;
+    }
+    .thumb img{
+      width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .35s ease;
+    }
+    .thumb img.loaded{ opacity:1; }
+    .badge{
+      position:absolute; left:10px; top:10px; font-size:11px; background:rgba(0,0,0,.55);
+      padding:6px 8px; border-radius:999px; color:#fff; border:1px solid rgba(255,255,255,.15);
+    }
+    @media (prefers-color-scheme: light){
+      .badge{ background:rgba(0,0,0,.35); }
+    }
+    .content{ padding:var(--card-padding); display:flex; flex-direction:column; gap:8px; flex:1; }
+    .title-row{ display:flex; gap:8px; align-items:flex-start; justify-content:space-between; }
+    .card h3{ margin:0; font-size:16px; line-height:1.25; }
+    .domain{ color:var(--muted); font-size:12px; }
+    .blurb{ color:var(--fg); opacity:.9; font-size:13px; margin-top:4px; }
+    .tags{ display:flex; flex-wrap:wrap; gap:8px; margin-top:auto; }
+    .tag{ font-size:11px; padding:4px 8px; border-radius:999px; border:1px dashed var(--border); color:var(--muted); }
+    .actions{ display:flex; gap:10px; margin-top:8px; }
+    .btn{
+      display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:10px;
+      background:var(--card-2); border:1px solid var(--border); color:var(--fg); font-size:13px;
+      text-decoration:none;
+    }
+    .btn.primary{ background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#fff; border:none; }
+    .meta{ margin-top:20px; color:var(--muted); font-size:12px; }
+    .footer{
+      border-top:1px solid var(--border); padding:24px 16px; color:var(--muted); text-align:center;
+      background:linear-gradient(to top, rgba(0,0,0,.08), transparent);
+    }
+    .skeleton{
+      background:linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.12), rgba(255,255,255,.06));
+      background-size:200% 100%; animation:shimmer 1.2s infinite;
+    }
+    @keyframes shimmer { to{ background-position:-200% 0; } }
+    .skeleton.text{ height:12px; border-radius:6px; opacity:.6 }
+    .skeleton.thumb{ height:168px; }
+    .toolbar{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+    .notice{ font-size:12px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap hero">
+      <div class="title">
+        <div class="logo" aria-hidden="true"><span>PP</span></div>
+        <div>
+          <h1>Project Prioritization Dashboard Showcase</h1>
+          <p class="subtitle">Municipal CIP dashboards, Power BI reports, and visualization patterns for transparent, quantitative project ranking.</p>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="control">
+          🔎 <input id="q" type="search" placeholder="Search title, domain, tags…" autocomplete="off">
+        </div>
+        <select id="filterTag" title="Filter by tag">
+          <option value="all">All types</option>
+          <option value="Public CIP">Public CIP</option>
+          <option value="Power BI">Power BI</option>
+          <option value="Visualization Patterns">Visualization Patterns</option>
+        </select>
+        <select id="sortBy" title="Sort">
+          <option value="default">Sort: Default</option>
+          <option value="title">Sort: Title (A→Z)</option>
+          <option value="domain">Sort: Domain (A→Z)</option>
+        </select>
+        <button id="refresh">Refresh blurbs</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <div class="chips" id="chips">
+        <!-- dynamic chip badges rendered here -->
+      </div>
+
+      <div class="grid" id="grid" aria-live="polite">
+        <!-- cards populated via JS -->
+      </div>
+
+      <p class="meta notice">Thumbnails are generated from public URLs using snapshot services. Blurbs are fetched automatically from each page’s readable content (proxied for CORS). If a site blocks snapshots or content, the card will fall back gracefully.</p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div>Static site, no tracking, no frameworks. Host on GitHub Pages.</div>
+    </div>
+  </footer>
+
+  <script>
+    // ======== Configuration: curated list ========
+    // Tags: "Public CIP", "Power BI", "Visualization Patterns"
+    const SITES = [
+      { title: "NYC Capital Projects Dashboard", url: "https://www.nyc.gov/site/operations/performance/capital-projects-dashboard.page", tags:["Public CIP"] },
+      { title: "Seattle DOT Capital Projects", url: "https://capitalprojects.seattle.gov/", tags:["Public CIP"] },
+      { title: "Charlotte, NC — Capital Projects", url: "https://www.charlottenc.gov/Growth-and-Development/Projects/Capital-Projects-Dashboard", tags:["Public CIP"] },
+      { title: "Richmond, VA — Capital Improvement Program", url: "https://rva.gov/budget-and-strategic-planning/cip", tags:["Public CIP"] },
+      { title: "Richmond, CA — CIP (BETA)", url: "https://richmondca.gov/158/Capital-Improvement-Program", tags:["Public CIP"] },
+      { title: "St. Helena, CA — CIP Dashboard", url: "https://www.cityofsthelena.gov/490/CIP-Interactive-Dashboard", tags:["Public CIP"] },
+      { title: "Hillsborough County, FL — Project Map Viewer", url: "https://hcfl.gov/residents/property-owners-and-renters/roads-and-sidewalks/project-map-viewer", tags:["Public CIP"] },
+      { title: "Palm Coast, FL — Capital Projects", url: "https://www.palmcoast.gov/capitalprojects", tags:["Public CIP"] },
+      { title: "Jacksonville, FL — CIP Dashboard", url: "https://www.jacksonville.gov/mayor/mayor-s-transparency-dashboards/capital-improvement-projects-dashboard", tags:["Public CIP"] },
+      { title: "Stuart, FL — Capital Improvement Projects", url: "https://www.stuartfl.gov/532/Capital-Improvement-Projects-Dashboard", tags:["Public CIP"] },
+      { title: "Austin, TX — Capital Projects Explorer", url: "https://capitalprojects.austintexas.gov/", tags:["Public CIP"] },
+      { title: "Los Angeles County DPW — Projects", url: "https://dpw.lacounty.gov/projects/", tags:["Public CIP"] },
+      { title: "Torrance, CA — CIP Dashboard", url: "https://www.torranceca.gov/government/city-departments/finance/financial-documents/capital-improvement-plan-dashboard", tags:["Public CIP"] },
+      { title: "Normal, IL — Community Investment Plan", url: "https://www.normalil.gov/1006/Community-Investment-Plan", tags:["Public CIP"] },
+      { title: "Great Lakes Water Authority — Five‑Year CIP (Power BI)", url: "https://app.powerbigov.us/view?r=eyJrIjoiNmU4Njk3NjAtYzRlNi00YzUxLWFmYzQtMzQ4OGU5YzI5MGIyIiwidCI6IjRlOGZmNjJlLWU2ODYtNGIxZi1hZWI0LTYyZDdjMTY4NjY1MyJ9", tags:["Power BI"] },
+      { title: "Minneapolis Park & Recreation Board — CIP (Power BI)", url: "https://app.powerbigov.us/view?pageName=ReportSection9b43331538d7a4beb394&r=eyJrIjoiMjE4YmI2ZjItYWZmMS00NTVlLThiOWQtMDhjMzlmYzc1NzI1IiwidCI6IjY0OTc4ZmFiLTY0NWMtNDljZS1iODMzLTc1NDYyMzYxMmQyMiJ9", tags:["Power BI"] },
+      { title: "City of Norfolk, VA — Adopted CIP FY2025 (Power BI)", url: "https://app.powerbigov.us/view?r=eyJrIjoiNjkwMTQ3ZGEtYzIzNy00NWI2LTk1NzQtMmVlZjdmMzEwY2FiIiwidCI6IjUzODZkMzU1LTJmYWUtNGZlOC05MTc0LWI4OWU0MDhiYTk5MSJ9", tags:["Power BI"] },
+      { title: "Chesterfield County, VA — CIP Explorer (Power BI)", url: "https://app.powerbigov.us/view?r=eyJrIjoiMTgyZTkxZDQtZWVjZi00ZjVlLWEyYmQtOWM5Y2I5YmNiMTg1IiwidCI6IjA1NjA5MzMyLWI5MDUtNGE2Yi1iZjc0LTQ4MDdmYTg5ODU3ZCJ9", tags:["Power BI"] },
+      { title: "Envisio — Public Dashboard Examples (Gallery)", url: "https://envisio.com/dashboard-examples/", tags:["Visualization Patterns"] },
+      { title: "Acuity PPM — Portfolio Charts & Priority Heatmaps", url: "https://acuityppm.com/the-pmo-guide-to-portfolio-management-charts/", tags:["Visualization Patterns"] }
+    ];
+
+    // ======== Utility helpers ========
+    const $ = (sel, el=document) => el.querySelector(sel);
+    const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+
+    const hostname = url => {
+      try{ return new URL(url).hostname.replace(/^www\./,''); } catch { return url; }
+    };
+
+    const screenshotURL = (url, width=640) =>
+      `https://s.wordpress.com/mshots/v1/${encodeURIComponent(url)}?w=${width}`;
+
+    const screenshotFallback = (url) =>
+      `https://image.thum.io/get/width/1200/crop/900/${url}`;
+
+    const faviconURL = (url) => {
+      const host = hostname(url);
+      return `https://www.google.com/s2/favicons?domain=${host}&sz=256`;
+    };
+
+    const proxiedReadableURL = (url) => {
+      // Use Jina reader proxy to bypass CORS and get readable content
+      const clean = url.replace(/^https?:\/\//,'');
+      return `https://r.jina.ai/http://${clean}`;
+    };
+
+    const truncate = (s, n=260) => (s && s.length > n) ? (s.slice(0, n-1) + "…") : s || "";
+
+    function createChip(tagText){
+      const chip = document.createElement('button');
+      chip.className = 'chip';
+      chip.textContent = tagText;
+      chip.type = 'button';
+      chip.dataset.tag = tagText;
+      chip.setAttribute('aria-pressed', 'false');
+      chip.addEventListener('click', () => {
+        const pressed = chip.getAttribute('aria-pressed') === 'true';
+        chip.setAttribute('aria-pressed', String(!pressed));
+        applyFilters();
+      });
+      return chip;
+    }
+
+    // ======== Build UI ========
+    const grid = $('#grid');
+    const chipsWrap = $('#chips');
+
+    // Dynamic tag chips (derived from SITES)
+    const allTags = Array.from(new Set(SITES.flatMap(s => s.tags))).sort();
+    allTags.forEach(t => chipsWrap.appendChild(createChip(t)));
+
+    function cardTemplate(item){
+      const host = hostname(item.url);
+      const elm = document.createElement('article');
+      elm.className = 'card';
+      elm.dataset.tags = (item.tags||[]).join('|').toLowerCase();
+      elm.dataset.title = (item.title||'').toLowerCase();
+      elm.dataset.domain = host.toLowerCase();
+
+      elm.innerHTML = `
+        <div class="thumb">
+          <img alt="Thumbnail for ${escapeHtml(item.title)}" loading="lazy" decoding="async" data-src="${screenshotURL(item.url)}">
+          <span class="badge">${host}</span>
+        </div>
+        <div class="content">
+          <div class="title-row">
+            <h3>${escapeHtml(item.title)}</h3>
+          </div>
+          <div class="domain">${host}</div>
+          <div class="blurb">
+            <div class="skeleton text" style="width:85%"></div>
+            <div class="skeleton text" style="width:70%"></div>
+            <div class="skeleton text" style="width:60%"></div>
+          </div>
+          <div class="tags">${(item.tags||[]).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>
+          <div class="actions">
+            <a class="btn primary" href="${item.url}" target="_blank" rel="noopener">Visit site ↗</a>
+            <a class="btn" href="${item.url}" target="_blank" rel="noopener">Open in new tab</a>
+          </div>
+        </div>
+      `;
+      return elm;
+    }
+
+    function build(){
+      grid.innerHTML = '';
+      SITES.forEach(item => grid.appendChild(cardTemplate(item)));
+      setupLazyImages();
+      hydrateBlurbs();
+    }
+
+    // ======== Blurbs (with caching) ========
+    const CACHE_KEY = 'pp-showcase-blurbs-v1';
+    const cache = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
+
+    function saveCache(){ localStorage.setItem(CACHE_KEY, JSON.stringify(cache)); }
+
+    async function fetchBlurb(url){
+      // Try cache first
+      const cached = cache[url];
+      if (cached && cached.text && Date.now() - cached.ts < 1000*60*60*24*7) { // 7 days
+        return cached.text;
+      }
+      try{
+        const res = await fetch(proxiedReadableURL(url), { mode: 'cors' });
+        if(!res.ok) throw new Error('bad status');
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        // Prefer first reasonable <p>
+        let text = "";
+        const ps = Array.from(doc.querySelectorAll('p'))
+          .map(p => (p.textContent||"").trim())
+          .filter(t => t.split(/\s+/).length >= 10 && !/cookie|javascript|enable|subscribe|sign in|accept/i.test(t));
+        if(ps.length) text = ps[0];
+        if(!text){
+          // fallback: first long text node from body
+          const raw = (doc.body && doc.body.textContent || "").trim();
+          const candidate = raw.split(/\n{2,}/).find(s => s.trim().length > 80);
+          text = candidate || "";
+        }
+        text = truncate(text, 280);
+        if(text){
+          cache[url] = { text, ts: Date.now() };
+          saveCache();
+        }
+        return text;
+      }catch(e){
+        return "";
+      }
+    }
+
+    async function hydrateBlurbs(){
+      const cards = $$('.card');
+      for (const card of cards){
+        const url = $('.btn.primary', card).getAttribute('href');
+        const blurbEl = $('.blurb', card);
+        const text = await fetchBlurb(url);
+        if (text){
+          blurbEl.textContent = text;
+        } else {
+          blurbEl.innerHTML = '<span class="notice">Blurb unavailable (site blocked or no readable text).</span>';
+        }
+      }
+    }
+
+    // ======== Lazy-load screenshots with fallbacks ========
+    function setupLazyImages(){
+      const imgs = $$('img[data-src]');
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting){
+            const img = entry.target;
+            img.src = img.dataset.src;
+            img.addEventListener('load', () => img.classList.add('loaded'));
+            img.addEventListener('error', () => {
+              // Fallback chain: thum.io → favicon
+              img.onerror = () => { img.src = faviconURL(img.closest('.card').querySelector('.btn.primary').href); };
+              img.src = screenshotFallback(img.closest('.card').querySelector('.btn.primary').href);
+            });
+            io.unobserve(img);
+          }
+        });
+      }, { rootMargin: '200px' });
+      imgs.forEach(img => io.observe(img));
+    }
+
+    // ======== Search, filter, sort ========
+    const q = $('#q');
+    const filterTag = $('#filterTag');
+    const sortBy = $('#sortBy');
+    const refreshBtn = $('#refresh');
+
+    function applyFilters(){
+      const query = q.value.trim().toLowerCase();
+      const selectTag = filterTag.value;
+      const pressedChips = $$('.chip[aria-pressed="true"]').map(c => c.dataset.tag);
+
+      const cards = $$('.card');
+      cards.forEach(card => {
+        const title = card.dataset.title;
+        const domain = card.dataset.domain;
+        const tags = card.dataset.tags.split('|').filter(Boolean);
+
+        const matchesQuery = !query || title.includes(query) || domain.includes(query) || tags.some(t => t.includes(query));
+        const matchesSelect = (selectTag === 'all') || tags.includes(selectTag.toLowerCase());
+        const matchesChips = pressedChips.length === 0 || pressedChips.every(t => tags.includes(t.toLowerCase()));
+
+        card.style.display = (matchesQuery && matchesSelect && matchesChips) ? '' : 'none';
+      });
+
+      // Sorting
+      const visibleCards = $$('.card').filter(c => c.style.display !== 'none');
+      const container = grid;
+      const key = sortBy.value;
+      if (key !== 'default'){
+        visibleCards.sort((a,b) => {
+          if (key === 'title') return a.dataset.title.localeCompare(b.dataset.title);
+          if (key === 'domain') return a.dataset.domain.localeCompare(b.dataset.domain);
+          return 0;
+        });
+        visibleCards.forEach(c => container.appendChild(c));
+      }
+    }
+
+    q.addEventListener('input', applyFilters);
+    filterTag.addEventListener('change', applyFilters);
+    sortBy.addEventListener('change', applyFilters);
+    refreshBtn.addEventListener('click', () => {
+      // Clear cache and re-hydrate
+      localStorage.removeItem(CACHE_KEY);
+      Object.keys(cache).forEach(k => delete cache[k]);
+      hydrateBlurbs();
+    });
+
+    // ======== HTML escape helper ========
+    function escapeHtml(s=''){
+      return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    // ======== Init ========
+    build();
+    applyFilters();
+  </script>
+</body>
+</html>
