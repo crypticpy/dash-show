@@ -248,6 +248,90 @@
     .skeleton.thumb{ height:180px; }
     .toolbar{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; }
     .notice{ font-size:12px; color:var(--muted); }
+    
+    /* Learning Panel Styles */
+    .learning-panel, .compare-panel{
+      position:fixed; top:80px; right:20px; width:380px; max-height:80vh;
+      background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+      box-shadow: var(--shadow-hover); z-index:200; overflow-y:auto;
+      backdrop-filter:saturate(120%) blur(12px);
+    }
+    .learning-header, .compare-header{
+      display:flex; justify-content:space-between; align-items:center;
+      padding:16px; border-bottom:1px solid var(--border);
+    }
+    .learning-header h3, .compare-header h3{
+      margin:0; font-size:16px; color:var(--fg);
+    }
+    .close-btn{
+      background:none; border:none; color:var(--muted); font-size:20px;
+      cursor:pointer; padding:4px; border-radius:4px; transition: var(--transition);
+    }
+    .close-btn:hover{
+      background:var(--card-2); color:var(--fg);
+    }
+    .learning-content, .compare-content{
+      padding:16px;
+    }
+    .learning-section{
+      margin-bottom:20px;
+    }
+    .learning-section h4{
+      margin:0 0 8px; font-size:14px; color:var(--accent);
+    }
+    .learning-section ul{
+      margin:0; padding-left:16px; list-style:none;
+    }
+    .learning-section li{
+      margin-bottom:6px; font-size:12px; line-height:1.4;
+    }
+    .learning-section strong{
+      color:var(--fg);
+    }
+    
+    /* Compare Mode Styles */
+    .compare-slots{
+      display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0;
+    }
+    .compare-slot{
+      min-height:60px; border:2px dashed var(--border); border-radius:var(--radius-sm);
+      display:flex; align-items:center; justify-content:center; font-size:12px;
+      color:var(--muted); transition: var(--transition);
+    }
+    .compare-slot.filled{
+      border-color:var(--accent); background:var(--chip);
+      color:var(--chip-fg);
+      font-size:11px;
+    }
+    .compare-slot.selected{
+      border-color:var(--accent-2); background:rgba(34,197,94,0.1);
+    }
+    
+    /* Learning Mode Indicators */
+    .learning-mode .card{
+      position:relative;
+    }
+    .learning-mode .card::after{
+      content: '📊'; position:absolute; top:10px; right:10px; 
+      background:var(--accent); color:white; width:24px; height:24px;
+      border-radius:50%; display:flex; align-items:center; justify-content:center;
+      font-size:12px; opacity:0; transition: opacity 0.3s;
+    }
+    .learning-mode .card:hover::after{
+      opacity:1;
+    }
+    
+    /* Compare Mode Indicators */
+    .compare-mode .card{
+      cursor:pointer; position:relative;
+    }
+    .compare-mode .card:hover{
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+    .compare-mode .card.selected-for-compare{
+      box-shadow: 0 0 0 3px var(--accent-2);
+      transform:scale(1.02);
+    }
   </style>
 </head>
 <body>
@@ -257,7 +341,7 @@
         <div class="logo" aria-hidden="true"><span>PP</span></div>
         <div>
           <h1>Project Prioritization Dashboard Showcase</h1>
-          <p class="subtitle">Municipal CIP dashboards, Power BI reports, and visualization patterns for transparent, quantitative project ranking.</p>
+          <p class="subtitle">47 examples across municipal CIP, Power BI, portfolio management tools, and data visualization patterns for teaching effective dashboard design.</p>
         </div>
       </div>
       <div class="controls">
@@ -269,6 +353,7 @@
           <option value="Public CIP">Public CIP</option>
           <option value="Power BI">Power BI</option>
           <option value="Visualization Patterns">Visualization Patterns</option>
+          <option value="Portfolio Management">Portfolio Management</option>
         </select>
         <select id="sortBy" title="Sort">
           <option value="default">Sort: Default</option>
@@ -276,6 +361,8 @@
           <option value="domain">Sort: Domain (A→Z)</option>
         </select>
         <button id="refresh">Refresh blurbs</button>
+        <button id="toggleLearning">📚 Learning Mode</button>
+        <button id="toggleCompare">🔍 Compare Mode</button>
       </div>
     </div>
   </header>
@@ -291,6 +378,62 @@
       </div>
 
       <p class="meta notice">Thumbnails are generated from public URLs using snapshot services. Blurbs are fetched automatically from each page’s readable content (proxied for CORS). If a site blocks snapshots or content, the card will fall back gracefully.</p>
+      <p class="meta notice">Thumbnails are generated from public URLs using snapshot services. Blurbs are fetched automatically from each page's readable content (proxied for CORS). If a site blocks snapshots or content, the card will fall back gracefully.</p>
+      
+      <!-- Learning Panel Overlay -->
+      <div id="learningPanel" class="learning-panel" style="display: none;">
+        <div class="learning-header">
+          <h3>📚 Data Visualization Learning Mode</h3>
+          <button id="closeLearning" class="close-btn">×</button>
+        </div>
+        <div class="learning-content">
+          <div class="learning-section">
+            <h4>🎯 Key Principles</h4>
+            <ul>
+              <li><strong>Data-Ink Ratio</strong>: Maximize data pixels, minimize non-data ink</li>
+              <li><strong>Gestalt Principles</strong>: Proximity, similarity, continuity guide perception</li>
+              <li><strong>Color Theory</strong>: Use color purposefully, ensure accessibility</li>
+              <li><strong>Progressive Disclosure</strong>: Show details on demand, avoid overwhelm</li>
+            </ul>
+          </div>
+          <div class="learning-section">
+            <h4>🔍 Look for These Patterns</h4>
+            <ul>
+              <li><strong>Heatmaps</strong>: Color intensity showing values/concentration</li>
+              <li><strong>Bubble Charts</strong>: Size + position + color encoding multiple dimensions</li>
+              <li><strong>Matrices</strong>: Grid layouts for comparison (Value vs Effort, Risk vs Return)</li>
+              <li><strong>WSJF</strong>: Weighted Shortest Job First prioritization methodology</li>
+              <li><strong>MCDA</strong>: Multi-Criteria Decision Analysis frameworks</li>
+            </ul>
+          </div>
+          <div class="learning-section">
+            <h4>⚡ Accessibility Checklist</h4>
+            <ul>
+              <li>☐ Sufficient color contrast (4.5:1 minimum)</li>
+              <li>☐ Screen reader compatible labels</li>
+              <li>☐ Keyboard navigation support</li>
+              <li>☐ Data table alternatives for charts</li>
+              <li>☐ High contrast mode compatibility</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compare Mode Panel -->
+      <div id="comparePanel" class="compare-panel" style="display: none;">
+        <div class="compare-header">
+          <h3>🔍 Compare Dashboards</h3>
+          <button id="closeCompare" class="close-btn">×</button>
+        </div>
+        <div class="compare-content">
+          <p>Click on 2 dashboards to compare their design patterns, data density, and effectiveness.</p>
+          <div id="compareSlots" class="compare-slots">
+            <div class="compare-slot" data-slot="1">+ Select first dashboard</div>
+            <div class="compare-slot" data-slot="2">+ Select second dashboard</div>
+          </div>
+          <button id="startCompare" class="btn primary" disabled>Compare Selected</button>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -302,7 +445,7 @@
 
   <script>
     // ======== Configuration: curated list ========
-    // Tags: "Public CIP", "Power BI", "Visualization Patterns"
+    // Tags: "Public CIP", "Power BI", "Visualization Patterns", "Portfolio Management"
     const SITES = [
       { title: "NYC Capital Projects Dashboard", url: "https://www.nyc.gov/site/operations/performance/capital-projects-dashboard.page", tags:["Public CIP"] },
       { title: "Seattle DOT Capital Projects", url: "https://capitalprojects.seattle.gov/", tags:["Public CIP"] },
@@ -328,7 +471,29 @@
       { title: "City of Norfolk, VA — Adopted CIP FY2025 (Power BI)", url: "https://app.powerbigov.us/view?r=eyJrIjoiNjkwMTQ3ZGEtYzIzNy00NWI2LTk1NzQtMmVlZjdmMzEwY2FiIiwidCI6IjUzODZkMzU1LTJmYWUtNGZlOC05MTc0LWI4OWU0MDhiYTk5MSJ9", tags:["Power BI"] },
       { title: "Chesterfield County, VA — CIP Explorer (Power BI)", url: "https://app.powerbigov.us/view?r=eyJrIjoiMTgyZTkxZDQtZWVjZi00ZjVlLWEyYmQtOWM5Y2I5YmNiMTg1IiwidCI6IjA1NjA5MzMyLWI5MDUtNGE2Yi1iZjc0LTQ4MDdmYTg5ODU3ZCJ9", tags:["Power BI"] },
       { title: "Envisio — Public Dashboard Examples (Gallery)", url: "https://envisio.com/dashboard-examples/", tags:["Visualization Patterns"] },
-      { title: "Acuity PPM — Portfolio Charts & Priority Heatmaps", url: "https://acuityppm.com/the-pmo-guide-to-portfolio-management-charts/", tags:["Visualization Patterns"] }
+      { title: "Acuity PPM — Portfolio Charts & Priority Heatmaps", url: "https://acuityppm.com/the-pmo-guide-to-portfolio-management-charts/", tags:["Visualization Patterns"] },
+      
+      // Project Prioritization & Portfolio Management Tools
+      { title: "Aha! Roadmaps — Prioritization (Scorecards & Ranking)", url: "https://www.aha.io/roadmaps/prioritization", tags:["Portfolio Management"] },
+      { title: "Productboard — Prioritization Matrix (Value × Effort)", url: "https://support.productboard.com/hc/en-us/articles/360056350174-Use-the-prioritization-matrix", tags:["Portfolio Management"] },
+      { title: "airfocus — Priority Ratings & Scoring (Weighted Matrices)", url: "https://help.airfocus.com/en/articles/2788532-priority-ratings-app", tags:["Portfolio Management"] },
+      { title: "Planview Advisor — Portfolio Visualizations (Bullseye, Treemap)", url: "https://www.planview.com/products-solutions/products/advisor/", tags:["Portfolio Management"] },
+      { title: "Meisterplan — Portfolio Dashboard (Configurable Charts)", url: "https://help.meisterplan.com/hc/en-us/articles/11289973015068-Portfolio-Dashboard", tags:["Portfolio Management"] },
+      { title: "OnePlan — Portfolio Modeler (Projects Ranked by Score)", url: "https://support.oneplan.ai/hc/en-us/articles/24187952450445-Portfolio-Planning-Portfolio-Modeler", tags:["Portfolio Management"] },
+      { title: "Adobe Workfront — Portfolio Optimizer Score (Auto Ranking)", url: "https://experienceleague.adobe.com/en/docs/workfront/using/manage-work/portfolio-management/manage-projects-in-portfolio-optimizer/portfolio-optimizer-score", tags:["Portfolio Management"] },
+      { title: "Apptio Targetprocess — WSJF Prioritization (SAFe)", url: "https://www.apptio.com/solutions/agile/full-safe-tool/", tags:["Portfolio Management"] },
+      { title: "Atlassian Jira Align — Prioritize Features (WSJF)", url: "https://help.jiraalign.com/hc/en-us/articles/115000102373-Prioritize-features", tags:["Portfolio Management"] },
+      { title: "Microsoft Project — Portfolio Analysis Driver-Based Prioritization", url: "https://learn.microsoft.com/en-us/project/portfolio-analysis-driver-prioritization", tags:["Portfolio Management"] },
+      { title: "Oracle Primavera Cloud — Investor Map (Portfolio Bubble Chart)", url: "https://primavera.oraclecloud.com/help/en/user/102917.htm", tags:["Portfolio Management"] },
+      { title: "Oracle Primavera Cloud — Prioritization Matrix (Evaluation & Ranking)", url: "https://docs.oracle.com/cd/E80480_01/help/en/user/102189.htm", tags:["Portfolio Management"] },
+      { title: "Planisware — Portfolio Heat Maps & Bubble Charts", url: "https://www.planisware.com/resources/strategic-planning-alignment/aligning-your-projects-business-strategies-best-practices", tags:["Portfolio Management"] },
+      { title: "Expert Choice Comparion — AHP Portfolio Prioritization", url: "https://www.expertchoice.com/comparion", tags:["Portfolio Management"] },
+      { title: "D-Sight — MCDA Decision Portfolio Dashboards", url: "https://www.d-sight.com/", tags:["Portfolio Management"] },
+      { title: "1000minds — Results & Ranking Views (Priority Values)", url: "https://www.1000minds.com/tutorials/results", tags:["Portfolio Management"] },
+      { title: "ServiceNow — Application Assessments Dashboard (Portfolio Scoring)", url: "https://www.servicenow.com/docs/bundle/yokohama-application-portfolio-management/page/product/application-portfolio-management/task/use-appln-assessment-dashboard.html", tags:["Portfolio Management"] },
+      { title: "SAP LeanIX — Application Portfolio Management Dashboard", url: "https://help.sap.com/docs/leanix/ea/application-portfolio-management-dashboard", tags:["Portfolio Management"] },
+      { title: "Strategyzer — Business Portfolio Map (Risk × Return)", url: "https://www.strategyzer.com/library/business-model-portfolio-part-3-the-business-portfolio-map", tags:["Portfolio Management"] },
+      { title: "SmartOrg Portfolio Navigator — Efficient Frontier & Innovation Screens", url: "https://smartorg.com/portfolio-navigator/", tags:["Portfolio Management"] }
     ];
 
     // ======== Utility helpers ========
@@ -388,6 +553,13 @@
       elm.dataset.tags = (item.tags||[]).join('|').toLowerCase();
       elm.dataset.title = (item.title||'').toLowerCase();
       elm.dataset.domain = host.toLowerCase();
+      
+      // Add click handler for compare mode
+      elm.addEventListener('click', (e) => {
+        if (!e.target.closest('.btn') && !e.target.closest('.tag')) {
+          handleCardClick(elm, item);
+        }
+      });
 
       elm.innerHTML = `
         <div class="thumb">
@@ -505,6 +677,103 @@
     const filterTag = $('#filterTag');
     const sortBy = $('#sortBy');
     const refreshBtn = $('#refresh');
+    const learningBtn = $('#toggleLearning');
+    const compareBtn = $('#toggleCompare');
+    const learningPanel = $('#learningPanel');
+    const comparePanel = $('#comparePanel');
+    const closeLearning = $('#closeLearning');
+    const closeCompare = $('#closeCompare');
+    
+    // State management
+    let learningMode = false;
+    let compareMode = false;
+    let selectedForCompare = [];
+    
+    // Panel controls
+    learningBtn.addEventListener('click', () => {
+      learningMode = !learningMode;
+      learningPanel.style.display = learningMode ? 'block' : 'none';
+      document.body.classList.toggle('learning-mode', learningMode);
+      learningBtn.textContent = learningMode ? '📚 Exit Learning' : '📚 Learning Mode';
+    });
+    
+    compareBtn.addEventListener('click', () => {
+      compareMode = !compareMode;
+      comparePanel.style.display = compareMode ? 'block' : 'none';
+      document.body.classList.toggle('compare-mode', compareMode);
+      compareBtn.textContent = compareMode ? '🔍 Exit Compare' : '🔍 Compare Mode';
+      if (!compareMode) {
+        selectedForCompare = [];
+        updateCompareSlots();
+        updateCardSelection();
+      }
+    });
+    
+    closeLearning.addEventListener('click', () => {
+      learningMode = false;
+      learningPanel.style.display = 'none';
+      document.body.classList.remove('learning-mode');
+      learningBtn.textContent = '📚 Learning Mode';
+    });
+    
+    closeCompare.addEventListener('click', () => {
+      compareMode = false;
+      comparePanel.style.display = 'none';
+      document.body.classList.remove('compare-mode');
+      compareBtn.textContent = '🔍 Compare Mode';
+      selectedForCompare = [];
+      updateCompareSlots();
+      updateCardSelection();
+    });
+    
+    // Compare functionality
+    function handleCardClick(card, item) {
+      if (!compareMode) return;
+      
+      event.preventDefault();
+      
+      const index = selectedForCompare.findIndex(s => s.url === item.url);
+      if (index > -1) {
+        selectedForCompare.splice(index, 1);
+      } else if (selectedForCompare.length < 2) {
+        selectedForCompare.push(item);
+      }
+      
+      updateCardSelection();
+      updateCompareSlots();
+    }
+    
+    function updateCardSelection() {
+      const cards = $$('.card');
+      cards.forEach(card => {
+        const url = $('.btn.primary', card).getAttribute('href');
+        const isSelected = selectedForCompare.some(s => s.url === url);
+        card.classList.toggle('selected-for-compare', isSelected);
+      });
+    }
+    
+    function updateCompareSlots() {
+      const slots = $$('.compare-slot');
+      slots.forEach((slot, index) => {
+        const item = selectedForCompare[index];
+        if (item) {
+          slot.textContent = item.title;
+          slot.classList.add('filled');
+        } else {
+          slot.textContent = `+ Select ${index === 0 ? 'first' : 'second'} dashboard`;
+          slot.classList.remove('filled');
+        }
+      });
+      
+      $('#startCompare').disabled = selectedForCompare.length !== 2;
+    }
+    
+    $('#startCompare').addEventListener('click', () => {
+      if (selectedForCompare.length === 2) {
+        const [first, second] = selectedForCompare;
+        alert(`Comparison Analysis:\n\n${first.title}\nvs\n${second.title}\n\nKey differences in design patterns, data density, and effectiveness would be displayed here in a full implementation.`);
+      }
+    });
 
     function applyFilters(){
       const query = q.value.trim().toLowerCase();
