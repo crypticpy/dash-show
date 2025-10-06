@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="learning-panel.css">
   <style>
     :root{
       --bg: #0f1115;
@@ -374,78 +375,6 @@
     .toolbar{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; }
     .notice{ font-size:12px; color:var(--muted); }
     
-    /* Learning Panel Styles */
-    .learning-panel{
-      position:fixed; top:80px; right:20px; width:380px; max-height:80vh;
-      background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
-      box-shadow: var(--shadow-hover); z-index:200; overflow-y:auto;
-      backdrop-filter:saturate(120%) blur(12px);
-    }
-    .learning-header{
-      display:flex; justify-content:space-between; align-items:center;
-      padding:16px; border-bottom:1px solid var(--border);
-    }
-    .learning-header h3{
-      margin:0; font-size:16px; color:var(--fg);
-    }
-    .close-btn{
-      background:none; border:none; color:var(--muted); font-size:20px;
-      cursor:pointer; padding:4px; border-radius:4px; transition: var(--transition);
-    }
-    .close-btn:hover{
-      background:var(--card-2); color:var(--fg);
-    }
-    .learning-content{
-      padding:16px;
-    }
-    .learning-section{
-      margin-bottom:20px;
-    }
-    .learning-section h4{
-      margin:0 0 8px; font-size:14px; color:var(--accent);
-    }
-    .learning-section ul{
-      margin:0; padding-left:16px; list-style:none;
-    }
-    .learning-section li{
-      margin-bottom:6px; font-size:12px; line-height:1.4;
-    }
-    .learning-section strong{
-      color:var(--fg);
-    }
-    .learning-section p{
-      margin:0 0 10px; font-size:12px; color:var(--muted);
-    }
-    .learning-section textarea{
-      width:100%; min-height:100px; border-radius:var(--radius-sm);
-      border:1px solid var(--border); background:var(--card-2);
-      color:var(--fg); padding:10px; font-family:inherit; font-size:12px;
-      resize:vertical;
-    }
-    .learning-section textarea:focus{
-      outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,130,246,0.1);
-    }
-    .learning-actions{
-      display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;
-    }
-    .learning-actions .btn{
-      font-size:12px; padding:8px 12px;
-    }
-
-    /* Learning Mode Indicators */
-    .learning-mode .card{
-      position:relative;
-    }
-    .learning-mode .card::after{
-      content: '📊'; position:absolute; top:10px; right:10px; 
-      background:var(--accent); color:white; width:24px; height:24px;
-      border-radius:50%; display:flex; align-items:center; justify-content:center;
-      font-size:12px; opacity:0; transition: opacity 0.3s;
-    }
-    .learning-mode .card:hover::after{
-      opacity:1;
-    }
-    
   </style>
 </head>
 <body>
@@ -550,15 +479,25 @@
       <p class="meta notice">Thumbnails are generated from public URLs using snapshot services. Blurbs are fetched automatically from each page’s readable content (proxied for CORS). If a site blocks snapshots or content, the card will fall back gracefully.</p>
       <p class="meta notice">Tip: Enable 📚 Learning Mode to reveal guided review checklists, reflection prompts, and a printable handout for working through each example.</p>
       
-      <!-- Learning Panel Overlay -->
-      <div id="learningPanel" class="learning-panel" style="display: none;">
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div>Static site, no tracking, no frameworks. Host on GitHub Pages.</div>
+    </div>
+  </footer>
+
+  <template id="learning-panel-template">
+    <div class="learning-overlay" id="learningOverlay" hidden>
+      <div class="learning-panel" id="learningPanel" role="dialog" aria-modal="true" aria-labelledby="learningPanelTitle" aria-describedby="learningPanelDescription" tabindex="-1">
         <div class="learning-header">
-          <h3>📚 Data Visualization Learning Mode</h3>
-          <button id="closeLearning" class="close-btn">×</button>
+          <h3 id="learningPanelTitle">📚 Data Visualization Learning Mode</h3>
+          <button id="closeLearning" class="close-btn" type="button" aria-label="Close learning mode">×</button>
         </div>
-        <div class="learning-content">
+        <div class="learning-content" id="learningPanelDescription">
           <div class="learning-actions">
-            <button id="printChecklist" class="btn primary">🖨️ Print review guide</button>
+            <button id="printChecklist" class="btn primary" type="button">🖨️ Print review guide</button>
           </div>
           <div id="checklistContent">
             <div class="learning-section">
@@ -620,13 +559,7 @@
         </div>
       </div>
     </div>
-  </main>
-
-  <footer class="footer">
-    <div class="wrap">
-      <div>Static site, no tracking, no frameworks. Host on GitHub Pages.</div>
-    </div>
-  </footer>
+  </template>
 
   <script>
     // ======== Configuration: curated list ========
@@ -684,6 +617,12 @@
     // ======== Utility helpers ========
     const $ = (sel, el=document) => el.querySelector(sel);
     const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+
+    const learningTemplate = document.getElementById('learning-panel-template');
+    if (learningTemplate) {
+      document.body.appendChild(learningTemplate.content.cloneNode(true));
+      learningTemplate.remove();
+    }
 
     const hostname = url => {
       try{ return new URL(url).hostname.replace(/^www\./,''); } catch { return url; }
@@ -856,29 +795,110 @@
     const sortBy = $('#sortBy');
     const refreshBtn = $('#refresh');
     const learningBtn = $('#toggleLearning');
+    const learningOverlay = $('#learningOverlay');
     const learningPanel = $('#learningPanel');
     const closeLearning = $('#closeLearning');
     const printChecklistBtn = $('#printChecklist');
     const checklistContent = $('#checklistContent');
     const reviewNotes = $('#reviewNotes');
 
-    // State management
     let learningMode = false;
+    let lastFocusedElement = null;
+    const focusableSelector = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
-    // Panel controls
-    learningBtn.addEventListener('click', () => {
-      learningMode = !learningMode;
-      learningPanel.style.display = learningMode ? 'block' : 'none';
-      document.body.classList.toggle('learning-mode', learningMode);
-      learningBtn.textContent = learningMode ? '📚 Exit Learning' : '📚 Learning Mode';
-    });
+    const setLearningButtonState = (active) => {
+      if (!learningBtn) return;
+      learningBtn.textContent = active ? '📚 Exit Learning' : '📚 Learning Mode';
+      learningBtn.setAttribute('aria-expanded', String(active));
+    };
 
-    closeLearning.addEventListener('click', () => {
+    const focusFirstElement = () => {
+      if (!learningOverlay) return;
+      const focusable = $$(focusableSelector, learningOverlay).filter(el => !el.hasAttribute('disabled') && el.getAttribute('tabindex') !== '-1' && el.getAttribute('aria-hidden') !== 'true');
+      const target = focusable[0] || learningPanel;
+      if (target && typeof target.focus === 'function') {
+        target.focus();
+      }
+    };
+
+    const handleLearningKeydown = (event) => {
+      if (!learningMode || !learningOverlay) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeLearningPanel();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+
+      const focusable = $$(focusableSelector, learningOverlay).filter(el => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true');
+      if (focusable.length === 0) {
+        event.preventDefault();
+        if (learningPanel) learningPanel.focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const current = document.activeElement;
+
+      if (event.shiftKey && current === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && current === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    const openLearningPanel = () => {
+      if (!learningOverlay || !learningPanel) return;
+      learningMode = true;
+      learningOverlay.hidden = false;
+      document.body.classList.add('learning-mode');
+      lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      focusFirstElement();
+      document.addEventListener('keydown', handleLearningKeydown);
+      setLearningButtonState(true);
+    };
+
+    const closeLearningPanel = () => {
+      if (!learningOverlay || !learningPanel) return;
       learningMode = false;
-      learningPanel.style.display = 'none';
+      learningOverlay.hidden = true;
       document.body.classList.remove('learning-mode');
-      learningBtn.textContent = '📚 Learning Mode';
-    });
+      document.removeEventListener('keydown', handleLearningKeydown);
+      setLearningButtonState(false);
+      if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+        lastFocusedElement.focus();
+      } else if (learningBtn) {
+        learningBtn.focus();
+      }
+      lastFocusedElement = null;
+    };
+
+    if (learningBtn) {
+      learningBtn.setAttribute('aria-haspopup', 'dialog');
+      learningBtn.setAttribute('aria-expanded', 'false');
+      learningBtn.setAttribute('aria-controls', 'learningPanel');
+      learningBtn.addEventListener('click', () => {
+        learningMode ? closeLearningPanel() : openLearningPanel();
+      });
+      setLearningButtonState(false);
+    }
+
+    if (closeLearning) {
+      closeLearning.addEventListener('click', () => {
+        closeLearningPanel();
+      });
+    }
+
+    if (learningOverlay) {
+      learningOverlay.addEventListener('mousedown', (event) => {
+        if (event.target === learningOverlay) {
+          closeLearningPanel();
+        }
+      });
+    }
 
     if (printChecklistBtn && checklistContent) {
       printChecklistBtn.addEventListener('click', () => {
