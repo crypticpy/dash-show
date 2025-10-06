@@ -217,10 +217,21 @@
       border-radius:var(--radius);
       padding:20px;
       box-shadow:0 10px 30px rgba(15,17,21,0.3);
-      backdrop-filter:blur(8px);
+      background:linear-gradient(160deg, rgba(59,130,246,0.14), rgba(17,24,39,0.4));
+      border:1px solid rgba(59,130,246,0.2);
+      border-radius:var(--radius);
+      padding:20px;
+      box-shadow:0 10px 30px rgba(15,17,21,0.3);
+      background-color:rgba(59,130,246,0.08); /* fallback for no blur support */
       display:flex;
       flex-direction:column;
       gap:12px;
+    }
+    @supports (backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px)) {
+      .intro-card {
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+      }
     }
     .intro-card h2{
       margin:0;
