@@ -57,6 +57,15 @@
       background:radial-gradient(1200px 600px at 80% -10%, rgba(59,130,246,.12), transparent 70%), var(--bg);
       color:var(--fg);
       line-height:1.5;
+      position:relative;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background-image:radial-gradient(800px 400px at 15% 10%, rgba(139,92,246,0.18), transparent 60%), radial-gradient(600px 300px at 85% 85%, rgba(34,197,94,0.1), transparent 65%), linear-gradient(120deg, rgba(255,255,255,0.05) 0%, transparent 45%, rgba(59,130,246,0.05) 100%);
+      pointer-events:none;
+      z-index:-1;
     }
     a{color:var(--accent); text-decoration:none}
     a:hover{text-decoration:underline}
@@ -73,7 +82,7 @@
       display:flex; align-items:center; gap:20px; flex-wrap:wrap; justify-content:space-between;
     }
     .title{
-      display:flex; align-items:center; gap:14px; flex:1 1 420px;
+      display:flex; align-items:flex-start; gap:14px; flex:1 1 420px;
     }
     .logo{
       width:56px; height:56px; border-radius:16px; background:linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3));
@@ -88,8 +97,38 @@
       transform: translateX(100%);
     }
     .logo span{font-size:22px}
+    .title-text{flex:1; display:flex; flex-direction:column; gap:6px;}
+    .eyebrow{
+      margin:0;
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:0.14em;
+      color:var(--chip-fg);
+      background:var(--chip);
+      border:1px solid rgba(255,255,255,0.08);
+      align-self:flex-start;
+      padding:6px 10px;
+      border-radius:999px;
+      font-weight:600;
+    }
+    @media (prefers-color-scheme: light){
+      .eyebrow{ border-color:rgba(30,64,175,0.15); }
+    }
     h1{margin:0; font-size: clamp(22px, 3.2vw, 34px); line-height:1.15}
-    .subtitle{margin:6px 0 0; color:var(--muted); font-size:14px}
+    .subtitle{margin:0; color:var(--muted); font-size:14px}
+    .hero-points{
+      display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;
+    }
+    .hero-point{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 12px; border-radius:999px; background:rgba(23,26,33,0.65);
+      border:1px solid rgba(255,255,255,0.08);
+      font-size:12px; color:var(--fg); letter-spacing:0.01em;
+    }
+    .hero-point span{font-size:13px;}
+    @media (prefers-color-scheme: light){
+      .hero-point{ background:rgba(255,255,255,0.8); border-color:rgba(30,64,175,0.12); color:var(--muted); }
+    }
     .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
     .control{
       display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border);
@@ -129,6 +168,92 @@
       box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
     }
     main{ max-width:var(--maxw); margin:18px auto; padding:0 16px 96px; }
+    .stat-row{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:12px;
+      margin:24px 0 12px;
+    }
+    @media (max-width: 480px) {
+      .stat-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    .stat-card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius-sm);
+      padding:16px 18px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.12);
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      transition:var(--transition);
+    }
+    .stat-card:hover{
+      transform:translateY(-3px);
+      box-shadow:var(--shadow-hover);
+      border-color:var(--accent);
+    }
+    .stat-card span{
+      font-size:26px;
+      font-weight:700;
+      color:var(--fg);
+    }
+    .stat-card small{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.4;
+    }
+    .intro-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:16px;
+      margin:12px 0 24px;
+    }
+    .intro-card{
+      background:linear-gradient(160deg, rgba(59,130,246,0.14), rgba(17,24,39,0.4));
+      border:1px solid rgba(59,130,246,0.2);
+      border-radius:var(--radius);
+      padding:20px;
+      box-shadow:0 10px 30px rgba(15,17,21,0.3);
+      background:linear-gradient(160deg, rgba(59,130,246,0.14), rgba(17,24,39,0.4));
+      border:1px solid rgba(59,130,246,0.2);
+      border-radius:var(--radius);
+      padding:20px;
+      box-shadow:0 10px 30px rgba(15,17,21,0.3);
+      background-color:rgba(59,130,246,0.08); /* fallback for no blur support */
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    @supports (backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px)) {
+      .intro-card {
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+      }
+    }
+    .intro-card h2{
+      margin:0;
+      font-size:16px;
+      color:#fff;
+    }
+    .intro-card p{ margin:0; font-size:13px; color:rgba(219,232,255,0.86); }
+    .intro-card ul{ margin:0; padding-left:18px; display:flex; flex-direction:column; gap:6px; }
+    .intro-card li{ font-size:12px; color:rgba(219,232,255,0.9); }
+    .intro-card strong{ color:#fff; }
+    .intro-card .subtle{ color:rgba(219,232,255,0.75); font-size:11px; letter-spacing:0.03em; text-transform:uppercase; }
+    @media (prefers-color-scheme: light){
+      .intro-card{
+        background:linear-gradient(160deg, rgba(37,99,235,0.12), rgba(255,255,255,0.92));
+        border-color:rgba(37,99,235,0.25);
+        box-shadow:0 8px 24px rgba(37,99,235,0.12);
+      }
+      .intro-card h2{ color:var(--fg); }
+      .intro-card p, .intro-card li{ color:var(--muted); }
+      .intro-card strong{ color:var(--fg); }
+      .intro-card .subtle{ color:var(--muted); opacity:0.8; }
+    }
     .chips{ display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 6px; }
     .chip{
       padding:8px 12px; background:var(--chip); color:var(--chip-fg); border-radius:999px; font-size:12px;
@@ -339,9 +464,15 @@
     <div class="wrap hero">
       <div class="title">
         <div class="logo" aria-hidden="true"><span>PP</span></div>
-        <div>
+        <div class="title-text">
+          <p class="eyebrow">Austin Civic Data Viz Cohort · 2024</p>
           <h1>Project Prioritization Dashboard Showcase</h1>
           <p class="subtitle">47 examples across municipal CIP, Power BI, portfolio management tools, and data visualization patterns for teaching effective dashboard design.</p>
+          <div class="hero-points" aria-label="Key cohort takeaways">
+            <span class="hero-point"><span>🧭</span>Prioritize civic impact with clarity</span>
+            <span class="hero-point"><span>🧪</span>Experiment with scoring frameworks</span>
+            <span class="hero-point"><span>🗣️</span>Guide conversations across departments</span>
+          </div>
         </div>
       </div>
       <div class="controls">
@@ -369,6 +500,57 @@
 
   <main>
     <div class="wrap">
+      <section class="stat-row" aria-label="Gallery overview">
+        <div class="stat-card">
+          <span>47</span>
+          <small>Total exemplars curated for the cohort</small>
+        </div>
+        <div class="stat-card">
+          <span>20</span>
+          <small>Municipal capital project dashboards (Public CIP)</small>
+        </div>
+        <div class="stat-card">
+          <span>20</span>
+          <small>Portfolio management and prioritization playbooks</small>
+        </div>
+        <div class="stat-card">
+          <span>7</span>
+          <small>Power BI & visualization pattern spotlights</small>
+        </div>
+      </section>
+
+      <section class="intro-grid" aria-label="How to use this gallery">
+        <article class="intro-card">
+          <p class="subtle">Cohort framing</p>
+          <h2>Set the stage for learners</h2>
+          <p>Open with a shared definition of prioritization. Invite students to notice how each dashboard balances transparency, outcomes, and feasibility.</p>
+          <ul>
+            <li><strong>Start with purpose:</strong> Who needs this dashboard and what question are they answering?</li>
+            <li><strong>Spot context cues:</strong> Navigation, legends, and copy explain the story.</li>
+          </ul>
+        </article>
+
+        <article class="intro-card">
+          <p class="subtle">Guided critique</p>
+          <h2>Compare design decisions</h2>
+          <p>Use Compare Mode to pick two dashboards. Prompt students to analyze encoding choices, accessibility, and how prioritization scores are justified.</p>
+          <ul>
+            <li><strong>What changes:</strong> Layouts shift between matrices, bubbles, and tables.</li>
+            <li><strong>What stays consistent:</strong> Color, hierarchy, and language reinforce rankings.</li>
+          </ul>
+        </article>
+
+        <article class="intro-card">
+          <p class="subtle">Workshop prompts</p>
+          <h2>Move from insight to action</h2>
+          <p>Turn inspiration into a sketching exercise. Ask teams to remix a dashboard pattern for an Austin department challenge.</p>
+          <ul>
+            <li><strong>Define inputs:</strong> Criteria weights, scoring formulas, and data freshness.</li>
+            <li><strong>Design for delivery:</strong> How would stakeholders explore, annotate, or export decisions?</li>
+          </ul>
+        </article>
+      </section>
+
       <div class="chips" id="chips">
         <!-- dynamic chip badges rendered here -->
       </div>
@@ -378,7 +560,7 @@
       </div>
 
       <p class="meta notice">Thumbnails are generated from public URLs using snapshot services. Blurbs are fetched automatically from each page’s readable content (proxied for CORS). If a site blocks snapshots or content, the card will fall back gracefully.</p>
-      <p class="meta notice">Thumbnails are generated from public URLs using snapshot services. Blurbs are fetched automatically from each page's readable content (proxied for CORS). If a site blocks snapshots or content, the card will fall back gracefully.</p>
+      <p class="meta notice">Tip: Enable 📚 Learning Mode to surface teaching cues or toggle 🔍 Compare Mode to spark critique discussions with the cohort.</p>
       
       <!-- Learning Panel Overlay -->
       <div id="learningPanel" class="learning-panel" style="display: none;">
