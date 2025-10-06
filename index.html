@@ -375,17 +375,17 @@
     .notice{ font-size:12px; color:var(--muted); }
     
     /* Learning Panel Styles */
-    .learning-panel, .compare-panel{
+    .learning-panel{
       position:fixed; top:80px; right:20px; width:380px; max-height:80vh;
       background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
       box-shadow: var(--shadow-hover); z-index:200; overflow-y:auto;
       backdrop-filter:saturate(120%) blur(12px);
     }
-    .learning-header, .compare-header{
+    .learning-header{
       display:flex; justify-content:space-between; align-items:center;
       padding:16px; border-bottom:1px solid var(--border);
     }
-    .learning-header h3, .compare-header h3{
+    .learning-header h3{
       margin:0; font-size:16px; color:var(--fg);
     }
     .close-btn{
@@ -395,7 +395,7 @@
     .close-btn:hover{
       background:var(--card-2); color:var(--fg);
     }
-    .learning-content, .compare-content{
+    .learning-content{
       padding:16px;
     }
     .learning-section{
@@ -413,25 +413,25 @@
     .learning-section strong{
       color:var(--fg);
     }
-    
-    /* Compare Mode Styles */
-    .compare-slots{
-      display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0;
+    .learning-section p{
+      margin:0 0 10px; font-size:12px; color:var(--muted);
     }
-    .compare-slot{
-      min-height:60px; border:2px dashed var(--border); border-radius:var(--radius-sm);
-      display:flex; align-items:center; justify-content:center; font-size:12px;
-      color:var(--muted); transition: var(--transition);
+    .learning-section textarea{
+      width:100%; min-height:100px; border-radius:var(--radius-sm);
+      border:1px solid var(--border); background:var(--card-2);
+      color:var(--fg); padding:10px; font-family:inherit; font-size:12px;
+      resize:vertical;
     }
-    .compare-slot.filled{
-      border-color:var(--accent); background:var(--chip);
-      color:var(--chip-fg);
-      font-size:11px;
+    .learning-section textarea:focus{
+      outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,130,246,0.1);
     }
-    .compare-slot.selected{
-      border-color:var(--accent-2); background:rgba(34,197,94,0.1);
+    .learning-actions{
+      display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;
     }
-    
+    .learning-actions .btn{
+      font-size:12px; padding:8px 12px;
+    }
+
     /* Learning Mode Indicators */
     .learning-mode .card{
       position:relative;
@@ -446,17 +446,6 @@
       opacity:1;
     }
     
-    /* Compare Mode Indicators */
-    .compare-mode .card{
-      cursor:pointer; position:relative;
-    }
-    .compare-mode .card:hover{
-      box-shadow: 0 0 0 2px var(--accent);
-    }
-    .compare-mode .card.selected-for-compare{
-      box-shadow: 0 0 0 3px var(--accent-2);
-      transform:scale(1.02);
-    }
   </style>
 </head>
 <body>
@@ -467,11 +456,11 @@
         <div class="title-text">
           <p class="eyebrow">Austin DIVE DLC Cohort 2025 ///</p>
           <h1>Project Prioritization Dashboard Showcase</h1>
-          <p class="subtitle">47 examples across municipal CIP, Power BI, portfolio management tools, and data visualization patterns for teaching effective dashboard design.</p>
+          <p class="subtitle">47 examples from cities, agencies, and companies to help you study how prioritization stories are framed, scored, and communicated.</p>
           <div class="hero-points" aria-label="Key cohort takeaways">
-            <span class="hero-point"><span>🧭</span>Prioritize civic impact with clarity</span>
-            <span class="hero-point"><span>🧪</span>Experiment with scoring frameworks</span>
-            <span class="hero-point"><span>🗣️</span>Guide conversations across departments</span>
+            <span class="hero-point"><span>🧭</span>Evaluate how others signal priorities</span>
+            <span class="hero-point"><span>🧪</span>Question the scoring logic on display</span>
+            <span class="hero-point"><span>🗣️</span>Translate observations into Austin’s context</span>
           </div>
         </div>
       </div>
@@ -493,7 +482,6 @@
         </select>
         <button id="refresh">Refresh blurbs</button>
         <button id="toggleLearning">📚 Learning Mode</button>
-        <button id="toggleCompare">🔍 Compare Mode</button>
       </div>
     </div>
   </header>
@@ -522,31 +510,31 @@
       <section class="intro-grid" aria-label="How to use this gallery">
         <article class="intro-card">
           <p class="subtle">Cohort framing</p>
-          <h2>Set the stage for your exploration</h2>
-          <p>Ground yourself in a shared definition of prioritization. Notice how each dashboard balances transparency, outcomes, and feasibility as you browse.</p>
+          <h2>Use these examples as teaching tools</h2>
+          <p>Each link shows how another city or company prioritizes work. Treat them as case studies to reverse-engineer what makes their story clear—or confusing.</p>
           <ul>
-            <li><strong>Start with purpose:</strong> Consider who relies on each dashboard and the questions it helps them answer.</li>
-            <li><strong>Spot context cues:</strong> Let navigation, legends, and copy guide the narrative.</li>
+            <li><strong>Start with intent:</strong> Identify the audience and the decision the visualization supports.</li>
+            <li><strong>Map the promise:</strong> Note what the dashboard claims to reveal about urgency, impact, or readiness.</li>
           </ul>
         </article>
 
         <article class="intro-card">
           <p class="subtle">Guided critique</p>
-          <h2>Compare design decisions</h2>
-          <p>Use Compare Mode to line up two dashboards. Evaluate how encoding choices, accessibility details, and prioritization scores earn your trust.</p>
+          <h2>Interrogate every visualization</h2>
+          <p>Walk through the checklists. Ask whether the visual encodes priorities, uncertainty, and tradeoffs in a way that would stand up to Austin stakeholders.</p>
           <ul>
-            <li><strong>What changes:</strong> Layouts shift between matrices, bubbles, and tables.</li>
-            <li><strong>What stays consistent:</strong> Color, hierarchy, and language reinforce rankings.</li>
+            <li><strong>Look for signals:</strong> How are scores, categories, or statuses communicated?</li>
+            <li><strong>Probe blind spots:</strong> What might be missing for someone new to the data?</li>
           </ul>
         </article>
 
         <article class="intro-card">
           <p class="subtle">Workshop prompts</p>
-          <h2>Move from insight to action</h2>
-          <p>Channel inspiration into a sketching session. Remix a dashboard pattern to tackle an Austin department challenge.</p>
+          <h2>Plan how you will adapt the patterns</h2>
+          <p>As you review, jot down ideas for Austin’s dashboards. Capture phrasing, layouts, and scoring logic you want to test or avoid.</p>
           <ul>
-            <li><strong>Define inputs:</strong> Choose criteria weights, scoring formulas, and refresh cadences that fit your scenario.</li>
-            <li><strong>Design for delivery:</strong> Plan how stakeholders will explore, annotate, or export their decisions.</li>
+            <li><strong>Translate criteria:</strong> Decide which weighting, thresholds, or groupings resonate locally.</li>
+            <li><strong>Design the conversation:</strong> Note facilitation moves for walking leadership through the story.</li>
           </ul>
         </article>
       </section>
@@ -560,7 +548,7 @@
       </div>
 
       <p class="meta notice">Thumbnails are generated from public URLs using snapshot services. Blurbs are fetched automatically from each page’s readable content (proxied for CORS). If a site blocks snapshots or content, the card will fall back gracefully.</p>
-      <p class="meta notice">Tip: Enable 📚 Learning Mode to surface teaching cues or toggle 🔍 Compare Mode to spark critique discussions with the cohort.</p>
+      <p class="meta notice">Tip: Enable 📚 Learning Mode to reveal guided review checklists, reflection prompts, and a printable handout for working through each example.</p>
       
       <!-- Learning Panel Overlay -->
       <div id="learningPanel" class="learning-panel" style="display: none;">
@@ -569,51 +557,66 @@
           <button id="closeLearning" class="close-btn">×</button>
         </div>
         <div class="learning-content">
-          <div class="learning-section">
-            <h4>🎯 Key Principles</h4>
-            <ul>
-              <li><strong>Data-Ink Ratio</strong>: Maximize data pixels, minimize non-data ink</li>
-              <li><strong>Gestalt Principles</strong>: Proximity, similarity, continuity guide perception</li>
-              <li><strong>Color Theory</strong>: Use color purposefully, ensure accessibility</li>
-              <li><strong>Progressive Disclosure</strong>: Show details on demand, avoid overwhelm</li>
-            </ul>
+          <div class="learning-actions">
+            <button id="printChecklist" class="btn primary">🖨️ Print review guide</button>
           </div>
-          <div class="learning-section">
-            <h4>🔍 Look for These Patterns</h4>
-            <ul>
-              <li><strong>Heatmaps</strong>: Color intensity showing values/concentration</li>
-              <li><strong>Bubble Charts</strong>: Size + position + color encoding multiple dimensions</li>
-              <li><strong>Matrices</strong>: Grid layouts for comparison (Value vs Effort, Risk vs Return)</li>
-              <li><strong>WSJF</strong>: Weighted Shortest Job First prioritization methodology</li>
-              <li><strong>MCDA</strong>: Multi-Criteria Decision Analysis frameworks</li>
-            </ul>
+          <div id="checklistContent">
+            <div class="learning-section">
+              <h4>🎯 Review Rhythm</h4>
+              <p>Work through these steps every time you open one of the linked exemplars.</p>
+              <ul>
+                <li>☐ Name the stakeholder and decision this visualization supports.</li>
+                <li>☐ Summarize the promise: what prioritization question should it answer?</li>
+                <li>☐ Trace the data path: where do the scores, statuses, or rankings originate?</li>
+                <li>☐ Capture one idea worth stealing and one practice to avoid.</li>
+              </ul>
+            </div>
+            <div class="learning-section">
+              <h4>🏙️ Public CIP Dashboards — Checklist</h4>
+              <p>Use municipal examples to evaluate how cities communicate project pipelines.</p>
+              <ul>
+                <li>☐ Are funding phases, timelines, and geography linked clearly?</li>
+                <li>☐ Does the map or table explain how priorities shift across districts?</li>
+                <li>☐ Where do residents see tradeoffs (cost vs. impact vs. readiness)?</li>
+                <li>☐ Is there a path to dig deeper—supporting docs, contact info, or filters?</li>
+              </ul>
+            </div>
+            <div class="learning-section">
+              <h4>🏢 Portfolio & Product Tools — Checklist</h4>
+              <p>Interrogate how vendors express scoring models you might adapt internally.</p>
+              <ul>
+                <li>☐ What criteria feed the scorecard, and can you trace the weighting?</li>
+                <li>☐ How does the interface show uncertainty, risk, or scenario planning?</li>
+                <li>☐ Are handoffs obvious—what happens after something ranks highly?</li>
+                <li>☐ Could Austin teams reuse the language without confusing stakeholders?</li>
+              </ul>
+            </div>
+            <div class="learning-section">
+              <h4>📊 Visualization Patterns & Power BI — Checklist</h4>
+              <p>Focus on the mechanics of charts, interactions, and annotations.</p>
+              <ul>
+                <li>☐ Does the layout guide the eye from question to insight to action?</li>
+                <li>☐ Are color scales, legends, and tooltips explicit about what matters?</li>
+                <li>☐ Is there a balance between overview metrics and detailed evidence?</li>
+                <li>☐ How are updates, refresh rates, or data lineage communicated?</li>
+              </ul>
+            </div>
+            <div class="learning-section">
+              <h4>🧠 Internal Monologue to Practice</h4>
+              <p>Adopt these prompts while scanning each dashboard or visualization.</p>
+              <ul>
+                <li>“What story about priority is this view persuading me to believe?”</li>
+                <li>“Which voices or datasets might be missing from this narrative?”</li>
+                <li>“If I had to defend a decision with this dashboard, what evidence is thin?”</li>
+                <li>“How would Austin leadership challenge or support what they see here?”</li>
+              </ul>
+            </div>
+            <div class="learning-section">
+              <h4>✍️ Field Notes</h4>
+              <p>Document phrasing, visual moves, or facilitation ideas you want to reuse.</p>
+              <textarea id="reviewNotes" placeholder="Capture observations, phrases, follow-up questions…"></textarea>
+            </div>
           </div>
-          <div class="learning-section">
-            <h4>⚡ Accessibility Checklist</h4>
-            <ul>
-              <li>☐ Sufficient color contrast (4.5:1 minimum)</li>
-              <li>☐ Screen reader compatible labels</li>
-              <li>☐ Keyboard navigation support</li>
-              <li>☐ Data table alternatives for charts</li>
-              <li>☐ High contrast mode compatibility</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- Compare Mode Panel -->
-      <div id="comparePanel" class="compare-panel" style="display: none;">
-        <div class="compare-header">
-          <h3>🔍 Compare Dashboards</h3>
-          <button id="closeCompare" class="close-btn">×</button>
-        </div>
-        <div class="compare-content">
-          <p>Click on 2 dashboards to compare their design patterns, data density, and effectiveness.</p>
-          <div id="compareSlots" class="compare-slots">
-            <div class="compare-slot" data-slot="1">+ Select first dashboard</div>
-            <div class="compare-slot" data-slot="2">+ Select second dashboard</div>
-          </div>
-          <button id="startCompare" class="btn primary" disabled>Compare Selected</button>
         </div>
       </div>
     </div>
@@ -736,13 +739,6 @@
       elm.dataset.title = (item.title||'').toLowerCase();
       elm.dataset.domain = host.toLowerCase();
       
-      // Add click handler for compare mode
-      elm.addEventListener('click', (e) => {
-        if (!e.target.closest('.btn') && !e.target.closest('.tag')) {
-          handleCardClick(elm, item);
-        }
-      });
-
       elm.innerHTML = `
         <div class="thumb">
           <img alt="Thumbnail for ${escapeHtml(item.title)}" loading="lazy" decoding="async" data-src="${screenshotURL(item.url)}">
@@ -860,17 +856,15 @@
     const sortBy = $('#sortBy');
     const refreshBtn = $('#refresh');
     const learningBtn = $('#toggleLearning');
-    const compareBtn = $('#toggleCompare');
     const learningPanel = $('#learningPanel');
-    const comparePanel = $('#comparePanel');
     const closeLearning = $('#closeLearning');
-    const closeCompare = $('#closeCompare');
-    
+    const printChecklistBtn = $('#printChecklist');
+    const checklistContent = $('#checklistContent');
+    const reviewNotes = $('#reviewNotes');
+
     // State management
     let learningMode = false;
-    let compareMode = false;
-    let selectedForCompare = [];
-    
+
     // Panel controls
     learningBtn.addEventListener('click', () => {
       learningMode = !learningMode;
@@ -878,84 +872,53 @@
       document.body.classList.toggle('learning-mode', learningMode);
       learningBtn.textContent = learningMode ? '📚 Exit Learning' : '📚 Learning Mode';
     });
-    
-    compareBtn.addEventListener('click', () => {
-      compareMode = !compareMode;
-      comparePanel.style.display = compareMode ? 'block' : 'none';
-      document.body.classList.toggle('compare-mode', compareMode);
-      compareBtn.textContent = compareMode ? '🔍 Exit Compare' : '🔍 Compare Mode';
-      if (!compareMode) {
-        selectedForCompare = [];
-        updateCompareSlots();
-        updateCardSelection();
-      }
-    });
-    
+
     closeLearning.addEventListener('click', () => {
       learningMode = false;
       learningPanel.style.display = 'none';
       document.body.classList.remove('learning-mode');
       learningBtn.textContent = '📚 Learning Mode';
     });
-    
-    closeCompare.addEventListener('click', () => {
-      compareMode = false;
-      comparePanel.style.display = 'none';
-      document.body.classList.remove('compare-mode');
-      compareBtn.textContent = '🔍 Compare Mode';
-      selectedForCompare = [];
-      updateCompareSlots();
-      updateCardSelection();
-    });
-    
-    // Compare functionality
-    function handleCardClick(card, item) {
-      if (!compareMode) return;
-      
-      event.preventDefault();
-      
-      const index = selectedForCompare.findIndex(s => s.url === item.url);
-      if (index > -1) {
-        selectedForCompare.splice(index, 1);
-      } else if (selectedForCompare.length < 2) {
-        selectedForCompare.push(item);
-      }
-      
-      updateCardSelection();
-      updateCompareSlots();
-    }
-    
-    function updateCardSelection() {
-      const cards = $$('.card');
-      cards.forEach(card => {
-        const url = $('.btn.primary', card).getAttribute('href');
-        const isSelected = selectedForCompare.some(s => s.url === url);
-        card.classList.toggle('selected-for-compare', isSelected);
-      });
-    }
-    
-    function updateCompareSlots() {
-      const slots = $$('.compare-slot');
-      slots.forEach((slot, index) => {
-        const item = selectedForCompare[index];
-        if (item) {
-          slot.textContent = item.title;
-          slot.classList.add('filled');
-        } else {
-          slot.textContent = `+ Select ${index === 0 ? 'first' : 'second'} dashboard`;
-          slot.classList.remove('filled');
+
+    if (printChecklistBtn && checklistContent) {
+      printChecklistBtn.addEventListener('click', () => {
+        const win = window.open('', '_blank');
+        if (!win) return;
+        const printable = checklistContent.cloneNode(true);
+        const textarea = printable.querySelector('textarea');
+        const notesValue = (reviewNotes && reviewNotes.value) ? reviewNotes.value : '';
+        if (textarea) {
+          const notesContainer = document.createElement('div');
+          notesContainer.innerHTML = `<p><strong>Field Notes</strong></p><div class='notes'>${notesValue ? notesValue.replace(/\n/g,'<br>') : '&nbsp;'}</div>`;
+          textarea.replaceWith(notesContainer);
         }
+        win.document.write(`<!DOCTYPE html><html><head><title>Prioritization Review Guide</title>
+          <style>
+            body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; margin:40px; color:#1f2937;}
+            h1{font-size:22px; margin-bottom:12px;}
+            h4{margin:24px 0 8px; font-size:16px; color:#111827;}
+            ul{margin:0 0 12px 20px; padding:0;}
+            li{margin-bottom:6px; font-size:13px; line-height:1.4;}
+            p{font-size:13px; color:#4b5563; margin:0 0 12px;}
+            .notes{border:1px solid #d1d5db; border-radius:8px; padding:12px; min-height:160px;}
+          </style>
+        </head><body>
+          <h1>Prioritization Visualization Review Guide</h1>
+          ${printable.innerHTML}
+        </body></html>`);
+        win.document.close();
+        win.focus();
+        win.print();
       });
-      
-      $('#startCompare').disabled = selectedForCompare.length !== 2;
     }
-    
-    $('#startCompare').addEventListener('click', () => {
-      if (selectedForCompare.length === 2) {
-        const [first, second] = selectedForCompare;
-        alert(`Comparison Analysis:\n\n${first.title}\nvs\n${second.title}\n\nKey differences in design patterns, data density, and effectiveness would be displayed here in a full implementation.`);
-      }
-    });
+
+    const NOTES_KEY = 'pp-showcase-notes';
+    if (reviewNotes) {
+      reviewNotes.value = localStorage.getItem(NOTES_KEY) || '';
+      reviewNotes.addEventListener('input', () => {
+        localStorage.setItem(NOTES_KEY, reviewNotes.value);
+      });
+    }
 
     function applyFilters(){
       const query = q.value.trim().toLowerCase();
