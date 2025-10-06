@@ -2,6 +2,120 @@ body.learning-mode {
   overflow: hidden;
 }
 
+@media print {
+  @page {
+    size: letter;
+    margin: 0.75in;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #1f2937;
+    font-size: 11pt;
+  }
+
+  body.learning-mode {
+    overflow: visible;
+  }
+
+  header,
+  main,
+  footer,
+  .hero,
+  .chips,
+  .grid,
+  .meta,
+  .notice {
+    display: none !important;
+  }
+
+  .learning-overlay {
+    position: static;
+    inset: auto;
+    padding: 0;
+    background: transparent;
+    display: block;
+  }
+
+  .learning-panel {
+    width: 100%;
+    max-height: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    color: inherit;
+  }
+
+  .learning-header {
+    padding: 0 0 12pt;
+    margin-bottom: 18pt;
+    border: none;
+    border-bottom: 2px solid currentColor;
+  }
+
+  .learning-header h3 {
+    font-size: 18pt;
+    letter-spacing: 0.02em;
+  }
+
+  .close-btn,
+  .learning-actions {
+    display: none !important;
+  }
+
+  .learning-content {
+    padding: 0;
+  }
+
+  .learning-section {
+    margin-bottom: 18pt;
+    padding-right: 6pt;
+  }
+
+  .learning-section h4 {
+    color: inherit;
+    font-size: 12pt;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6pt;
+  }
+
+  .learning-section p {
+    color: inherit;
+    font-size: 10.5pt;
+  }
+
+  .learning-section ul {
+    padding-left: 18pt;
+  }
+
+  .learning-section li {
+    font-size: 10.5pt;
+    margin-bottom: 8pt;
+    line-height: 1.45;
+  }
+
+  .learning-section textarea {
+    background: transparent;
+    border: 1px solid currentColor;
+    min-height: 160px;
+    padding: 10pt;
+    font-size: 10.5pt;
+  }
+
+  .learning-section:nth-of-type(3) {
+    break-after: page;
+  }
+
+  #learningOverlay,
+  #learningPanel,
+  #learningPanelDescription,
+  #checklistContent {
+    display: block;
+  }
+}
+
 .learning-overlay {
   position: fixed;
   inset: 0;
