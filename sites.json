@@ -539,6 +539,202 @@
         "Value-at-Risk",
         "Investment Scenarios"
       ]
+    },
+    {
+      "title": "City of Boulder, CO — Zero Waste Dashboard",
+      "url": "https://bouldercolorado.gov/boulder-measures/zero-waste-diversion",
+      "tags": ["Resource Recovery", "Zero Waste", "Municipal Program"],
+      "description": "Public-facing zero waste portal showing diversion performance, organics capture, and policy milestones. Helpful blueprint for pairing narrative context with live KPI tracking.",
+      "techniques": [
+        "Zero Waste Metrics",
+        "Material Stream Tracking",
+        "Goal Progress Visualization",
+        "Community Education"
+      ]
+    },
+    {
+      "title": "San Francisco International Airport — Zero Waste Dashboard",
+      "url": "https://app.powerbigov.us/view?r=eyJrIjoiMjg0ZDlkZDItZDA1Mi00MjY3LWI1ZjktMzA0YTliZTMzM2M5IiwidCI6IjIyZDVjMmNmLWNlM2UtNDQzZC05YTdmLWRmY2MwMjMxZjczZiJ9",
+      "tags": ["Resource Recovery", "Zero Waste", "Power BI"],
+      "description": "Operational Power BI experience detailing airport waste diversion, with deep dives on construction and demolition materials and tenant compliance.",
+      "techniques": [
+        "Power BI Reporting",
+        "Facilities Benchmarking",
+        "Construction & Demolition Focus",
+        "Compliance Monitoring"
+      ]
+    },
+    {
+      "title": "City of Oakland, CA — Green Halo Waste Tracking",
+      "url": "https://wastetracking.com/city/oakland/",
+      "tags": ["Resource Recovery", "C&D Waste", "Green Halo"],
+      "description": "Standardized Green Halo portal summarizing project-level diversion, recycling totals, and supporting certifications for Oakland's debris ordinance.",
+      "techniques": [
+        "Permit-Linked Reporting",
+        "Diversion Analytics",
+        "Material Recovery Tables",
+        "Compliance Dashboard"
+      ]
+    },
+    {
+      "title": "Redwood City, CA — Green Halo Waste Tracking",
+      "url": "https://wastetracking.com/city/redwoodcity/",
+      "tags": ["Resource Recovery", "C&D Waste", "Green Halo"],
+      "description": "City-specific Green Halo instance displaying construction recycling activity, recovery facilities, and permit summaries for Redwood City projects.",
+      "techniques": [
+        "Permit Summaries",
+        "Material Recovery Reports",
+        "Facility Directory",
+        "Standardized Platform"
+      ]
+    },
+    {
+      "title": "Contra Costa County, CA — Green Halo Waste Tracking",
+      "url": "https://wastetracking.com/city/contracostacounty/",
+      "tags": ["Resource Recovery", "C&D Waste", "Green Halo"],
+      "description": "Countywide Green Halo site consolidating debris diversion progress, approved facilities, and sustainability documentation requirements.",
+      "techniques": [
+        "Countywide Rollup",
+        "Diversion Progress Indicators",
+        "Approved Facility Listings",
+        "Document Repository"
+      ]
+    },
+    {
+      "title": "City of Santa Monica, CA — Green Halo Waste Tracking",
+      "url": "https://wastetracking.com/city/santamonica/",
+      "tags": ["Resource Recovery", "C&D Waste", "Green Halo"],
+      "description": "Santa Monica's debris recycling compliance portal showcasing project diversion percentages, recovery receipts, and material breakdowns.",
+      "techniques": [
+        "Diversion Percentage Tracking",
+        "Receipt Management",
+        "Material Breakdown Charts",
+        "Compliance Workflow"
+      ]
+    },
+    {
+      "title": "City of Lakewood, CO — Green Halo Waste Tracking",
+      "url": "https://wastetracking.com/city/lakewoodco/",
+      "tags": ["Resource Recovery", "C&D Waste", "Green Halo"],
+      "description": "Green Halo implementation highlighting construction material diversion dashboards, project status filters, and sustainability reporting for Lakewood.",
+      "techniques": [
+        "Project Status Filters",
+        "Construction Diversion Dashboards",
+        "Sustainability Reporting",
+        "Permit Compliance"
+      ]
+    },
+    {
+      "title": "City of San José, CA — Green Halo Waste Tracking",
+      "url": "https://wastetracking.com/city/sanjose/",
+      "tags": ["Resource Recovery", "C&D Waste", "Green Halo"],
+      "description": "San José's consolidated view of demolition and construction diversion, leveraging Green Halo's standardized analytics for municipal oversight.",
+      "techniques": [
+        "Standardized Analytics",
+        "Municipal Oversight",
+        "Material Diversion KPIs",
+        "Permit Compliance"
+      ]
+    },
+    {
+      "title": "City of Carlsbad, CA — Green Halo Waste Tracking",
+      "url": "https://wastetracking.com/city/carlsbad/",
+      "tags": ["Resource Recovery", "C&D Waste", "Green Halo"],
+      "description": "Carlsbad's debris recycling portal providing at-a-glance diversion scores, project inventory, and facility utilization insights.",
+      "techniques": [
+        "Diversion Scoring",
+        "Project Inventory",
+        "Facility Utilization",
+        "Compliance Insights"
+      ]
+    },
+    {
+      "title": "City of San Diego, CA — C&D Recycling Program",
+      "url": "https://www.sandiego.gov/environmental-services/recycling/cd",
+      "tags": ["Resource Recovery", "C&D Waste", "Policy Reference"],
+      "description": "Program hub detailing San Diego's construction and demolition recycling requirements, certified facilities, and compliance tools for permit holders.",
+      "techniques": [
+        "Program Guidance",
+        "Certified Facility Listings",
+        "Permit Compliance Tools",
+        "Education Resources"
+      ]
+    },
+    {
+      "title": "San Diego Mixed C&D Facilities — Historical Diversion Rates",
+      "url": "https://www.sandiego.gov/sites/default/files/mixed-cd-facilities-historical-rates.pdf",
+      "tags": ["Resource Recovery", "C&D Waste", "Performance Report"],
+      "description": "Quarterly PDF report documenting diversion performance for certified C&D processing facilities across San Diego.",
+      "techniques": [
+        "Facility Benchmarking",
+        "Quarterly Performance",
+        "Diversion Targets",
+        "Regulatory Transparency"
+      ]
+    },
+    {
+      "title": "San Diego C&D Debris Conversion Table",
+      "url": "https://www.sandiego.gov/sites/default/files/material_conversion_table_6.8.16_0.xls",
+      "tags": ["Resource Recovery", "C&D Waste", "Reference Data"],
+      "description": "Conversion factor spreadsheet translating construction material volumes into standardized weight estimates for compliance reporting.",
+      "techniques": [
+        "Material Conversion Factors",
+        "Compliance Calculations",
+        "Spreadsheet Reference",
+        "Standardized Reporting"
+      ]
+    },
+    {
+      "title": "Australian Government — National Waste Report (At a Glance)",
+      "url": "https://www.dcceew.gov.au/environment/protection/waste/publications/national-waste-resource-recovery-reporting/glance-2024",
+      "tags": [
+        "Resource Recovery",
+        "International Benchmark",
+        "National Policy"
+      ],
+      "description": "National snapshot of Australian waste flows with Sankey visualizations, recovery trends, and sector comparisons for benchmarking.",
+      "techniques": [
+        "Material Flow Sankey",
+        "National Benchmarking",
+        "Trend Analysis",
+        "Sector Comparison"
+      ]
+    },
+    {
+      "title": "UK Government — Waste Statistics Open Data Portal",
+      "url": "https://www.data.gov.uk/dataset/882186e7-97b0-4ad0-b253-e28607252f42/uk_statistics_on_waste",
+      "tags": ["Resource Recovery", "International Benchmark", "Open Data"],
+      "description": "Open data release covering UK waste statistics, including construction and demolition streams, with downloadable CSV datasets.",
+      "techniques": [
+        "Open Data Release",
+        "Downloadable Datasets",
+        "Construction & Demolition Metrics",
+        "International Benchmarking"
+      ]
+    },
+    {
+      "title": "US EPA — Sustainable Management of C&D Materials",
+      "url": "https://www.epa.gov/smm/sustainable-management-construction-and-demolition-materials",
+      "tags": ["Resource Recovery", "C&D Waste", "Guidance"],
+      "description": "EPA guidance hub aggregating policy context, material reuse strategies, and national statistics for construction and demolition waste.",
+      "techniques": [
+        "Policy Guidance",
+        "Material Reuse Strategies",
+        "National Statistics",
+        "Educational Resources"
+      ]
+    },
+    {
+      "title": "US EPA — State & Local C&D Measurement Reports",
+      "url": "https://www.epa.gov/smm/state-and-local-government-construction-and-demolition-materials-measurement-reports",
+      "tags": ["Resource Recovery", "C&D Waste", "Guidance"],
+      "description": "Curated directory of state and local measurement reports documenting diversion methodologies, program results, and reporting templates.",
+      "techniques": [
+        "Program Benchmarking",
+        "Measurement Templates",
+        "Comparative Reporting",
+        "Policy Research"
+      ]
     }
   ]
 }
