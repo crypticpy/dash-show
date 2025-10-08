@@ -392,6 +392,52 @@
         position: relative;
         cursor: pointer;
       }
+      .card.loading .thumb {
+        background: var(--card-2);
+        position: relative;
+        overflow: hidden;
+      }
+      .card.loading .thumb::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(255, 255, 255, 0.05) 50%,
+          transparent 100%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+      }
+      .card.loading .content h3,
+      .card.loading .description,
+      .card.loading .technique-tag {
+        background: var(--card-2);
+        color: transparent;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+      }
+      .card.loading .content h3::before,
+      .card.loading .description::before,
+      .card.loading .technique-tag::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(255, 255, 255, 0.05) 50%,
+          transparent 100%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+      }
+      @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+      }
 
       /* Enhanced Card Header */
       .card-header {
@@ -1004,65 +1050,6 @@
         opacity: 1;
       }
 
-      /* Compare Panel Styles */
-      .compare-panel {
-        position: fixed;
-        top: 80px;
-        right: 20px;
-        width: 380px;
-        max-height: 80vh;
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow-hover);
-        z-index: 200;
-        overflow-y: auto;
-        backdrop-filter: saturate(120%) blur(12px);
-      }
-      .compare-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 16px;
-        border-bottom: 1px solid var(--border);
-      }
-      .compare-header h3 {
-        margin: 0;
-        font-size: 16px;
-        color: var(--fg);
-      }
-      .compare-content {
-        padding: 16px;
-      }
-
-      /* Compare Mode Styles */
-      .compare-slots {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin: 16px 0;
-      }
-      .compare-slot {
-        min-height: 60px;
-        border: 2px dashed var(--border);
-        border-radius: var(--radius-sm);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        color: var(--muted);
-        transition: var(--transition);
-      }
-      .compare-slot.filled {
-        border-color: var(--accent);
-        background: var(--chip);
-        color: var(--chip-fg);
-        font-size: 11px;
-      }
-      .compare-slot.selected {
-        border-color: var(--accent-2);
-        background: rgba(34, 197, 94, 0.1);
-      }
 
       /* Learning Mode Indicators */
       .learning-mode .card {
@@ -1089,17 +1076,193 @@
         opacity: 1;
       }
 
-      /* Compare Mode Indicators */
-      .compare-mode .card {
-        cursor: pointer;
+
+      /* Onboarding Overlay */
+      .onboarding-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 12, 16, 0.92);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 300;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        animation: fadeIn 0.3s ease;
+      }
+      .onboarding-overlay[hidden] {
+        display: none;
+      }
+      .onboarding-modal {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+        max-width: 600px;
+        width: 100%;
+        padding: 40px;
         position: relative;
+        animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       }
-      .compare-mode .card:hover {
-        box-shadow: 0 0 0 2px var(--accent);
+      .onboarding-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: none;
+        color: var(--muted);
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        font-size: 24px;
+        cursor: pointer;
+        transition: var(--transition);
+        display: grid;
+        place-items: center;
       }
-      .compare-mode .card.selected-for-compare {
-        box-shadow: 0 0 0 3px var(--accent-2);
-        transform: scale(1.02);
+      .onboarding-close:hover {
+        background: var(--card-2);
+        color: var(--fg);
+      }
+      .onboarding-content {
+        text-align: center;
+      }
+      .onboarding-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+        animation: bounce 0.6s ease;
+      }
+      .onboarding-content h2 {
+        margin: 0 0 16px 0;
+        font-size: 28px;
+        color: var(--fg);
+      }
+      .onboarding-content p {
+        margin: 0 0 30px 0;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      .onboarding-features {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin: 30px 0;
+        text-align: left;
+      }
+      .onboarding-feature {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+        background: var(--card-2);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        transition: var(--transition);
+      }
+      .onboarding-feature:hover {
+        border-color: var(--accent);
+        transform: translateX(4px);
+      }
+      .onboarding-feature-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+      }
+      .onboarding-feature-content h3 {
+        margin: 0 0 4px 0;
+        font-size: 16px;
+        color: var(--fg);
+      }
+      .onboarding-feature-content p {
+        margin: 0;
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .onboarding-footer {
+        display: flex;
+        gap: 12px;
+        margin-top: 30px;
+        justify-content: center;
+      }
+      .onboarding-step-indicator {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin: 20px 0;
+      }
+      .onboarding-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--border);
+        transition: var(--transition);
+      }
+      .onboarding-dot.active {
+        background: var(--accent);
+        width: 24px;
+        border-radius: 4px;
+      }
+      .onboarding-help-icon {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: white;
+        border: none;
+        box-shadow: var(--shadow-hover);
+        cursor: pointer;
+        font-size: 24px;
+        display: grid;
+        place-items: center;
+        z-index: 50;
+        transition: var(--transition);
+      }
+      .onboarding-help-icon:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+
+      /* Skip Link */
+      .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: var(--accent);
+        color: white;
+        padding: 8px 16px;
+        z-index: 1000;
+        border-radius: 0 0 8px 0;
+        font-weight: 600;
+        text-decoration: none;
+        transition: top 0.3s;
+      }
+      .skip-link:focus {
+        top: 0;
+        outline: 3px solid var(--accent-2);
+        outline-offset: 2px;
       }
 
       /* Detail Modal */
@@ -1302,7 +1465,8 @@
     </style>
   </head>
   <body>
-    <header>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <header role="banner">
       <div class="wrap hero">
         <div class="title">
           <div class="logo" aria-hidden="true"><span>DV</span></div>
@@ -1320,7 +1484,7 @@
             </p>
           </div>
         </div>
-        <div class="controls">
+        <nav class="controls" aria-label="Filter and search controls">
           <div class="control">
             🔎
             <input
@@ -1328,9 +1492,10 @@
               type="search"
               placeholder="Search title, domain, tags…"
               autocomplete="off"
+              aria-label="Search dashboards"
             />
           </div>
-          <select id="filterTag" title="Filter by tag">
+          <select id="filterTag" title="Filter by tag" aria-label="Filter by category">
             <option value="all">All types</option>
           </select>
           <select
@@ -1346,20 +1511,19 @@
             <option value="title">Sort: Title (A→Z)</option>
             <option value="domain">Sort: Domain (A→Z)</option>
           </select>
-          <button id="refresh">Refresh blurbs</button>
-          <button id="toggleLearning">📚 Learning Mode</button>
-          <button id="toggleCompare">🔍 Compare Mode</button>
-        </div>
+          <button id="refresh" aria-label="Refresh dashboard descriptions">Refresh blurbs</button>
+          <button id="toggleLearning" aria-label="Toggle learning mode">📚 Learning Mode</button>
+        </nav>
       </div>
     </header>
 
-    <main>
+    <main role="main" id="main-content">
       <div class="wrap">
-        <div class="chips" id="chips">
+        <div class="chips" id="chips" role="group" aria-label="Filter by tags">
           <!-- dynamic chip badges rendered here -->
         </div>
 
-        <div class="grid" id="grid" aria-live="polite">
+        <div class="grid" id="grid" aria-live="polite" aria-label="Dashboard cards">
           <!-- cards populated via JS -->
         </div>
 
@@ -1374,32 +1538,35 @@
           personal study guide.
         </p>
 
-        <!-- Compare Mode Panel -->
-        <div id="comparePanel" class="compare-panel" style="display: none">
-          <div class="compare-header">
-            <h3>🔍 Compare Dashboards</h3>
-            <button id="closeCompare" class="close-btn">×</button>
-          </div>
-          <div class="compare-content">
-            <p>
-              Click on 2 dashboards to compare their design patterns, data
-              density, and effectiveness.
-            </p>
-            <div id="compareSlots" class="compare-slots">
-              <div class="compare-slot" data-slot="1">
-                + Select first dashboard
-              </div>
-              <div class="compare-slot" data-slot="2">
-                + Select second dashboard
-              </div>
+      </div>
+    </main>
+
+    <!-- Onboarding Overlay -->
+    <div id="onboardingOverlay" class="onboarding-overlay" hidden>
+      <div class="onboarding-modal" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
+        <button id="onboardingClose" class="onboarding-close" aria-label="Close onboarding">×</button>
+        <div class="onboarding-content" id="onboardingContent">
+          <!-- Step 1: Welcome -->
+          <div class="onboarding-step" data-step="1">
+            <div class="onboarding-icon">📊</div>
+            <h2 id="onboardingTitle">Welcome to Dashboard Showcase!</h2>
+            <p>Discover 70+ real-world data visualization examples from municipalities, organizations, and data professionals around the web.</p>
+            <div class="onboarding-step-indicator">
+              <div class="onboarding-dot active"></div>
+              <div class="onboarding-dot"></div>
+              <div class="onboarding-dot"></div>
             </div>
-            <button id="startCompare" class="btn primary" disabled>
-              Compare Selected
-            </button>
+            <div class="onboarding-footer">
+              <button class="btn" id="onboardingSkip">Skip</button>
+              <button class="btn primary" id="onboardingNext">Next →</button>
+            </div>
           </div>
         </div>
       </div>
-    </main>
+    </div>
+
+    <!-- Onboarding Help Button -->
+    <button id="onboardingHelp" class="onboarding-help-icon" aria-label="Show help" title="Show help tour">?</button>
 
     <div id="detailOverlay" class="detail-overlay" hidden>
       <article
@@ -2037,7 +2204,7 @@
       function cardTemplate(item) {
         const host = hostname(item.url);
         const elm = document.createElement("article");
-        elm.className = "card";
+        elm.className = "card loading";
         elm.dataset.tags = (item.tags || []).join("|").toLowerCase();
         elm.dataset.title = (item.title || "").toLowerCase();
         elm.dataset.domain = host.toLowerCase();
@@ -2378,9 +2545,11 @@
         }
       }
 
-      async function hydrateBlurbs() {
+      async function hydrateBlurbs(onProgress) {
         const cards = $$(".card");
-        for (const card of cards) {
+        const total = cards.length;
+        for (let i = 0; i < cards.length; i++) {
+          const card = cards[i];
           const url = $(".btn.primary", card).getAttribute("href");
           const blurbEl = $(".blurb", card);
           const text = await fetchBlurb(url);
@@ -2390,6 +2559,7 @@
             blurbEl.innerHTML =
               '<span class="notice">Blurb unavailable (site blocked or no readable text).</span>';
           }
+          if (onProgress) onProgress(i + 1, total);
         }
       }
 
@@ -2401,14 +2571,19 @@
             entries.forEach((entry) => {
               if (entry.isIntersecting) {
                 const img = entry.target;
+                const card = img.closest(".card");
                 img.src = img.dataset.src;
-                img.addEventListener("load", () => img.classList.add("loaded"));
+                img.addEventListener("load", () => {
+                  img.classList.add("loaded");
+                  if (card) card.classList.remove("loading");
+                });
                 img.addEventListener("error", () => {
                   // Fallback chain: thum.io → favicon
                   img.onerror = () => {
                     img.src = faviconURL(
                       img.closest(".card").querySelector(".btn.primary").href,
                     );
+                    if (card) card.classList.remove("loading");
                   };
                   img.src = screenshotFallback(
                     img.closest(".card").querySelector(".btn.primary").href,
@@ -2429,9 +2604,6 @@
       const sortBy = $("#sortBy");
       const refreshBtn = $("#refresh");
       const learningBtn = $("#toggleLearning");
-      const compareBtn = $("#toggleCompare");
-      const comparePanel = $("#comparePanel");
-      const closeCompare = $("#closeCompare");
       const learningOverlay = $("#learningOverlay");
       const learningPanel = $("#learningPanel");
       const closeLearning = $("#closeLearning");
@@ -2455,8 +2627,6 @@
 
       // State management
       let learningMode = false;
-      let compareMode = false;
-      let selectedForCompare = [];
       let lastFocusedElement = null;
       let detailLastFocused = null;
       let currentRole = localStorage.getItem(ROLE_STORAGE_KEY) || DEFAULT_ROLE;
@@ -2638,99 +2808,13 @@
         });
       }
 
-      if (compareBtn) {
-        compareBtn.addEventListener("click", () => {
-          compareMode = !compareMode;
-          if (compareMode) {
-            closeDetailModal();
-          }
-          if (comparePanel) {
-            comparePanel.style.display = compareMode ? "block" : "none";
-          }
-          document.body.classList.toggle("compare-mode", compareMode);
-          compareBtn.textContent = compareMode
-            ? "🔍 Exit Compare"
-            : "🔍 Compare Mode";
-          if (!compareMode) {
-            selectedForCompare = [];
-            updateCompareSlots();
-            updateCardSelection();
-          }
-        });
-      }
-
-      if (closeCompare) {
-        closeCompare.addEventListener("click", () => {
-          compareMode = false;
-          if (comparePanel) {
-            comparePanel.style.display = "none";
-          }
-          document.body.classList.remove("compare-mode");
-          if (compareBtn) {
-            compareBtn.textContent = "🔍 Compare Mode";
-          }
-          selectedForCompare = [];
-          updateCompareSlots();
-          updateCardSelection();
-        });
-      }
-
-      // Compare functionality
+      // Card click functionality
       function handleCardClick(card, item, evt) {
-        if (compareMode) {
-          if (evt && typeof evt.preventDefault === "function") {
-            evt.preventDefault();
-          }
-          const index = selectedForCompare.findIndex((s) => s.url === item.url);
-          if (index > -1) {
-            selectedForCompare.splice(index, 1);
-          } else if (selectedForCompare.length < 2) {
-            selectedForCompare.push(item);
-          }
-          updateCardSelection();
-          updateCompareSlots();
-          return;
-        }
-
         if (evt && typeof evt.preventDefault === "function") {
           evt.preventDefault();
         }
         openDetailModal(item, card);
       }
-
-      function updateCardSelection() {
-        const cards = $$(".card");
-        cards.forEach((card) => {
-          const url = $(".btn.primary", card).getAttribute("href");
-          const isSelected = selectedForCompare.some((s) => s.url === url);
-          card.classList.toggle("selected-for-compare", isSelected);
-        });
-      }
-
-      function updateCompareSlots() {
-        const slots = $$(".compare-slot");
-        slots.forEach((slot, index) => {
-          const item = selectedForCompare[index];
-          if (item) {
-            slot.textContent = item.title;
-            slot.classList.add("filled");
-          } else {
-            slot.textContent = `+ Select ${index === 0 ? "first" : "second"} dashboard`;
-            slot.classList.remove("filled");
-          }
-        });
-
-        $("#startCompare").disabled = selectedForCompare.length !== 2;
-      }
-
-      $("#startCompare").addEventListener("click", () => {
-        if (selectedForCompare.length === 2) {
-          const [first, second] = selectedForCompare;
-          alert(
-            `Comparison Analysis:\n\n${first.title}\nvs\n${second.title}\n\nKey differences in design patterns, data density, and effectiveness would be displayed here in a full implementation.`,
-          );
-        }
-      });
 
       function applyFilters() {
         const query = q.value.trim().toLowerCase();
@@ -2781,11 +2865,27 @@
       q.addEventListener("input", applyFilters);
       filterTag.addEventListener("change", applyFilters);
       sortBy.addEventListener("change", applyFilters);
-      refreshBtn.addEventListener("click", () => {
+      refreshBtn.addEventListener("click", async () => {
         // Clear cache and re-hydrate
         localStorage.removeItem(CACHE_KEY);
         Object.keys(cache).forEach((k) => delete cache[k]);
-        hydrateBlurbs();
+
+        const originalText = refreshBtn.textContent;
+        refreshBtn.disabled = true;
+        refreshBtn.innerHTML = '⏳ Refreshing... <span class="progress-count">0/0</span>';
+
+        await hydrateBlurbs((current, total) => {
+          const progressSpan = refreshBtn.querySelector('.progress-count');
+          if (progressSpan) {
+            progressSpan.textContent = `${current}/${total}`;
+          }
+        });
+
+        refreshBtn.innerHTML = '✓ Refreshed!';
+        setTimeout(() => {
+          refreshBtn.textContent = originalText;
+          refreshBtn.disabled = false;
+        }, 2000);
       });
 
       // ======== HTML escape helper ========
@@ -2801,6 +2901,212 @@
               "'": "&#39;",
             })[m],
         );
+      }
+
+      // ======== Onboarding Flow ========
+      const onboardingOverlay = $("#onboardingOverlay");
+      const onboardingContent = $("#onboardingContent");
+      const onboardingClose = $("#onboardingClose");
+      const onboardingHelp = $("#onboardingHelp");
+      const ONBOARDING_KEY = "hasSeenOnboarding";
+      let currentStep = 1;
+
+      const onboardingSteps = [
+        {
+          icon: "📊",
+          title: "Welcome to Dashboard Showcase!",
+          description: "Discover 70+ real-world data visualization examples from municipalities, organizations, and data professionals around the web.",
+        },
+        {
+          icon: "📚",
+          title: "Explore Powerful Features",
+          description: "Use Learning Mode for guided analysis, filter by category and technique, or search for specific dashboard types.",
+          features: [
+            {
+              icon: "📚",
+              title: "Learning Mode",
+              description: "Get guided prompts and create a personal study guide"
+            },
+            {
+              icon: "🔍",
+              title: "Smart Filters",
+              description: "Filter by tags, categories, and visualization techniques"
+            },
+            {
+              icon: "🎯",
+              title: "Detailed Analysis",
+              description: "Click any dashboard for in-depth information and insights"
+            }
+          ]
+        },
+        {
+          icon: "🚀",
+          title: "Ready to Explore!",
+          description: "Click any dashboard card to see detailed analysis, or use the filters above to find specific examples. Enable Learning Mode anytime for guided analysis.",
+        }
+      ];
+
+      function showOnboarding() {
+        if (!onboardingOverlay) return;
+        currentStep = 1;
+        renderOnboardingStep(1);
+        onboardingOverlay.hidden = false;
+        document.body.style.overflow = "hidden";
+      }
+
+      function hideOnboarding(markAsSeen = true) {
+        if (!onboardingOverlay) return;
+        onboardingOverlay.hidden = true;
+        document.body.style.overflow = "";
+        if (markAsSeen) {
+          localStorage.setItem(ONBOARDING_KEY, "true");
+        }
+      }
+
+      function renderOnboardingStep(step) {
+        if (!onboardingContent) return;
+        const stepData = onboardingSteps[step - 1];
+        if (!stepData) return;
+
+        let html = `
+          <div class="onboarding-step" data-step="${step}">
+            <div class="onboarding-icon">${stepData.icon}</div>
+            <h2>${stepData.title}</h2>
+            <p>${stepData.description}</p>
+        `;
+
+        if (stepData.features) {
+          html += '<div class="onboarding-features">';
+          stepData.features.forEach(feature => {
+            html += `
+              <div class="onboarding-feature">
+                <div class="onboarding-feature-icon">${feature.icon}</div>
+                <div class="onboarding-feature-content">
+                  <h3>${feature.title}</h3>
+                  <p>${feature.description}</p>
+                </div>
+              </div>
+            `;
+          });
+          html += '</div>';
+        }
+
+        html += '<div class="onboarding-step-indicator">';
+        for (let i = 1; i <= onboardingSteps.length; i++) {
+          html += `<div class="onboarding-dot ${i === step ? 'active' : ''}"></div>`;
+        }
+        html += '</div>';
+
+        html += '<div class="onboarding-footer">';
+        if (step > 1) {
+          html += '<button class="btn" id="onboardingPrev">← Back</button>';
+        }
+        if (step < onboardingSteps.length) {
+          html += '<button class="btn" id="onboardingSkip">Skip</button>';
+          html += '<button class="btn primary" id="onboardingNext">Next →</button>';
+        } else {
+          html += '<button class="btn primary" id="onboardingStart">Get Started!</button>';
+        }
+        html += '</div></div>';
+
+        onboardingContent.innerHTML = html;
+        attachOnboardingListeners();
+      }
+
+      function attachOnboardingListeners() {
+        const nextBtn = $("#onboardingNext");
+        const prevBtn = $("#onboardingPrev");
+        const skipBtn = $("#onboardingSkip");
+        const startBtn = $("#onboardingStart");
+
+        if (nextBtn) {
+          nextBtn.addEventListener("click", () => {
+            currentStep++;
+            renderOnboardingStep(currentStep);
+          });
+        }
+
+        if (prevBtn) {
+          prevBtn.addEventListener("click", () => {
+            currentStep--;
+            renderOnboardingStep(currentStep);
+          });
+        }
+
+        if (skipBtn) {
+          skipBtn.addEventListener("click", () => {
+            hideOnboarding(true);
+          });
+        }
+
+        if (startBtn) {
+          startBtn.addEventListener("click", () => {
+            hideOnboarding(true);
+          });
+        }
+      }
+
+      if (onboardingClose) {
+        onboardingClose.addEventListener("click", () => {
+          hideOnboarding(true);
+        });
+      }
+
+      if (onboardingHelp) {
+        onboardingHelp.addEventListener("click", () => {
+          showOnboarding();
+        });
+      }
+
+      if (onboardingOverlay) {
+        onboardingOverlay.addEventListener("mousedown", (event) => {
+          if (event.target === onboardingOverlay) {
+            hideOnboarding(true);
+          }
+        });
+      }
+
+      // Show onboarding on first visit
+      if (!localStorage.getItem(ONBOARDING_KEY)) {
+        setTimeout(() => showOnboarding(), 500);
+      }
+
+      // ======== Keyboard Navigation ========
+      if (grid) {
+        grid.addEventListener("keydown", (e) => {
+          if (!["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"].includes(e.key)) {
+            return;
+          }
+
+          const cards = Array.from(grid.querySelectorAll(".card")).filter(
+            card => card.style.display !== "none"
+          );
+          const currentIndex = cards.indexOf(document.activeElement);
+
+          if (currentIndex === -1) return;
+
+          // Calculate grid columns
+          const gridStyle = window.getComputedStyle(grid);
+          const gridColumns = gridStyle.gridTemplateColumns.split(" ").length;
+
+          let nextIndex = currentIndex;
+
+          if (e.key === "ArrowRight" && currentIndex < cards.length - 1) {
+            nextIndex = currentIndex + 1;
+          } else if (e.key === "ArrowLeft" && currentIndex > 0) {
+            nextIndex = currentIndex - 1;
+          } else if (e.key === "ArrowDown") {
+            nextIndex = Math.min(currentIndex + gridColumns, cards.length - 1);
+          } else if (e.key === "ArrowUp") {
+            nextIndex = Math.max(currentIndex - gridColumns, 0);
+          }
+
+          if (nextIndex !== currentIndex && cards[nextIndex]) {
+            e.preventDefault();
+            cards[nextIndex].focus();
+            cards[nextIndex].scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }
+        });
       }
 
       // ======== Init ========
