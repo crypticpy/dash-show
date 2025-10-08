@@ -1,0 +1,599 @@
+/**
+ * Modal Overlays & Dialogs
+ * Learning Mode, Detail View, Onboarding
+ * WCAG 2.2 AA Compliant Focus Management
+ */
+
+/* ============================================
+   LEARNING MODE OVERLAY
+   ============================================ */
+
+.learning-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 72px 16px 24px;
+  background: rgba(15, 17, 21, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: var(--z-learning);
+  transition: opacity 0.25s ease;
+}
+
+.learning-overlay[hidden] {
+  display: none;
+}
+
+.learning-panel {
+  width: min(420px, 100%);
+  max-height: calc(100vh - 120px);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hover);
+  overflow-y: auto;
+  backdrop-filter: saturate(120%) blur(12px);
+  outline: none;
+}
+
+.learning-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.learning-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--fg);
+}
+
+.learning-content {
+  padding: 16px;
+}
+
+.learning-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.learning-actions .btn {
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+.learning-section {
+  margin-bottom: 20px;
+}
+
+.learning-section h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.learning-section ul {
+  margin: 0;
+  padding-left: 16px;
+  list-style: none;
+}
+
+.learning-section li {
+  margin-bottom: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+  position: relative;
+  padding-left: 16px;
+}
+
+.learning-section li::before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.learning-section strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.learning-section p {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 720px) {
+  .learning-overlay {
+    align-items: flex-end;
+    padding: 32px 12px 24px;
+  }
+
+  .learning-panel {
+    width: 100%;
+    max-height: calc(100vh - 56px);
+  }
+}
+
+/* ============================================
+   DETAIL MODAL
+   ============================================ */
+
+.detail-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 16px;
+  background: rgba(10, 12, 16, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: var(--z-detail);
+  transition: opacity 0.25s ease;
+}
+
+.detail-overlay[hidden] {
+  display: none;
+}
+
+.detail-modal {
+  width: min(940px, 100%);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 28px 68px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 120px);
+  position: relative;
+  overflow: hidden;
+  animation: detailEnter 0.35s ease;
+}
+
+.detail-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  font-size: 20px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: var(--transition);
+  z-index: 1;
+}
+
+.detail-close:hover,
+.detail-close:focus-visible {
+  background: var(--accent);
+  color: #fff;
+  border-color: transparent;
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.detail-header {
+  padding: 36px 36px 0 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detail-header h2 {
+  margin: 0;
+  font-size: clamp(24px, 3.2vw, 32px);
+  line-height: 1.2;
+  padding-right: 48px; /* Space for close button */
+}
+
+.detail-category {
+  align-self: flex-start;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(59, 130, 246, 0.16);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: var(--accent);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+}
+
+.detail-domain {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-body {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  gap: 28px;
+  padding: 28px 36px 36px;
+  align-items: flex-start;
+  overflow-y: auto;
+}
+
+.detail-media {
+  margin: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--card-2);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+}
+
+.detail-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.detail-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.detail-summary {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--fg);
+  line-height: 1.6;
+}
+
+.detail-blurb {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(232, 234, 237, 0.85);
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  margin: 0;
+}
+
+.detail-meta {
+  display: grid;
+  gap: 18px;
+}
+
+.detail-meta-group h3 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.detail-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.detail-chip {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--card-2);
+  color: var(--fg);
+  letter-spacing: 0.01em;
+}
+
+.detail-chip.technique {
+  border-style: dashed;
+}
+
+.detail-empty {
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 20px 36px 32px;
+  border-top: 1px solid var(--border);
+  background: var(--card-2);
+}
+
+/* Detail Modal Responsive */
+@media (max-width: 900px) {
+  .detail-body {
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+
+  .detail-header {
+    padding: 28px 24px 0;
+  }
+
+  .detail-actions {
+    padding: 20px 24px 28px;
+  }
+
+  .detail-modal {
+    max-height: calc(100vh - 72px);
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .detail-overlay {
+    padding: 40px 12px;
+  }
+
+  .detail-header h2 {
+    font-size: 20px;
+  }
+
+  .detail-body {
+    padding: 20px 16px;
+    gap: 20px;
+  }
+
+  .detail-header {
+    padding: 24px 16px 0;
+  }
+
+  .detail-actions {
+    padding: 16px;
+  }
+}
+
+/* ============================================
+   ONBOARDING OVERLAY
+   ============================================ */
+
+.onboarding-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 16, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: var(--z-onboarding);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.onboarding-overlay[hidden] {
+  display: none;
+}
+
+.onboarding-modal {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+  max-width: 600px;
+  width: 100%;
+  padding: 40px;
+  position: relative;
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.onboarding-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: grid;
+  place-items: center;
+  min-height: 36px;
+}
+
+.onboarding-close:hover,
+.onboarding-close:focus-visible {
+  background: var(--card-2);
+  color: var(--fg);
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.onboarding-content {
+  text-align: center;
+}
+
+.onboarding-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+  animation: bounce 0.6s ease;
+}
+
+.onboarding-content h2 {
+  margin: 0 0 16px 0;
+  font-size: 28px;
+  color: var(--fg);
+}
+
+.onboarding-content p {
+  margin: 0 0 30px 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.onboarding-features {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 30px 0;
+  text-align: left;
+}
+
+.onboarding-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: var(--card-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.onboarding-feature:hover {
+  border-color: var(--accent);
+  transform: translateX(4px);
+}
+
+.onboarding-feature-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.onboarding-feature-content h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  color: var(--fg);
+}
+
+.onboarding-feature-content p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.onboarding-footer {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.onboarding-step-indicator {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.onboarding-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: var(--transition);
+}
+
+.onboarding-dot.active {
+  background: var(--accent);
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* Onboarding Responsive */
+@media (max-width: 640px) {
+  .onboarding-modal {
+    padding: 32px 24px;
+    border-radius: 20px;
+  }
+
+  .onboarding-content h2 {
+    font-size: 24px;
+  }
+
+  .onboarding-content p {
+    font-size: 14px;
+  }
+
+  .onboarding-icon {
+    font-size: 40px;
+  }
+
+  .onboarding-feature {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .onboarding-overlay {
+    padding: 16px;
+  }
+
+  .onboarding-modal {
+    padding: 28px 20px;
+  }
+
+  .onboarding-content h2 {
+    font-size: 22px;
+  }
+
+  .onboarding-feature-icon {
+    font-size: 20px;
+  }
+
+  .onboarding-feature-content h3 {
+    font-size: 14px;
+  }
+
+  .onboarding-feature-content p {
+    font-size: 13px;
+  }
+}
+
+/* ============================================
+   FOCUS TRAP UTILITIES
+   ============================================ */
+
+/* Ensure focus stays within modals */
+.detail-overlay:focus-within,
+.learning-overlay:focus-within,
+.onboarding-overlay:focus-within {
+  outline: none;
+}
+
+/* First and last focusable sentinels for keyboard navigation */
+.modal-focus-trap-start,
+.modal-focus-trap-end {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

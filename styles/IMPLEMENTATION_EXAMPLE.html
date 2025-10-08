@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Visualization Dashboard Showcase</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Design System Styles (REPLACE OLD <style> BLOCK WITH THESE) -->
+  <link rel="stylesheet" href="styles/variables.css">
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/modals.css">
+</head>
+<body>
+  <!-- Skip Link (WCAG 2.2 AA) -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Header -->
+  <header role="banner">
+    <div class="wrap hero">
+      <div class="title">
+        <div class="logo" aria-hidden="true"><span>DV</span></div>
+        <div class="title-text">
+          <h1>Data Visualization Dashboard Showcase</h1>
+          <div class="subtitle">
+            <div class="subtitle-count">
+              <strong>147</strong> Municipal Dashboards
+              <span class="filter-count" id="filterIndicator"></span>
+            </div>
+            <div class="subtitle-detail">
+              Curated collection of public sector data visualizations
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <nav class="controls" aria-label="Dashboard filters">
+        <div class="control">
+          <span>🔍</span>
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="Search dashboards..."
+            aria-label="Search dashboards"
+          >
+        </div>
+
+        <select id="categoryFilter" aria-label="Filter by category">
+          <option value="">All Categories</option>
+          <option value="budget">Budget & Finance</option>
+          <option value="performance">Performance</option>
+          <option value="operations">Operations</option>
+        </select>
+
+        <select id="sortBy" aria-label="Sort dashboards">
+          <option value="name">Sort by Name</option>
+          <option value="recent">Recently Added</option>
+          <option value="popular">Most Popular</option>
+        </select>
+
+        <button class="btn-clear" id="clearBtn" aria-label="Clear all filters">
+          Clear Filters
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+    <!-- Active Filters Row (NEW - Optional) -->
+    <div class="active-filters-row" id="activeFiltersRow" hidden>
+      <span class="active-filters-label">Active:</span>
+      <!-- Populated dynamically with JavaScript:
+      <button class="active-filter-chip">
+        Category Name
+        <span class="remove-icon">×</span>
+      </button>
+      -->
+    </div>
+
+    <!-- Category Chips -->
+    <div class="chips" role="group" aria-label="Category filters">
+      <button class="chip" aria-pressed="false" data-category="budget">
+        <span class="chip-icon">✓</span>
+        Budget & Finance
+      </button>
+      <button class="chip" aria-pressed="false" data-category="performance">
+        <span class="chip-icon">✓</span>
+        Performance Metrics
+      </button>
+      <button class="chip" aria-pressed="false" data-category="operations">
+        <span class="chip-icon">✓</span>
+        City Operations
+      </button>
+      <button class="chip" aria-pressed="false" data-category="transparency">
+        <span class="chip-icon">✓</span>
+        Transparency
+      </button>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="grid" id="dashboardGrid">
+
+      <!-- Example Card -->
+      <article class="card" tabindex="0" data-category="budget">
+        <!-- Card Header -->
+        <div class="card-header">
+          <span class="category-badge">Budget & Finance</span>
+          <!-- Kebab Menu (NEW - Optional) -->
+          <div class="kebab-menu">
+            <button class="kebab-button" aria-label="More actions">⋮</button>
+            <div class="kebab-dropdown">
+              <button>Regenerate AI Description</button>
+              <button>Edit Dashboard</button>
+              <button>Share</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Thumbnail -->
+        <div class="thumb">
+          <img
+            src="https://via.placeholder.com/400x200"
+            alt="Dashboard preview"
+            class="loaded"
+          >
+          <span class="badge">Updated 2025</span>
+          <div class="pattern-overlay">
+            <span class="technique-badge">Tableau</span>
+            <span class="technique-badge">D3.js</span>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+          <h3>City Budget Dashboard</h3>
+          <p class="description">
+            Interactive budget dashboard showing revenue, expenditures, and
+            departmental allocations. Features drill-down capabilities and
+            year-over-year comparisons.
+          </p>
+
+          <!-- Techniques -->
+          <div class="techniques">
+            <span class="technique-tag">Interactive</span>
+            <span class="technique-tag">Drill-down</span>
+            <span class="technique-tag">Time-series</span>
+            <!-- Overflow toggle (NEW - Optional) -->
+            <button class="tag-overflow-toggle">+2 more</button>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+          <a href="#" class="btn primary">
+            View Dashboard →
+          </a>
+        </div>
+      </article>
+
+      <!-- More cards... -->
+
+      <!-- Empty State (shown when no results) -->
+      <div class="empty-state" hidden>
+        <div class="empty-icon">🔍</div>
+        <h3>No Dashboards Found</h3>
+        <p>Try adjusting your filters or search terms</p>
+        <button class="btn primary" id="resetFilters">
+          Reset All Filters
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Meta Info -->
+    <div class="meta">
+      <p>Last updated: October 2025 • 147 dashboards cataloged</p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 Data Visualization Dashboard Showcase</p>
+    <p class="notice">
+      All dashboards are publicly available resources from municipal governments.
+    </p>
+  </footer>
+
+  <!-- Detail Modal -->
+  <div class="detail-overlay" id="detailOverlay" hidden aria-modal="true" role="dialog">
+    <div class="detail-modal">
+      <button class="detail-close" aria-label="Close detail view">×</button>
+
+      <div class="detail-header">
+        <span class="detail-category">Budget & Finance</span>
+        <h2 id="detailTitle">Dashboard Title</h2>
+        <p class="detail-domain">🔗 city.example.gov</p>
+      </div>
+
+      <div class="detail-body">
+        <figure class="detail-media">
+          <img src="" alt="" id="detailImage">
+        </figure>
+
+        <div class="detail-copy">
+          <p class="detail-summary" id="detailSummary">
+            Dashboard summary...
+          </p>
+
+          <div class="detail-blurb" id="detailBlurb">
+            AI-generated description...
+          </div>
+
+          <div class="detail-meta">
+            <div class="detail-meta-group">
+              <h3>Categories</h3>
+              <div class="detail-chips" id="detailCategories">
+                <span class="detail-chip">Category</span>
+              </div>
+            </div>
+
+            <div class="detail-meta-group">
+              <h3>Techniques</h3>
+              <div class="detail-chips" id="detailTechniques">
+                <span class="detail-chip technique">Technique</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-actions">
+        <a href="#" class="btn primary" id="detailVisitBtn">
+          Visit Dashboard →
+        </a>
+        <button class="btn secondary" id="detailShareBtn">
+          Share
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Learning Mode Overlay -->
+  <div class="learning-overlay" id="learningOverlay" hidden aria-modal="true" role="dialog">
+    <div class="learning-panel">
+      <div class="learning-header">
+        <h3>Learning Mode</h3>
+        <button class="close-btn" aria-label="Close learning mode">×</button>
+      </div>
+
+      <div class="learning-content">
+        <div class="learning-actions">
+          <button class="btn secondary">📄 Print</button>
+          <button class="btn secondary">📧 Email</button>
+        </div>
+
+        <div class="learning-section">
+          <h4>Key Features</h4>
+          <ul>
+            <li><strong>Interactive filters</strong> - Narrow dashboards by category</li>
+            <li><strong>Search</strong> - Find specific dashboards quickly</li>
+            <li><strong>Detail view</strong> - Click any card for more information</li>
+          </ul>
+        </div>
+
+        <div class="learning-section">
+          <h4>Assignment</h4>
+          <p>Analyze one dashboard and answer:</p>
+          <textarea placeholder="Enter your observations..."></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Onboarding Modal -->
+  <div class="onboarding-overlay" id="onboardingOverlay" hidden aria-modal="true" role="dialog">
+    <div class="onboarding-modal">
+      <button class="onboarding-close" aria-label="Close onboarding">×</button>
+
+      <div class="onboarding-content">
+        <div class="onboarding-icon">👋</div>
+        <h2>Welcome to Dashboard Showcase</h2>
+        <p>Explore 147 municipal data visualization dashboards</p>
+
+        <div class="onboarding-features">
+          <div class="onboarding-feature">
+            <div class="onboarding-feature-icon">🔍</div>
+            <div class="onboarding-feature-content">
+              <h3>Search & Filter</h3>
+              <p>Find dashboards by category, name, or technique</p>
+            </div>
+          </div>
+
+          <div class="onboarding-feature">
+            <div class="onboarding-feature-icon">📊</div>
+            <div class="onboarding-feature-content">
+              <h3>Learning Mode</h3>
+              <p>Educational tools for analyzing dashboard design</p>
+            </div>
+          </div>
+
+          <div class="onboarding-feature">
+            <div class="onboarding-feature-icon">🎯</div>
+            <div class="onboarding-feature-content">
+              <h3>Compare Mode</h3>
+              <p>Side-by-side comparison of different approaches</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="onboarding-footer">
+          <button class="btn primary">Get Started</button>
+          <button class="btn secondary">Take Tour</button>
+        </div>
+
+        <div class="onboarding-step-indicator">
+          <div class="onboarding-dot active"></div>
+          <div class="onboarding-dot"></div>
+          <div class="onboarding-dot"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help Button -->
+  <button class="onboarding-help-icon" aria-label="Help" title="Show help">
+    ?
+  </button>
+
+  <!-- Optional: Faceted Filter Drawer (NEW) -->
+  <!--
+  <aside class="filter-drawer" aria-hidden="false" aria-label="Filter options">
+    <div class="filter-group">
+      <h4>Category</h4>
+      <div class="filter-group-content">
+        <label>
+          <input type="checkbox" value="budget"> Budget & Finance
+        </label>
+        <label>
+          <input type="checkbox" value="performance"> Performance
+        </label>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <h4>Technique</h4>
+      <div class="filter-group-content">
+        <label>
+          <input type="checkbox" value="tableau"> Tableau
+        </label>
+        <label>
+          <input type="checkbox" value="d3"> D3.js
+        </label>
+      </div>
+    </div>
+  </aside>
+
+  <div class="filter-drawer-overlay"></div>
+  <button class="filter-drawer-toggle" aria-label="Toggle filters">☰</button>
+  -->
+
+  <!-- Your existing JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
