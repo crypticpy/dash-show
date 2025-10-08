@@ -1,0 +1,544 @@
+{
+  "sites": [
+    {
+      "title": "NYC Capital Projects Dashboard",
+      "url": "https://www.nyc.gov/site/operations/performance/capital-projects-dashboard.page",
+      "tags": ["Public CIP"],
+      "description": "Transparent municipal infrastructure planning combining project timelines, budget tracking, and interactive mapping for public accountability. Outstanding example of progressive disclosure serving both technical and citizen audiences.",
+      "techniques": [
+        "Interactive Mapping",
+        "Multi-Audience Design",
+        "Progressive Disclosure",
+        "Public Data"
+      ]
+    },
+    {
+      "title": "Seattle DOT Capital Projects",
+      "url": "https://capitalprojects.seattle.gov/",
+      "tags": ["Public CIP"],
+      "description": "Comprehensive transportation infrastructure visualization with real-time project status, budget tracking, and community impact assessment. Demonstrates how to present complex construction data in an accessible public interface.",
+      "techniques": [
+        "Real-time Status",
+        "Budget Visualization",
+        "Community Impact",
+        "Transportation Planning"
+      ]
+    },
+    {
+      "title": "Charlotte, NC — Capital Projects",
+      "url": "https://www.charlottenc.gov/Growth-and-Development/Projects/Capital-Projects-Dashboard",
+      "tags": ["Public CIP"],
+      "description": "Municipal planning dashboard showing capital improvement projects with geographic context and timeline visualization. Excellent example of how to organize large-scale infrastructure data for public understanding.",
+      "techniques": [
+        "Geographic Context",
+        "Timeline Visualization",
+        "Public Planning",
+        "Infrastructure Data"
+      ]
+    },
+    {
+      "title": "Richmond, VA — Capital Improvement Program",
+      "url": "https://rva.gov/budget-and-strategic-planning/cip",
+      "tags": ["Public CIP"],
+      "description": "Strategic capital planning dashboard connecting infrastructure investments to community priorities. Shows how municipalities can align long-term planning with budget realities through interactive visualization.",
+      "techniques": [
+        "Strategic Planning",
+        "Budget Alignment",
+        "Community Priorities",
+        "Long-term Planning"
+      ]
+    },
+    {
+      "title": "Richmond, CA — CIP (BETA)",
+      "url": "https://richmondca.gov/158/Capital-Improvement-Program",
+      "tags": ["Public CIP"],
+      "description": "City-run CIP microsite that organizes active projects with capital categories, milestone narratives, and status indicators. Shows how smaller municipalities can deliver pipeline transparency without custom tooling.",
+      "techniques": [
+        "ArcGIS Hub Integration",
+        "Milestone Narratives",
+        "Status Badges",
+        "Transparency Playbook"
+      ]
+    },
+    {
+      "title": "St. Helena, CA — CIP Dashboard",
+      "url": "https://www.cityofsthelena.gov/490/CIP-Interactive-Dashboard",
+      "tags": ["Public CIP"],
+      "description": "ArcGIS dashboard summarizing water, street, and facility investments with filterable maps and budget tables. Highlights straightforward ways to mix spatial layers with progress reporting for local boards.",
+      "techniques": [
+        "ArcGIS Dashboard",
+        "Filter Controls",
+        "Budget Tables",
+        "Progress Tracking"
+      ]
+    },
+    {
+      "title": "Hillsborough County, FL — Project Map Viewer",
+      "url": "https://hcfl.gov/residents/property-owners-and-renters/roads-and-sidewalks/project-map-viewer",
+      "tags": ["Public CIP"],
+      "description": "Countywide project map bridging dozens of transportation improvements with status filters and interactive timelines. Demonstrates how to scale map-first storytelling for a large capital program.",
+      "techniques": [
+        "Countywide Map",
+        "Status Filters",
+        "Timeline Slider",
+        "Transportation Focus"
+      ]
+    },
+    {
+      "title": "Palm Coast, FL — Capital Projects",
+      "url": "https://www.palmcoast.gov/capitalprojects",
+      "tags": ["Public CIP"],
+      "description": "Municipal capital dashboard that breaks projects into lifecycle stages with cost summaries and photo documentation. Useful reference for pairing story cards with GIS-powered detail pages.",
+      "techniques": [
+        "Lifecycle Stages",
+        "Cost Summaries",
+        "Photo Documentation",
+        "ArcGIS Experience Builder"
+      ]
+    },
+    {
+      "title": "Jacksonville, FL — CIP Dashboard",
+      "url": "https://www.jacksonville.gov/mayor/mayor-s-transparency-dashboards/capital-improvement-projects-dashboard",
+      "tags": ["Public CIP"],
+      "description": "Transparency portal offering district filters, program categories, and status dials for hundreds of city projects. Illustrates how to keep a dense CIP dataset browsable for residents.",
+      "techniques": [
+        "District Filters",
+        "Program Categories",
+        "Status Indicators",
+        "High-Volume Data"
+      ]
+    },
+    {
+      "title": "Stuart, FL — Capital Improvement Projects",
+      "url": "https://www.stuartfl.gov/532/Capital-Improvement-Projects-Dashboard",
+      "tags": ["Public CIP"],
+      "description": "Interactive dashboard with timeline widgets and expenditure charts tailored to a smaller coastal city. Great example of making complex CIP schedules digestible on a single page.",
+      "techniques": [
+        "Timeline Widgets",
+        "Expenditure Charts",
+        "Small City Focus",
+        "ArcGIS Dashboard"
+      ]
+    },
+    {
+      "title": "Ann Arbor, MI — FY2026-2031 Capital Improvements Plan",
+      "url": "http://a2gov.org/a2cipmap",
+      "tags": ["Public CIP"],
+      "description": "Public planning map linking multi-year investments to location, schedule, and funding source. Highlights how to pair long-range planning narratives with interactive map navigation.",
+      "techniques": [
+        "Planning Map",
+        "Funding Filters",
+        "Multi-Year View",
+        "Public Engagement"
+      ]
+    },
+    {
+      "title": "San Diego County, CA — 2025-2030 Capital Plan",
+      "url": "https://engage.sandiegocounty.gov/capitalplan25-30",
+      "tags": ["Public CIP"],
+      "description": "Engage platform briefing that walks residents through capital plan priorities, scoring criteria, and submission opportunities before linking to detailed data. Demonstrates narrative-first framing.",
+      "techniques": [
+        "Civic Engagement",
+        "Scoring Criteria",
+        "Narrative Walkthrough",
+        "Feedback Integration"
+      ]
+    },
+    {
+      "title": "Baltimore City, MD — FY25-30 Capital Improvement Program",
+      "url": "https://planning.baltimorecity.gov/sites/default/files/FY2530_CIP-Recommendation-Report_final_0.pdf",
+      "tags": ["Public CIP"],
+      "description": "Comprehensive CIP recommendation PDF with score explanations, funding tables, and neighborhood summaries. Reference for documenting prioritization logic when interactive tooling is limited.",
+      "techniques": [
+        "Static Report",
+        "Prioritization Narrative",
+        "Funding Tables",
+        "Neighborhood Summaries"
+      ]
+    },
+    {
+      "title": "Deerfield Beach, FL — Capital Project Dashboard",
+      "url": "https://www.arcgis.com/apps/dashboards/9aecec5400934abfac6f163132def27f",
+      "tags": ["Public CIP"],
+      "description": "ArcGIS dashboard focusing on water, roadway, and facility projects with stage-based status chips and dynamic budget totals. Shows how to manage multiple infrastructure types within one layout.",
+      "techniques": [
+        "Stage-Based Status",
+        "Dynamic Budget Totals",
+        "Multi-Sector Projects",
+        "ArcGIS Dashboard"
+      ]
+    },
+    {
+      "title": "Lawrence, KS — Capital Improvement Project Map",
+      "url": "https://lawrenceks.maps.arcgis.com/apps/dashboards/326b2951772a468a9d139787d19dc3f4",
+      "tags": ["Public CIP"],
+      "description": "Geospatial dashboard combining map bookmarks, KPI cards, and embedded construction photography. Useful for demonstrating progress storytelling at the project level.",
+      "techniques": [
+        "Map Bookmarks",
+        "KPI Cards",
+        "Photo Integration",
+        "Progress Storytelling"
+      ]
+    },
+    {
+      "title": "Morristown, TN — Capital Projects StoryMap",
+      "url": "https://storymaps.arcgis.com/stories/d83accd2177545c8a05ef4f12b8d2f22",
+      "tags": ["Public CIP"],
+      "description": "ArcGIS StoryMap that narrates capital initiatives with scroll-driven copy, maps, and embedded media. Model for blending storytelling and capital data without a dense dashboard.",
+      "techniques": [
+        "StoryMap Narrative",
+        "Scroll Storytelling",
+        "Embedded Media",
+        "Capital Highlights"
+      ]
+    },
+    {
+      "title": "Los Angeles County DPW — Projects",
+      "url": "https://dpw.lacounty.gov/projects/",
+      "tags": ["Public CIP"],
+      "description": "County public works portal listing roadway, flood, and building projects with filterable status and open data exports. Shows how enterprise data can power a front-end catalog with actionable next steps.",
+      "techniques": [
+        "Enterprise Catalog",
+        "Status Filtering",
+        "Data Export",
+        "Public Works Focus"
+      ]
+    },
+    {
+      "title": "Torrance, CA — CIP Dashboard",
+      "url": "https://www.torranceca.gov/government/city-departments/finance/financial-documents/capital-improvement-plan-dashboard",
+      "tags": ["Public CIP"],
+      "description": "City dashboard layering project cards, funding charts, and milestone dates with optional OpenGov detail views. Demonstrates cross-linking between summary dashboards and deeper financial systems.",
+      "techniques": [
+        "Project Cards",
+        "Funding Charts",
+        "Milestone Tracking",
+        "Linked Detail Views"
+      ]
+    },
+    {
+      "title": "Normal, IL — Community Investment Plan",
+      "url": "https://www.normalil.gov/1006/Community-Investment-Plan",
+      "tags": ["Public CIP"],
+      "description": "Community investment plan portal presenting five-year priorities with maps, cost breakdowns, and citizen FAQs. Helpful example of combining policy framing and operational data.",
+      "techniques": [
+        "Five-Year Planning",
+        "Cost Breakdown",
+        "FAQ Integration",
+        "Map Embeds"
+      ]
+    },
+    {
+      "title": "Great Lakes Water Authority — Five-Year CIP (Power BI)",
+      "url": "https://app.powerbigov.us/view?r=eyJrIjoiNmU4Njk3NjAtYzRlNi00YzUxLWFmYzQtMzQ4OGU5YzI5MGIyIiwidCI6IjRlOGZmNjJlLWU2ODYtNGIxZi1hZWI0LTYyZDdjMTY4NjY1MyJ9",
+      "tags": ["Power BI"],
+      "description": "Power BI report visualizing water utility capital projects with category filtering, funding status, and geographic drill-through. Demonstrates strong use of slicers and cards for regulated infrastructure reporting.",
+      "techniques": [
+        "Power BI Report",
+        "Category Slicers",
+        "Geographic Drill-through",
+        "Utility Infrastructure"
+      ]
+    },
+    {
+      "title": "Minneapolis Park & Recreation Board — CIP (Power BI)",
+      "url": "https://app.powerbigov.us/view?pageName=ReportSection9b43331538d7a4beb394&r=eyJrIjoiMjE4YmI2ZjItYWZmMS00NTVlLThiOWQtMDhjMzlmYzc1NzI1IiwidCI6IjY0OTc4ZmFiLTY0NWMtNDljZS1iODMzLTc1NDYyMzYxMmQyMiJ9",
+      "tags": ["Power BI"],
+      "description": "Power BI experience showcasing park capital improvements with district filters, priority rankings, and interactive charts. Illustrates how to translate CIP spreadsheets into responsive visuals.",
+      "techniques": [
+        "District Filters",
+        "Priority Ranking",
+        "Responsive Charts",
+        "Power BI"
+      ]
+    },
+    {
+      "title": "City of Norfolk, VA — Adopted CIP FY2025 (Power BI)",
+      "url": "https://app.powerbigov.us/view?r=eyJrIjoiNjkwMTQ3ZGEtYzIzNy00NWI2LTk1NzQtMmVlZjdmMzEwY2FiIiwidCI6IjUzODZkMzU1LTJmYWUtNGZlOC05MTc0LWI4OWU0MDhiYTk5MSJ9",
+      "tags": ["Power BI"],
+      "description": "Adopted CIP Power BI report detailing project phases, funding sources, and council priorities. Useful for exploring how governments tie narrative text to interactive fiscal views.",
+      "techniques": [
+        "Funding Source View",
+        "Phase Tracking",
+        "Council Priorities",
+        "Power BI"
+      ]
+    },
+    {
+      "title": "Chesterfield County, VA — CIP Explorer (Power BI)",
+      "url": "https://app.powerbigov.us/view?r=eyJrIjoiMTgyZTkxZDQtZWVjZi00ZjVlLWEyYmQtOWM5Y2I5YmNiMTg1IiwidCI6IjA1NjA5MzMyLWI5MDUtNGE2Yi1iZjc0LTQ4MDdmYTg5ODU3ZCJ9",
+      "tags": ["Power BI"],
+      "description": "Power BI explorer for county capital projects with scenario filters, map visuals, and commitment tracking. Demonstrates multi-page navigation tuned to different stakeholder questions.",
+      "techniques": [
+        "Scenario Filters",
+        "Map Visuals",
+        "Commitment Tracking",
+        "Power BI Multi-Page"
+      ]
+    },
+    {
+      "title": "Envisio — Public Dashboard Examples (Gallery)",
+      "url": "https://envisio.com/dashboard-examples/",
+      "tags": ["Visualization Patterns"],
+      "description": "Gallery of public sector dashboards illustrating performance alignment, strategic plan tracking, and capital updates. Reference for structuring case-study storytelling alongside live embeds.",
+      "techniques": [
+        "Gallery Showcase",
+        "Strategic Alignment",
+        "Case Study Layout",
+        "Public Sector Examples"
+      ]
+    },
+    {
+      "title": "Acuity PPM — Portfolio Charts & Priority Heatmaps",
+      "url": "https://acuityppm.com/the-pmo-guide-to-portfolio-management-charts/",
+      "tags": ["Visualization Patterns"],
+      "description": "Deep dive into portfolio management chart types with screenshots, explanations, and use-case guidance. Helpful when selecting visualization patterns for executive storytelling.",
+      "techniques": [
+        "Chart Taxonomy",
+        "Executive Storytelling",
+        "Use Case Guidance",
+        "Portfolio Analytics"
+      ]
+    },
+    {
+      "title": "Aha! Roadmaps — Prioritization (Scorecards & Ranking)",
+      "url": "https://www.aha.io/roadmaps/prioritization",
+      "tags": ["Portfolio Management"],
+      "description": "Sophisticated feature scoring system with real-time prioritization that demonstrates how quantitative models translate into visual hierarchy. Features inline editing, drag-and-drop ranking, and dynamic scorecard calculations.",
+      "techniques": [
+        "Scorecard System",
+        "Drag-and-Drop",
+        "Real-time Scoring",
+        "Product Management"
+      ]
+    },
+    {
+      "title": "Productboard — Prioritization Matrix (Value × Effort)",
+      "url": "https://support.productboard.com/hc/en-us/articles/360056350174-Use-the-prioritization-matrix",
+      "tags": ["Portfolio Management"],
+      "description": "Documentation outlining Productboard's value-versus-effort matrix with configurable fields and roadmap tie-ins. Shows how product teams keep customer signals and prioritization logic in sync.",
+      "techniques": [
+        "Value vs Effort Matrix",
+        "Configurable Fields",
+        "Roadmap Integration",
+        "Product Discovery"
+      ]
+    },
+    {
+      "title": "airfocus — Priority Ratings & Scoring (Weighted Matrices)",
+      "url": "https://help.airfocus.com/en/articles/2788532-priority-ratings-app",
+      "tags": ["Portfolio Management"],
+      "description": "Flexible weighted scoring system that allows teams to create custom prioritization frameworks. Demonstrates how to make complex multi-criteria decision making accessible through visual interface design.",
+      "techniques": [
+        "Weighted Scoring",
+        "Custom Frameworks",
+        "Multi-Criteria Analysis",
+        "Visual Decision Making"
+      ]
+    },
+    {
+      "title": "Planview Advisor — Portfolio Visualizations (Bullseye, Treemap)",
+      "url": "https://www.planview.com/products-solutions/products/advisor/",
+      "tags": ["Portfolio Management"],
+      "description": "Executive-ready portfolio optimization with advanced analytics showcasing multi-dimensional visualization including bubble charts, efficient frontier analysis, and scenario modeling for C-level decisions.",
+      "techniques": [
+        "Executive Analytics",
+        "Scenario Modeling",
+        "Efficient Frontier",
+        "Portfolio Optimization"
+      ]
+    },
+    {
+      "title": "Meisterplan — Portfolio Dashboard (Configurable Charts)",
+      "url": "https://help.meisterplan.com/hc/en-us/articles/11289973015068-Portfolio-Dashboard",
+      "tags": ["Portfolio Management"],
+      "description": "Portfolio dashboard module with configurable charts for capacity, scenario comparisons, and prioritization heatmaps. Demonstrates how to communicate staffing impact alongside investment choices.",
+      "techniques": [
+        "Capacity Analysis",
+        "Scenario Comparison",
+        "Prioritization Heatmaps",
+        "Interactive Dashboards"
+      ]
+    },
+    {
+      "title": "OnePlan — Portfolio Modeler (Projects Ranked by Score)",
+      "url": "https://support.oneplan.ai/hc/en-us/articles/24187952450445-Portfolio-Planning-Portfolio-Modeler",
+      "tags": ["Portfolio Management"],
+      "description": "Portfolio modeler featuring ranking boards, what-if analysis, and investment balancing. Useful example for showing how sliders and presets speed decision cycles.",
+      "techniques": [
+        "What-If Analysis",
+        "Ranking Boards",
+        "Investment Balancing",
+        "Scenario Modeling"
+      ]
+    },
+    {
+      "title": "Adobe Workfront — Portfolio Optimizer Score (Auto Ranking)",
+      "url": "https://experienceleague.adobe.com/en/docs/workfront/using/manage-work/portfolio-management/manage-projects-in-portfolio-optimizer/portfolio-optimizer-score",
+      "tags": ["Portfolio Management"],
+      "description": "Automated portfolio optimization that uses algorithmic scoring to rank projects by business value. Excellent example of how to present complex optimization algorithms in an understandable visual format.",
+      "techniques": [
+        "Automated Optimization",
+        "Algorithmic Scoring",
+        "Business Value",
+        "Visual Algorithms"
+      ]
+    },
+    {
+      "title": "Apptio Targetprocess — WSJF Prioritization (SAFe)",
+      "url": "https://www.apptio.com/solutions/agile/full-safe-tool/",
+      "tags": ["Portfolio Management"],
+      "description": "SAFe-oriented prioritization workflow with WSJF scoring, dependency mapping, and portfolio views. Helpful when translating agile ceremonies into executive summaries.",
+      "techniques": [
+        "WSJF Scoring",
+        "Dependency Mapping",
+        "Agile Portfolio View",
+        "SAFe Alignment"
+      ]
+    },
+    {
+      "title": "Atlassian Jira Align — Prioritize Features (WSJF)",
+      "url": "https://help.jiraalign.com/hc/en-us/articles/115000102373-Prioritize-features",
+      "tags": ["Portfolio Management"],
+      "description": "Guidance on prioritizing features inside Jira Align with WSJF, lean business cases, and roadmap views. Shows how large enterprises coordinate prioritization at multiple layers.",
+      "techniques": [
+        "WSJF Framework",
+        "Lean Business Case",
+        "Roadmap Views",
+        "Enterprise Scaling"
+      ]
+    },
+    {
+      "title": "Microsoft Project — Portfolio Analysis Driver-Based Prioritization",
+      "url": "https://learn.microsoft.com/en-us/project/portfolio-analysis-driver-prioritization",
+      "tags": ["Portfolio Management"],
+      "description": "Documentation on driver-based portfolio analysis with prioritization, strategic alignment scores, and optimizer views. Reference for teams needing governance-heavy tooling.",
+      "techniques": [
+        "Driver Prioritization",
+        "Strategic Alignment",
+        "Optimizer Views",
+        "Governance Workflow"
+      ]
+    },
+    {
+      "title": "Oracle Primavera Cloud — Investor Map (Portfolio Bubble Chart)",
+      "url": "https://primavera.oraclecloud.com/help/en/user/102917.htm",
+      "tags": ["Portfolio Management"],
+      "description": "Investor Map module visualizing projects on bubble charts with filters for cost, benefit, and risk. Illustrates capital planning tradeoffs via intuitive portfolio geometry.",
+      "techniques": [
+        "Bubble Charts",
+        "Risk Lens",
+        "Cost vs Benefit",
+        "Portfolio Geometry"
+      ]
+    },
+    {
+      "title": "Oracle Primavera Cloud — Prioritization Matrix (Evaluation & Ranking)",
+      "url": "https://docs.oracle.com/cd/E80480_01/help/en/user/102189.htm",
+      "tags": ["Portfolio Management"],
+      "description": "Prioritization workspace capturing evaluation criteria, scoring worksheets, and review workflows. Useful for structuring collaborative ranking in capital programs.",
+      "techniques": [
+        "Evaluation Criteria",
+        "Scoring Worksheets",
+        "Review Workflow",
+        "Capital Program Management"
+      ]
+    },
+    {
+      "title": "Planisware — Portfolio Heat Maps & Bubble Charts",
+      "url": "https://www.planisware.com/resources/strategic-planning-alignment/aligning-your-projects-business-strategies-best-practices",
+      "tags": ["Portfolio Management"],
+      "description": "Best practices article covering portfolio heat maps, bubble charts, and dashboards that connect strategy to execution. Solid orientation for visualizing project pipelines.",
+      "techniques": [
+        "Strategy Alignment",
+        "Heat Maps",
+        "Bubble Charts",
+        "Pipeline Visualization"
+      ]
+    },
+    {
+      "title": "Expert Choice Comparion — AHP Portfolio Prioritization",
+      "url": "https://www.expertchoice.com/comparion",
+      "tags": ["Portfolio Management"],
+      "description": "Platform overview for analytic hierarchy process (AHP) portfolio prioritization with scenario planning and stakeholder weighting. Highlights decision-science rigor for balanced scorecards.",
+      "techniques": [
+        "AHP Method",
+        "Stakeholder Weighting",
+        "Scenario Planning",
+        "Decision Science"
+      ]
+    },
+    {
+      "title": "D-Sight — MCDA Decision Portfolio Dashboards",
+      "url": "https://www.d-sight.com/",
+      "tags": ["Portfolio Management"],
+      "description": "MCDA software showcasing customizable scoring models, collaborative evaluation, and visual reports. Demonstrates how to manage transparent decision audits.",
+      "techniques": [
+        "MCDA Workflow",
+        "Collaborative Evaluation",
+        "Transparent Scoring",
+        "Audit Trail"
+      ]
+    },
+    {
+      "title": "1000minds — Results & Ranking Views (Priority Values)",
+      "url": "https://www.1000minds.com/tutorials/results",
+      "tags": ["Portfolio Management"],
+      "description": "Tutorial on results and ranking outputs from PAPRIKA-based decision models with sensitivity analysis. Useful example for clear outcome communication.",
+      "techniques": [
+        "PAPRIKA Method",
+        "Sensitivity Analysis",
+        "Ranking Outputs",
+        "Decision Transparency"
+      ]
+    },
+    {
+      "title": "ServiceNow — Application Assessments Dashboard (Portfolio Scoring)",
+      "url": "https://www.servicenow.com/docs/bundle/yokohama-application-portfolio-management/page/product/application-portfolio-management/task/use-appln-assessment-dashboard.html",
+      "tags": ["Portfolio Management"],
+      "description": "Application assessment dashboard illustrating scoring dimensions, bubble charts, and lifecycle statuses for IT portfolios. Reference for bridging technology health with investment decisions.",
+      "techniques": [
+        "Application Scoring",
+        "Lifecycle Status",
+        "Bubble Charts",
+        "IT Portfolio"
+      ]
+    },
+    {
+      "title": "SAP LeanIX — Application Portfolio Management Dashboard",
+      "url": "https://help.sap.com/docs/leanix/ea/application-portfolio-management-dashboard",
+      "tags": ["Portfolio Management"],
+      "description": "LeanIX dashboard documentation showing KPIs, interactive filters, and impact analysis for application portfolios. Good model for connecting data lineage, ownership, and risk.",
+      "techniques": [
+        "Impact Analysis",
+        "Interactive Filters",
+        "Portfolio KPIs",
+        "Data Lineage"
+      ]
+    },
+    {
+      "title": "Strategyzer — Business Portfolio Map (Risk × Return)",
+      "url": "https://www.strategyzer.com/library/business-model-portfolio-part-3-the-business-portfolio-map",
+      "tags": ["Portfolio Management"],
+      "description": "Business portfolio map guidance contrasting explore versus exploit bets with risk-return lenses. Helps teams visualize balance and momentum on a single canvas.",
+      "techniques": [
+        "Risk vs Return",
+        "Explore vs Exploit",
+        "Portfolio Canvas",
+        "Strategic Framing"
+      ]
+    },
+    {
+      "title": "SmartOrg Portfolio Navigator — Efficient Frontier & Innovation Screens",
+      "url": "https://smartorg.com/portfolio-navigator/",
+      "tags": ["Portfolio Management"],
+      "description": "Overview of SmartOrg's portfolio navigator with efficient frontier charts, innovation screens, and value-at-risk reporting. Highlights quantitative storytelling for innovation investments.",
+      "techniques": [
+        "Efficient Frontier",
+        "Innovation Screens",
+        "Value-at-Risk",
+        "Investment Scenarios"
+      ]
+    }
+  ]
+}

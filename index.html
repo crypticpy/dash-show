@@ -1,830 +1,2249 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Project Prioritization Dashboard Showcase</title>
-  <meta name="description" content="Curated showcase of municipal CIP, Power BI reports, and visualization patterns for project prioritization and ranking.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg: #0f1115;
-      --fg: #e8eaed;
-      --muted:#9aa0a6;
-      --card:#171a21;
-      --card-2:#1b1f2a;
-      --accent:#3b82f6;
-      --accent-2:#22c55e;
-      --accent-3:#8b5cf6;
-      --border: #283042;
-      --chip:#22314b;
-      --chip-fg:#dbe8ff;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --shadow-hover: 0 20px 50px rgba(59,130,246,.15);
-      --radius: 16px;
-      --radius-sm: 12px;
-      --radius-xs: 8px;
-      --gap: 20px;
-      --card-padding: 16px;
-      --maxw: 1200px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    @media (prefers-color-scheme: light){
-      :root{
-        --bg:#f6f8fb;
-        --fg:#1f2937;
-        --muted:#4b5563;
-        --card:#ffffff;
-        --card-2:#f3f6fb;
-        --accent:#2563eb;
-        --accent-2:#16a34a;
-        --accent-3:#8b5cf6;
-        --border:#e5e7eb;
-        --chip:#e8f0ff;
-        --chip-fg:#1e40af;
-        --shadow:0 8px 24px rgba(0,0,0,.08);
-        --shadow-hover: 0 16px 40px rgba(37,99,235,.12);
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project Prioritization Dashboard Showcase</title>
+    <meta
+      name="description"
+      content="Curated showcase of municipal CIP, Power BI reports, and visualization patterns for project prioritization and ranking."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0f1115;
+        --fg: #e8eaed;
+        --muted: #9aa0a6;
+        --card: #171a21;
+        --card-2: #1b1f2a;
+        --accent: #3b82f6;
+        --accent-2: #22c55e;
+        --accent-3: #8b5cf6;
+        --border: #283042;
+        --chip: #22314b;
+        --chip-fg: #dbe8ff;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        --shadow-hover: 0 20px 50px rgba(59, 130, 246, 0.15);
+        --radius: 16px;
+        --radius-sm: 12px;
+        --radius-xs: 8px;
+        --gap: 20px;
+        --card-padding: 16px;
+        --maxw: 1200px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      padding:0;
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
-      background:radial-gradient(1200px 600px at 80% -10%, rgba(59,130,246,.12), transparent 70%), var(--bg);
-      color:var(--fg);
-      line-height:1.5;
-    }
-    a{color:var(--accent); text-decoration:none}
-    a:hover{text-decoration:underline}
-    header{
-      position:sticky; top:0; z-index:100; backdrop-filter:saturate(120%) blur(12px);
-      background:linear-gradient(to bottom, rgba(10,12,16,.92), rgba(10,12,16,.88));
-      border-bottom:1px solid var(--border); transition: var(--transition);
-    }
-    @media (prefers-color-scheme: light){
-      header{ background:linear-gradient(to bottom, rgba(255,255,255,.9), rgba(255,255,255,.85)); }
-    }
-    .wrap{ max-width:var(--maxw); margin:0 auto; padding: 18px 16px; }
-    .hero{
-      display:flex; align-items:center; gap:20px; flex-wrap:wrap; justify-content:space-between;
-    }
-    .title{
-      display:flex; align-items:center; gap:14px; flex:1 1 420px;
-    }
-    .logo{
-      width:56px; height:56px; border-radius:16px; background:linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3));
-      box-shadow: var(--shadow); display:grid; place-items:center; color:white; font-weight:800; letter-spacing:.5px;
-      position: relative; overflow: hidden;
-    }
-    .logo::before{
-      content: ''; position: absolute; inset: 0; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-      transform: translateX(-100%); transition: transform 0.6s;
-    }
-    .logo:hover::before{
-      transform: translateX(100%);
-    }
-    .logo span{font-size:22px}
-    h1{margin:0; font-size: clamp(22px, 3.2vw, 34px); line-height:1.15}
-    .subtitle{margin:6px 0 0; color:var(--muted); font-size:14px}
-    .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    .control{
-      display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border);
-      padding:10px 12px; border-radius:var(--radius-sm); transition: var(--transition);
-    }
-    .control:hover{
-      border-color: var(--accent);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-    input[type="search"]{
-      border:none; background:transparent; color:var(--fg); outline:none; width:260px; font-size:14px;
-      transition: var(--transition);
-    }
-    input[type="search"]:focus{
-      width:300px;
-    }
-    input[type="search"]::placeholder{
-      color:var(--muted);
-      transition: opacity 0.3s;
-    }
-    input[type="search"]:focus::placeholder{
-      opacity: 0.5;
-    }
-    select, button{
-      border:1px solid var(--border); background:var(--card); color:var(--fg);
-      padding:10px 12px; border-radius:var(--radius-sm); font-size:14px; cursor:pointer;
-      transition: var(--transition); position: relative; overflow: hidden;
-    }
-    select:hover, button:hover{
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      filter:brightness(1.05);
-    }
-    select:focus, button:focus{
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
-    }
-    main{ max-width:var(--maxw); margin:18px auto; padding:0 16px 96px; }
-    .chips{ display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 6px; }
-    .chip{
-      padding:8px 12px; background:var(--chip); color:var(--chip-fg); border-radius:999px; font-size:12px;
-      border:1px solid rgba(255,255,255,.1); cursor:pointer; user-select:none; transition: var(--transition);
-      position: relative; overflow: hidden;
-    }
-    .chip::before{
-      content: ''; position: absolute; inset: 0; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-      transform: translateX(-100%); transition: transform 0.4s;
-    }
-    .chip:hover::before{
-      transform: translateX(100%);
-    }
-    .chip:hover{
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .chip[aria-pressed="true"]{ 
-      background:linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3)); 
-      color:white; 
-      border-color: transparent;
-      box-shadow: 0 2px 12px rgba(59,130,246,0.3);
-    }
-    .grid{
-      display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap:var(--gap); margin-top:20px;
-    }
-    .card{
-      background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
-      overflow:hidden; box-shadow: var(--shadow); display:flex; flex-direction:column; min-height:380px;
-      transition:var(--transition); position: relative;
-    }
-    .card::before{
-      content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, rgba(59,130,246,0.05));
-      opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
-    }
-    .card:hover{ 
-      transform: translateY(-4px) scale(1.02); 
-      box-shadow: var(--shadow-hover);
-      border-color: var(--accent);
-    }
-    .card:hover::before{
-      opacity: 1;
-    }
-    .thumb{
-      position:relative; height:180px; background:var(--card-2); overflow:hidden;
-    }
-    .thumb img{
-      width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity 0.5s ease, transform 0.3s ease;
-    }
-    .thumb img.loaded{ opacity:1; }
-    .card:hover .thumb img{
-      transform: scale(1.05);
-    }
-    .badge{
-      position:absolute; left:10px; top:10px; font-size:11px; background:rgba(0,0,0,.55);
-      padding:6px 8px; border-radius:999px; color:#fff; border:1px solid rgba(255,255,255,.15);
-    }
-    @media (prefers-color-scheme: light){
-      .badge{ background:rgba(0,0,0,.35); }
-    }
-    .content{ padding:var(--card-padding); display:flex; flex-direction:column; gap:8px; flex:1; }
-    .title-row{ display:flex; gap:8px; align-items:flex-start; justify-content:space-between; }
-    .card h3{ margin:0; font-size:16px; line-height:1.25; }
-    .domain{ color:var(--muted); font-size:12px; }
-    .blurb{ color:var(--fg); opacity:.9; font-size:13px; margin-top:4px; }
-    .tags{ display:flex; flex-wrap:wrap; gap:8px; margin-top:auto; }
-    .tag{ font-size:11px; padding:4px 8px; border-radius:999px; border:1px dashed var(--border); color:var(--muted); }
-    .actions{ display:flex; gap:10px; margin-top:8px; }
-    .btn{
-      display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px;
-      background:var(--card-2); border:1px solid var(--border); color:var(--fg); font-size:13px;
-      text-decoration:none; transition: var(--transition); position: relative; overflow: hidden;
-    }
-    .btn::before{
-      content: ''; position: absolute; inset: 0; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-      transform: translateX(-100%); transition: transform 0.4s;
-    }
-    .btn:hover::before{
-      transform: translateX(100%);
-    }
-    .btn.primary{ background:linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3)); color:#fff; border:none; }
-    .btn.primary:hover{ 
-      box-shadow: 0 4px 20px rgba(59,130,246,0.3);
-      transform: translateY(-1px);
-    }
-    .btn:hover{ 
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .meta{ margin-top:20px; color:var(--muted); font-size:12px; }
-    .footer{
-      border-top:1px solid var(--border); padding:32px 16px; color:var(--muted); text-align:center;
-      background:linear-gradient(to top, rgba(0,0,0,.12), transparent);
-    }
-    .skeleton{
-      background:linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.12), rgba(255,255,255,.06));
-      background-size:200% 100%; animation:shimmer 1.5s infinite;
-    }
-    @keyframes shimmer { to{ background-position:-200% 0; } }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-    .logo:hover{
-      animation: pulse 2s infinite;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .card{
-      animation: fadeIn 0.6s ease-out forwards;
-      animation-delay: calc(var(--index, 0) * 0.1s);
-    }
-    .skeleton.text{ height:12px; border-radius:6px; opacity:.7 }
-    .skeleton.thumb{ height:180px; }
-    .toolbar{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; }
-    .notice{ font-size:12px; color:var(--muted); }
-    
-    /* Learning Panel Styles */
-    .learning-panel, .compare-panel{
-      position:fixed; top:80px; right:20px; width:380px; max-height:80vh;
-      background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
-      box-shadow: var(--shadow-hover); z-index:200; overflow-y:auto;
-      backdrop-filter:saturate(120%) blur(12px);
-    }
-    .learning-header, .compare-header{
-      display:flex; justify-content:space-between; align-items:center;
-      padding:16px; border-bottom:1px solid var(--border);
-    }
-    .learning-header h3, .compare-header h3{
-      margin:0; font-size:16px; color:var(--fg);
-    }
-    .close-btn{
-      background:none; border:none; color:var(--muted); font-size:20px;
-      cursor:pointer; padding:4px; border-radius:4px; transition: var(--transition);
-    }
-    .close-btn:hover{
-      background:var(--card-2); color:var(--fg);
-    }
-    .learning-content, .compare-content{
-      padding:16px;
-    }
-    .learning-section{
-      margin-bottom:20px;
-    }
-    .learning-section h4{
-      margin:0 0 8px; font-size:14px; color:var(--accent);
-    }
-    .learning-section ul{
-      margin:0; padding-left:16px; list-style:none;
-    }
-    .learning-section li{
-      margin-bottom:6px; font-size:12px; line-height:1.4;
-    }
-    .learning-section strong{
-      color:var(--fg);
-    }
-    
-    /* Compare Mode Styles */
-    .compare-slots{
-      display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0;
-    }
-    .compare-slot{
-      min-height:60px; border:2px dashed var(--border); border-radius:var(--radius-sm);
-      display:flex; align-items:center; justify-content:center; font-size:12px;
-      color:var(--muted); transition: var(--transition);
-    }
-    .compare-slot.filled{
-      border-color:var(--accent); background:var(--chip);
-      color:var(--chip-fg);
-      font-size:11px;
-    }
-    .compare-slot.selected{
-      border-color:var(--accent-2); background:rgba(34,197,94,0.1);
-    }
-    
-    /* Learning Mode Indicators */
-    .learning-mode .card{
-      position:relative;
-    }
-    .learning-mode .card::after{
-      content: '📊'; position:absolute; top:10px; right:10px; 
-      background:var(--accent); color:white; width:24px; height:24px;
-      border-radius:50%; display:flex; align-items:center; justify-content:center;
-      font-size:12px; opacity:0; transition: opacity 0.3s;
-    }
-    .learning-mode .card:hover::after{
-      opacity:1;
-    }
-    
-    /* Compare Mode Indicators */
-    .compare-mode .card{
-      cursor:pointer; position:relative;
-    }
-    .compare-mode .card:hover{
-      box-shadow: 0 0 0 2px var(--accent);
-    }
-    .compare-mode .card.selected-for-compare{
-      box-shadow: 0 0 0 3px var(--accent-2);
-      transform:scale(1.02);
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="wrap hero">
-      <div class="title">
-        <div class="logo" aria-hidden="true"><span>PP</span></div>
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f6f8fb;
+          --fg: #1f2937;
+          --muted: #4b5563;
+          --card: #ffffff;
+          --card-2: #f3f6fb;
+          --accent: #2563eb;
+          --accent-2: #16a34a;
+          --accent-3: #8b5cf6;
+          --border: #e5e7eb;
+          --chip: #e8f0ff;
+          --chip-fg: #1e40af;
+          --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+          --shadow-hover: 0 16px 40px rgba(37, 99, 235, 0.12);
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Helvetica,
+          Arial,
+          "Apple Color Emoji",
+          "Segoe UI Emoji";
+        background:
+          radial-gradient(
+            1200px 600px at 80% -10%,
+            rgba(59, 130, 246, 0.12),
+            transparent 70%
+          ),
+          var(--bg);
+        color: var(--fg);
+        line-height: 1.5;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: saturate(120%) blur(12px);
+        background: linear-gradient(
+          to bottom,
+          rgba(10, 12, 16, 0.92),
+          rgba(10, 12, 16, 0.88)
+        );
+        border-bottom: 1px solid var(--border);
+        transition: var(--transition);
+      }
+      @media (prefers-color-scheme: light) {
+        header {
+          background: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.9),
+            rgba(255, 255, 255, 0.85)
+          );
+        }
+      }
+      .wrap {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 18px 16px;
+      }
+      .hero {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+      .title {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex: 1 1 420px;
+      }
+      .logo {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-2),
+          var(--accent-3)
+        );
+        box-shadow: var(--shadow);
+        display: grid;
+        place-items: center;
+        color: white;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+      }
+      .logo::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        transform: translateX(-100%);
+        transition: transform 0.6s;
+      }
+      .logo:hover::before {
+        transform: translateX(100%);
+      }
+      .logo span {
+        font-size: 22px;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(22px, 3.2vw, 34px);
+        line-height: 1.15;
+      }
+      .subtitle {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        padding: 10px 12px;
+        border-radius: var(--radius-sm);
+        transition: var(--transition);
+      }
+      .control:hover {
+        border-color: var(--accent);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+      input[type="search"] {
+        border: none;
+        background: transparent;
+        color: var(--fg);
+        outline: none;
+        width: 260px;
+        font-size: 14px;
+        transition: var(--transition);
+      }
+      input[type="search"]:focus {
+        width: 300px;
+      }
+      input[type="search"]::placeholder {
+        color: var(--muted);
+        transition: opacity 0.3s;
+      }
+      input[type="search"]:focus::placeholder {
+        opacity: 0.5;
+      }
+      select,
+      button {
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--fg);
+        padding: 10px 12px;
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        cursor: pointer;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+      select:hover,
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        filter: brightness(1.05);
+      }
+      select:focus,
+      button:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+      main {
+        max-width: var(--maxw);
+        margin: 18px auto;
+        padding: 0 16px 96px;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 14px 0 6px;
+      }
+      .chip {
+        padding: 8px 12px;
+        background: var(--chip);
+        color: var(--chip-fg);
+        border-radius: 999px;
+        font-size: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+        user-select: none;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+      .chip::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        transform: translateX(-100%);
+        transition: transform 0.4s;
+      }
+      .chip:hover::before {
+        transform: translateX(100%);
+      }
+      .chip:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .chip[aria-pressed="true"] {
+        background: linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-2),
+          var(--accent-3)
+        );
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 2px 12px rgba(59, 130, 246, 0.3);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--gap);
+        margin-top: 20px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        min-height: 420px;
+        transition: var(--transition);
+        position: relative;
+      }
+
+      /* Enhanced Card Header */
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        background: var(--card-2);
+      }
+      .category-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--accent-3);
+        background: rgba(139, 92, 246, 0.1);
+        padding: 4px 8px;
+        border-radius: 6px;
+        border: 1px solid rgba(139, 92, 246, 0.2);
+      }
+      .category-badge:nth-child(1n) {
+        color: var(--accent);
+        background: rgba(59, 130, 246, 0.1);
+        border-color: rgba(59, 130, 246, 0.2);
+      }
+      .category-badge:nth-child(2n) {
+        color: var(--accent-2);
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.2);
+      }
+      .category-badge:nth-child(3n) {
+        color: var(--accent-3);
+        background: rgba(139, 92, 246, 0.1);
+        border-color: rgba(139, 92, 246, 0.2);
+      }
+      .category-badge:nth-child(4n) {
+        color: orange;
+        background: rgba(251, 146, 60, 0.1);
+        border-color: rgba(251, 146, 60, 0.2);
+      }
+
+      /* Enhanced Content Structure */
+      .content {
+        padding: var(--card-padding);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        flex: 1;
+      }
+      .content h3 {
+        margin: 0;
+        font-size: 16px;
+        line-height: 1.3;
+        color: var(--fg);
+        font-weight: 600;
+        scroll-margin-top: 8px;
+      }
+      .description {
+        color: var(--fg);
+        font-size: 13px;
+        line-height: 1.5;
+        margin: 0;
+        opacity: 0.9;
+        flex: 1;
+      }
+      .techniques {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: auto;
+      }
+      .technique-tag {
+        font-size: 10px;
+        padding: 3px 6px;
+        border-radius: 4px;
+        background: var(--chip);
+        color: var(--chip-fg);
+        border: 1px solid var(--border);
+        font-weight: 500;
+      }
+
+      /* Enhanced Pattern Overlay */
+      .pattern-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.7),
+          rgba(0, 0, 0, 0.3)
+        );
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-end;
+        padding: 8px;
+        gap: 4px;
+        flex-wrap: wrap;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+      .technique-badge {
+        font-size: 9px;
+        padding: 2px 6px;
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--bg);
+        border-radius: 3px;
+        font-weight: 600;
+        backdrop-filter: blur(4px);
+      }
+
+      /* Enhanced Card Hover States */
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to bottom,
+          transparent,
+          rgba(59, 130, 246, 0.05)
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+      .card:hover {
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: var(--shadow-hover);
+        border-color: var(--accent);
+      }
+      .card:hover::before {
+        opacity: 1;
+      }
+      .card:hover .pattern-overlay {
+        opacity: 1;
+      }
+      .card:hover .thumb img {
+        transform: scale(1.05);
+      }
+      .card:hover .technique-tag {
+        background: var(--accent-2);
+        color: white;
+        border-color: var(--accent-2);
+      }
+
+      /* Focus States for Accessibility */
+      .card:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        border-color: var(--accent);
+      }
+      .card:focus-within {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      /* Enhanced Actions */
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        padding: 0 16px 16px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        background: var(--card-2);
+        border: 1px solid var(--border);
+        color: var(--fg);
+        font-size: 13px;
+        text-decoration: none;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+        font-weight: 500;
+      }
+      .btn::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        transform: translateX(-100%);
+        transition: transform 0.4s;
+      }
+      .btn:hover::before {
+        transform: translateX(100%);
+      }
+      .btn.primary {
+        background: linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-2),
+          var(--accent-3)
+        );
+        color: #fff;
+        border: none;
+      }
+      .btn.primary:hover {
+        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        transform: translateY(-1px);
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      .meta {
+        margin-top: 20px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .footer {
+        border-top: 1px solid var(--border);
+        padding: 32px 16px;
+        color: var(--muted);
+        text-align: center;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.12), transparent);
+      }
+      .thumb {
+        position: relative;
+        height: 200px;
+        background: var(--card-2);
+        overflow: hidden;
+      }
+      .thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        opacity: 0;
+        transition:
+          opacity 0.5s ease,
+          transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .thumb img.loaded {
+        opacity: 1;
+      }
+      .badge {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        font-size: 11px;
+        background: rgba(0, 0, 0, 0.55);
+        padding: 6px 8px;
+        border-radius: 6px;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        z-index: 2;
+      }
+      @media (prefers-color-scheme: light) {
+        .badge {
+          background: rgba(0, 0, 0, 0.35);
+        }
+      }
+      /* Remove old unused styles */
+      .content {
+        padding: var(--card-padding);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+      }
+      .title-row {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+      .card h3 {
+        margin: 0;
+        font-size: 16px;
+        line-height: 1.25;
+      }
+      .domain {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .blurb {
+        color: var(--fg);
+        opacity: 0.9;
+        font-size: 13px;
+        margin-top: 4px;
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: auto;
+      }
+      .tag {
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px dashed var(--border);
+        color: var(--muted);
+      }
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 8px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .notice {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      body.learning-mode {
+        overflow: hidden;
+      }
+
+      @media print {
+        @page {
+          size: letter;
+          margin: 0.75in;
+        }
+
+        body {
+          background: #ffffff !important;
+          color: #1f2937;
+          font-size: 11pt;
+        }
+
+        body.learning-mode {
+          overflow: visible;
+        }
+
+        header,
+        main,
+        footer,
+        .hero,
+        .chips,
+        .grid,
+        .meta,
+        .notice {
+          display: none !important;
+        }
+
+        .learning-overlay {
+          position: static;
+          inset: auto;
+          padding: 0;
+          background: transparent;
+          display: block;
+        }
+
+        .learning-panel {
+          width: 100%;
+          max-height: none;
+          border: none;
+          border-radius: 0;
+          box-shadow: none;
+          backdrop-filter: none;
+          color: inherit;
+        }
+
+        .learning-header {
+          padding: 0 0 12pt;
+          margin-bottom: 18pt;
+          border: none;
+          border-bottom: 2px solid currentColor;
+        }
+
+        .learning-header h3 {
+          font-size: 18pt;
+          letter-spacing: 0.02em;
+        }
+
+        .close-btn,
+        .learning-actions {
+          display: none !important;
+        }
+
+        .learning-content {
+          padding: 0;
+        }
+
+        .learning-section {
+          margin-bottom: 18pt;
+          padding-right: 6pt;
+        }
+
+        .learning-section h4 {
+          color: inherit;
+          font-size: 12pt;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          margin-bottom: 6pt;
+        }
+
+        .learning-section p {
+          color: inherit;
+          font-size: 10.5pt;
+        }
+
+        .learning-section ul {
+          padding-left: 18pt;
+        }
+
+        .learning-section li {
+          font-size: 10.5pt;
+          margin-bottom: 8pt;
+          line-height: 1.45;
+        }
+
+        .learning-section textarea {
+          background: transparent;
+          border: 1px solid currentColor;
+          min-height: 160px;
+          padding: 10pt;
+          font-size: 10.5pt;
+        }
+
+        .learning-section:nth-of-type(3) {
+          break-after: page;
+        }
+
+        #learningOverlay,
+        #learningPanel,
+        #learningPanelDescription,
+        #checklistContent {
+          display: block;
+        }
+      }
+
+      .learning-overlay {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 72px 16px 24px;
+        background: rgba(15, 17, 21, 0.65);
+        z-index: 220;
+        transition: opacity 0.25s ease;
+      }
+
+      @media (prefers-color-scheme: light) {
+        .learning-overlay {
+          background: rgba(17, 24, 39, 0.4);
+        }
+      }
+
+      .learning-overlay[hidden] {
+        display: none;
+      }
+
+      .learning-panel {
+        width: min(420px, 100%);
+        max-height: calc(100vh - 120px);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-hover);
+        overflow-y: auto;
+        backdrop-filter: saturate(120%) blur(12px);
+        outline: none;
+      }
+
+      @media (max-width: 720px) {
+        .learning-overlay {
+          align-items: flex-end;
+          padding: 32px 12px 24px;
+        }
+
+        .learning-panel {
+          width: 100%;
+          max-height: calc(100vh - 56px);
+        }
+      }
+
+      .learning-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .learning-header h3 {
+        margin: 0;
+        font-size: 16px;
+        color: var(--fg);
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        color: var(--muted);
+        font-size: 20px;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 6px;
+        transition: var(--transition);
+      }
+
+      .close-btn:hover,
+      .close-btn:focus-visible {
+        background: var(--card-2);
+        color: var(--fg);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+      }
+
+      .learning-content {
+        padding: 16px;
+      }
+
+      .learning-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+
+      .learning-actions .btn {
+        font-size: 12px;
+        padding: 8px 12px;
+      }
+
+      .learning-section {
+        margin-bottom: 20px;
+      }
+
+      .learning-section h4 {
+        margin: 0 0 8px;
+        font-size: 14px;
+        color: var(--accent);
+      }
+
+      .learning-section ul {
+        margin: 0;
+        padding-left: 16px;
+        list-style: none;
+      }
+
+      .learning-section li {
+        margin-bottom: 6px;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+
+      .learning-section strong {
+        color: var(--fg);
+      }
+
+      .learning-section p {
+        margin: 0 0 10px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .learning-section textarea {
+        width: 100%;
+        min-height: 120px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: var(--card-2);
+        color: var(--fg);
+        padding: 10px;
+        font-family: inherit;
+        font-size: 12px;
+        resize: vertical;
+      }
+
+      .learning-section textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .learning-mode .card {
+        position: relative;
+      }
+
+      .learning-mode .card::after {
+        content: "\1F4CA";
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--accent);
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .learning-mode .card:hover::after,
+      .learning-mode .card:focus-within::after {
+        opacity: 1;
+      }
+
+      /* Compare Panel Styles */
+      .compare-panel {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        width: 380px;
+        max-height: 80vh;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-hover);
+        z-index: 200;
+        overflow-y: auto;
+        backdrop-filter: saturate(120%) blur(12px);
+      }
+      .compare-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        border-bottom: 1px solid var(--border);
+      }
+      .compare-header h3 {
+        margin: 0;
+        font-size: 16px;
+        color: var(--fg);
+      }
+      .compare-content {
+        padding: 16px;
+      }
+
+      /* Compare Mode Styles */
+      .compare-slots {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 16px 0;
+      }
+      .compare-slot {
+        min-height: 60px;
+        border: 2px dashed var(--border);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: var(--muted);
+        transition: var(--transition);
+      }
+      .compare-slot.filled {
+        border-color: var(--accent);
+        background: var(--chip);
+        color: var(--chip-fg);
+        font-size: 11px;
+      }
+      .compare-slot.selected {
+        border-color: var(--accent-2);
+        background: rgba(34, 197, 94, 0.1);
+      }
+
+      /* Learning Mode Indicators */
+      .learning-mode .card {
+        position: relative;
+      }
+      .learning-mode .card::after {
+        content: "📊";
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--accent);
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .learning-mode .card:hover::after {
+        opacity: 1;
+      }
+
+      /* Compare Mode Indicators */
+      .compare-mode .card {
+        cursor: pointer;
+        position: relative;
+      }
+      .compare-mode .card:hover {
+        box-shadow: 0 0 0 2px var(--accent);
+      }
+      .compare-mode .card.selected-for-compare {
+        box-shadow: 0 0 0 3px var(--accent-2);
+        transform: scale(1.02);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap hero">
+        <div class="title">
+          <div class="logo" aria-hidden="true"><span>PP</span></div>
+          <div>
+            <h1>Project Prioritization Dashboard Showcase</h1>
+            <p class="subtitle">
+              47 examples across municipal CIP, Power BI, portfolio management
+              tools, and data visualization patterns for teaching effective
+              dashboard design.
+            </p>
+          </div>
+        </div>
+        <div class="controls">
+          <div class="control">
+            🔎
+            <input
+              id="q"
+              type="search"
+              placeholder="Search title, domain, tags…"
+              autocomplete="off"
+            />
+          </div>
+          <select id="filterTag" title="Filter by tag">
+            <option value="all">All types</option>
+          </select>
+          <select
+            id="roleSelect"
+            title="Select learning perspective"
+            aria-label="Select learning perspective"
+          >
+            <option value="student">Participant view</option>
+            <option value="coach">Coach view</option>
+          </select>
+          <select id="sortBy" title="Sort">
+            <option value="default">Sort: Default</option>
+            <option value="title">Sort: Title (A→Z)</option>
+            <option value="domain">Sort: Domain (A→Z)</option>
+          </select>
+          <button id="refresh">Refresh blurbs</button>
+          <button id="toggleLearning">📚 Learning Mode</button>
+          <button id="toggleCompare">🔍 Compare Mode</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="wrap">
+        <div class="chips" id="chips">
+          <!-- dynamic chip badges rendered here -->
+        </div>
+
+        <div class="grid" id="grid" aria-live="polite">
+          <!-- cards populated via JS -->
+        </div>
+
+        <p class="meta notice">
+          Thumbnails are generated from public URLs using snapshot services.
+          Blurbs are fetched automatically from each page’s readable content
+          (proxied for CORS). If a site blocks snapshots or content, the card
+          will fall back gracefully.
+        </p>
+        <p class="meta notice" id="learningTip">
+          Tip: Enable 📚 Learning Mode to follow guided prompts and print a
+          personal study guide.
+        </p>
+
+        <!-- Compare Mode Panel -->
+        <div id="comparePanel" class="compare-panel" style="display: none">
+          <div class="compare-header">
+            <h3>🔍 Compare Dashboards</h3>
+            <button id="closeCompare" class="close-btn">×</button>
+          </div>
+          <div class="compare-content">
+            <p>
+              Click on 2 dashboards to compare their design patterns, data
+              density, and effectiveness.
+            </p>
+            <div id="compareSlots" class="compare-slots">
+              <div class="compare-slot" data-slot="1">
+                + Select first dashboard
+              </div>
+              <div class="compare-slot" data-slot="2">
+                + Select second dashboard
+              </div>
+            </div>
+            <button id="startCompare" class="btn primary" disabled>
+              Compare Selected
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <template id="learning-panel-template">
+      <div class="learning-overlay" id="learningOverlay" hidden>
+        <div
+          class="learning-panel"
+          id="learningPanel"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="learningPanelTitle"
+          aria-describedby="learningPanelDescription"
+          tabindex="-1"
+        >
+          <div class="learning-header">
+            <h3 id="learningPanelTitle">📚 Data Visualization Learning Mode</h3>
+            <button
+              id="closeLearning"
+              class="close-btn"
+              type="button"
+              aria-label="Close learning mode"
+            >
+              ×
+            </button>
+          </div>
+          <div class="learning-content" id="learningPanelDescription">
+            <div class="learning-actions">
+              <button id="printChecklist" class="btn primary" type="button">
+                🖨️ Print review guide
+              </button>
+            </div>
+            <div id="checklistContent">
+              <div class="learning-section">
+                <h4>🎯 Review Rhythm</h4>
+                <p>
+                  Work through these steps every time you open one of the linked
+                  exemplars.
+                </p>
+                <ul>
+                  <li>
+                    ☐ Name the stakeholder and decision this visualization
+                    supports.
+                  </li>
+                  <li>
+                    ☐ Summarize the promise: what prioritization question should
+                    it answer?
+                  </li>
+                  <li>
+                    ☐ Trace the data path: where do the scores, statuses, or
+                    rankings originate?
+                  </li>
+                  <li>
+                    ☐ Capture one idea worth stealing and one practice to avoid.
+                  </li>
+                </ul>
+              </div>
+              <div class="learning-section">
+                <h4>🏙️ Public CIP Dashboards — Checklist</h4>
+                <p>
+                  Use municipal examples to evaluate how cities communicate
+                  project pipelines.
+                </p>
+                <ul>
+                  <li>
+                    ☐ Are funding phases, timelines, and geography linked
+                    clearly?
+                  </li>
+                  <li>
+                    ☐ Does the map or table explain how priorities shift across
+                    districts?
+                  </li>
+                  <li>
+                    ☐ Where do residents see tradeoffs (cost vs. impact vs.
+                    readiness)?
+                  </li>
+                  <li>
+                    ☐ Is there a path to dig deeper—supporting docs, contact
+                    info, or filters?
+                  </li>
+                </ul>
+              </div>
+              <div class="learning-section">
+                <h4>🏢 Portfolio & Product Tools — Checklist</h4>
+                <p>
+                  Interrogate how vendors express scoring models you might adapt
+                  internally.
+                </p>
+                <ul>
+                  <li>
+                    ☐ What criteria feed the scorecard, and can you trace the
+                    weighting?
+                  </li>
+                  <li>
+                    ☐ How does the interface show uncertainty, risk, or scenario
+                    planning?
+                  </li>
+                  <li>
+                    ☐ Are handoffs obvious—what happens after something ranks
+                    highly?
+                  </li>
+                  <li>
+                    ☐ Could Austin teams reuse the language without confusing
+                    stakeholders?
+                  </li>
+                </ul>
+              </div>
+              <div class="learning-section">
+                <h4>📊 Visualization Patterns & Power BI — Checklist</h4>
+                <p>
+                  Focus on the mechanics of charts, interactions, and
+                  annotations.
+                </p>
+                <ul>
+                  <li>
+                    ☐ Does the layout guide the eye from question to insight to
+                    action?
+                  </li>
+                  <li>
+                    ☐ Are color scales, legends, and tooltips explicit about
+                    what matters?
+                  </li>
+                  <li>
+                    ☐ Is there a balance between overview metrics and detailed
+                    evidence?
+                  </li>
+                  <li>
+                    ☐ How are updates, refresh rates, or data lineage
+                    communicated?
+                  </li>
+                </ul>
+              </div>
+              <div class="learning-section">
+                <h4>🧠 Internal Monologue to Practice</h4>
+                <p>
+                  Adopt these prompts while scanning each dashboard or
+                  visualization.
+                </p>
+                <ul>
+                  <li>
+                    “What story about priority is this view persuading me to
+                    believe?”
+                  </li>
+                  <li>
+                    “Which voices or datasets might be missing from this
+                    narrative?”
+                  </li>
+                  <li>
+                    “If I had to defend a decision with this dashboard, what
+                    evidence is thin?”
+                  </li>
+                  <li>
+                    “How would Austin leadership challenge or support what they
+                    see here?”
+                  </li>
+                </ul>
+              </div>
+              <div class="learning-section">
+                <h4>✍️ Field Notes</h4>
+                <p>
+                  Document phrasing, visual moves, or facilitation ideas you
+                  want to reuse.
+                </p>
+                <textarea
+                  id="reviewNotes"
+                  placeholder="Capture observations, phrases, follow-up questions…"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <footer class="footer">
+      <div class="wrap">
         <div>
-          <h1>Project Prioritization Dashboard Showcase</h1>
-          <p class="subtitle">47 examples across municipal CIP, Power BI, portfolio management tools, and data visualization patterns for teaching effective dashboard design.</p>
+          Static site, no tracking, no frameworks. Host on GitHub Pages.
         </div>
       </div>
-      <div class="controls">
-        <div class="control">
-          🔎 <input id="q" type="search" placeholder="Search title, domain, tags…" autocomplete="off">
-        </div>
-        <select id="filterTag" title="Filter by tag">
-          <option value="all">All types</option>
-          <option value="Public CIP">Public CIP</option>
-          <option value="Power BI">Power BI</option>
-          <option value="Visualization Patterns">Visualization Patterns</option>
-          <option value="Portfolio Management">Portfolio Management</option>
-        </select>
-        <select id="sortBy" title="Sort">
-          <option value="default">Sort: Default</option>
-          <option value="title">Sort: Title (A→Z)</option>
-          <option value="domain">Sort: Domain (A→Z)</option>
-        </select>
-        <button id="refresh">Refresh blurbs</button>
-        <button id="toggleLearning">📚 Learning Mode</button>
-        <button id="toggleCompare">🔍 Compare Mode</button>
-      </div>
-    </div>
-  </header>
+    </footer>
 
-  <main>
-    <div class="wrap">
-      <div class="chips" id="chips">
-        <!-- dynamic chip badges rendered here -->
-      </div>
+    <script>
+      // ======== Configuration loader ========
+      const SITES_ENDPOINT = "sites.json";
+      let sites = [];
 
-      <div class="grid" id="grid" aria-live="polite">
-        <!-- cards populated via JS -->
-      </div>
-
-      <p class="meta notice">Thumbnails are generated from public URLs using snapshot services. Blurbs are fetched automatically from each page’s readable content (proxied for CORS). If a site blocks snapshots or content, the card will fall back gracefully.</p>
-      <p class="meta notice">Thumbnails are generated from public URLs using snapshot services. Blurbs are fetched automatically from each page's readable content (proxied for CORS). If a site blocks snapshots or content, the card will fall back gracefully.</p>
-      
-      <!-- Learning Panel Overlay -->
-      <div id="learningPanel" class="learning-panel" style="display: none;">
-        <div class="learning-header">
-          <h3>📚 Data Visualization Learning Mode</h3>
-          <button id="closeLearning" class="close-btn">×</button>
-        </div>
-        <div class="learning-content">
-          <div class="learning-section">
-            <h4>🎯 Key Principles</h4>
-            <ul>
-              <li><strong>Data-Ink Ratio</strong>: Maximize data pixels, minimize non-data ink</li>
-              <li><strong>Gestalt Principles</strong>: Proximity, similarity, continuity guide perception</li>
-              <li><strong>Color Theory</strong>: Use color purposefully, ensure accessibility</li>
-              <li><strong>Progressive Disclosure</strong>: Show details on demand, avoid overwhelm</li>
-            </ul>
-          </div>
-          <div class="learning-section">
-            <h4>🔍 Look for These Patterns</h4>
-            <ul>
-              <li><strong>Heatmaps</strong>: Color intensity showing values/concentration</li>
-              <li><strong>Bubble Charts</strong>: Size + position + color encoding multiple dimensions</li>
-              <li><strong>Matrices</strong>: Grid layouts for comparison (Value vs Effort, Risk vs Return)</li>
-              <li><strong>WSJF</strong>: Weighted Shortest Job First prioritization methodology</li>
-              <li><strong>MCDA</strong>: Multi-Criteria Decision Analysis frameworks</li>
-            </ul>
-          </div>
-          <div class="learning-section">
-            <h4>⚡ Accessibility Checklist</h4>
-            <ul>
-              <li>☐ Sufficient color contrast (4.5:1 minimum)</li>
-              <li>☐ Screen reader compatible labels</li>
-              <li>☐ Keyboard navigation support</li>
-              <li>☐ Data table alternatives for charts</li>
-              <li>☐ High contrast mode compatibility</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- Compare Mode Panel -->
-      <div id="comparePanel" class="compare-panel" style="display: none;">
-        <div class="compare-header">
-          <h3>🔍 Compare Dashboards</h3>
-          <button id="closeCompare" class="close-btn">×</button>
-        </div>
-        <div class="compare-content">
-          <p>Click on 2 dashboards to compare their design patterns, data density, and effectiveness.</p>
-          <div id="compareSlots" class="compare-slots">
-            <div class="compare-slot" data-slot="1">+ Select first dashboard</div>
-            <div class="compare-slot" data-slot="2">+ Select second dashboard</div>
-          </div>
-          <button id="startCompare" class="btn primary" disabled>Compare Selected</button>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <footer class="footer">
-    <div class="wrap">
-      <div>Static site, no tracking, no frameworks. Host on GitHub Pages.</div>
-    </div>
-  </footer>
-
-  <script>
-    // ======== Configuration: curated list ========
-    // Tags: "Public CIP", "Power BI", "Visualization Patterns", "Portfolio Management"
-    const SITES = [
-      { title: "NYC Capital Projects Dashboard", url: "https://www.nyc.gov/site/operations/performance/capital-projects-dashboard.page", tags:["Public CIP"] },
-      { title: "Seattle DOT Capital Projects", url: "https://capitalprojects.seattle.gov/", tags:["Public CIP"] },
-      { title: "Charlotte, NC — Capital Projects", url: "https://www.charlottenc.gov/Growth-and-Development/Projects/Capital-Projects-Dashboard", tags:["Public CIP"] },
-      { title: "Richmond, VA — Capital Improvement Program", url: "https://rva.gov/budget-and-strategic-planning/cip", tags:["Public CIP"] },
-      { title: "Richmond, CA — CIP (BETA)", url: "https://richmondca.gov/158/Capital-Improvement-Program", tags:["Public CIP"] },
-      { title: "St. Helena, CA — CIP Dashboard", url: "https://www.cityofsthelena.gov/490/CIP-Interactive-Dashboard", tags:["Public CIP"] },
-      { title: "Hillsborough County, FL — Project Map Viewer", url: "https://hcfl.gov/residents/property-owners-and-renters/roads-and-sidewalks/project-map-viewer", tags:["Public CIP"] },
-      { title: "Palm Coast, FL — Capital Projects", url: "https://www.palmcoast.gov/capitalprojects", tags:["Public CIP"] },
-      { title: "Jacksonville, FL — CIP Dashboard", url: "https://www.jacksonville.gov/mayor/mayor-s-transparency-dashboards/capital-improvement-projects-dashboard", tags:["Public CIP"] },
-      { title: "Stuart, FL — Capital Improvement Projects", url: "https://www.stuartfl.gov/532/Capital-Improvement-Projects-Dashboard", tags:["Public CIP"] },
-      { title: "Ann Arbor, MI — FY2026-2031 Capital Improvements Plan", url: "http://a2gov.org/a2cipmap", tags:["Public CIP"] },
-      { title: "San Diego County, CA — 2025-2030 Capital Plan", url: "https://engage.sandiegocounty.gov/capitalplan25-30", tags:["Public CIP"] },
-      { title: "Baltimore City, MD — FY25-30 Capital Improvement Program", url: "https://planning.baltimorecity.gov/sites/default/files/FY2530_CIP-Recommendation-Report_final_0.pdf", tags:["Public CIP"] },
-      { title: "Deerfield Beach, FL — Capital Project Dashboard", url: "https://www.arcgis.com/apps/dashboards/9aecec5400934abfac6f163132def27f", tags:["Public CIP"] },
-      { title: "Lawrence, KS — Capital Improvement Project Map", url: "https://lawrenceks.maps.arcgis.com/apps/dashboards/326b2951772a468a9d139787d19dc3f4", tags:["Public CIP"] },
-      { title: "Morristown, TN — Capital Projects StoryMap", url: "https://storymaps.arcgis.com/stories/d83accd2177545c8a05ef4f12b8d2f22", tags:["Public CIP"] },
-      { title: "Los Angeles County DPW — Projects", url: "https://dpw.lacounty.gov/projects/", tags:["Public CIP"] },
-      { title: "Torrance, CA — CIP Dashboard", url: "https://www.torranceca.gov/government/city-departments/finance/financial-documents/capital-improvement-plan-dashboard", tags:["Public CIP"] },
-      { title: "Normal, IL — Community Investment Plan", url: "https://www.normalil.gov/1006/Community-Investment-Plan", tags:["Public CIP"] },
-      { title: "Great Lakes Water Authority — Five‑Year CIP (Power BI)", url: "https://app.powerbigov.us/view?r=eyJrIjoiNmU4Njk3NjAtYzRlNi00YzUxLWFmYzQtMzQ4OGU5YzI5MGIyIiwidCI6IjRlOGZmNjJlLWU2ODYtNGIxZi1hZWI0LTYyZDdjMTY4NjY1MyJ9", tags:["Power BI"] },
-      { title: "Minneapolis Park & Recreation Board — CIP (Power BI)", url: "https://app.powerbigov.us/view?pageName=ReportSection9b43331538d7a4beb394&r=eyJrIjoiMjE4YmI2ZjItYWZmMS00NTVlLThiOWQtMDhjMzlmYzc1NzI1IiwidCI6IjY0OTc4ZmFiLTY0NWMtNDljZS1iODMzLTc1NDYyMzYxMmQyMiJ9", tags:["Power BI"] },
-      { title: "City of Norfolk, VA — Adopted CIP FY2025 (Power BI)", url: "https://app.powerbigov.us/view?r=eyJrIjoiNjkwMTQ3ZGEtYzIzNy00NWI2LTk1NzQtMmVlZjdmMzEwY2FiIiwidCI6IjUzODZkMzU1LTJmYWUtNGZlOC05MTc0LWI4OWU0MDhiYTk5MSJ9", tags:["Power BI"] },
-      { title: "Chesterfield County, VA — CIP Explorer (Power BI)", url: "https://app.powerbigov.us/view?r=eyJrIjoiMTgyZTkxZDQtZWVjZi00ZjVlLWEyYmQtOWM5Y2I5YmNiMTg1IiwidCI6IjA1NjA5MzMyLWI5MDUtNGE2Yi1iZjc0LTQ4MDdmYTg5ODU3ZCJ9", tags:["Power BI"] },
-      { title: "Envisio — Public Dashboard Examples (Gallery)", url: "https://envisio.com/dashboard-examples/", tags:["Visualization Patterns"] },
-      { title: "Acuity PPM — Portfolio Charts & Priority Heatmaps", url: "https://acuityppm.com/the-pmo-guide-to-portfolio-management-charts/", tags:["Visualization Patterns"] },
-      
-      // Project Prioritization & Portfolio Management Tools
-      { title: "Aha! Roadmaps — Prioritization (Scorecards & Ranking)", url: "https://www.aha.io/roadmaps/prioritization", tags:["Portfolio Management"] },
-      { title: "Productboard — Prioritization Matrix (Value × Effort)", url: "https://support.productboard.com/hc/en-us/articles/360056350174-Use-the-prioritization-matrix", tags:["Portfolio Management"] },
-      { title: "airfocus — Priority Ratings & Scoring (Weighted Matrices)", url: "https://help.airfocus.com/en/articles/2788532-priority-ratings-app", tags:["Portfolio Management"] },
-      { title: "Planview Advisor — Portfolio Visualizations (Bullseye, Treemap)", url: "https://www.planview.com/products-solutions/products/advisor/", tags:["Portfolio Management"] },
-      { title: "Meisterplan — Portfolio Dashboard (Configurable Charts)", url: "https://help.meisterplan.com/hc/en-us/articles/11289973015068-Portfolio-Dashboard", tags:["Portfolio Management"] },
-      { title: "OnePlan — Portfolio Modeler (Projects Ranked by Score)", url: "https://support.oneplan.ai/hc/en-us/articles/24187952450445-Portfolio-Planning-Portfolio-Modeler", tags:["Portfolio Management"] },
-      { title: "Adobe Workfront — Portfolio Optimizer Score (Auto Ranking)", url: "https://experienceleague.adobe.com/en/docs/workfront/using/manage-work/portfolio-management/manage-projects-in-portfolio-optimizer/portfolio-optimizer-score", tags:["Portfolio Management"] },
-      { title: "Apptio Targetprocess — WSJF Prioritization (SAFe)", url: "https://www.apptio.com/solutions/agile/full-safe-tool/", tags:["Portfolio Management"] },
-      { title: "Atlassian Jira Align — Prioritize Features (WSJF)", url: "https://help.jiraalign.com/hc/en-us/articles/115000102373-Prioritize-features", tags:["Portfolio Management"] },
-      { title: "Microsoft Project — Portfolio Analysis Driver-Based Prioritization", url: "https://learn.microsoft.com/en-us/project/portfolio-analysis-driver-prioritization", tags:["Portfolio Management"] },
-      { title: "Oracle Primavera Cloud — Investor Map (Portfolio Bubble Chart)", url: "https://primavera.oraclecloud.com/help/en/user/102917.htm", tags:["Portfolio Management"] },
-      { title: "Oracle Primavera Cloud — Prioritization Matrix (Evaluation & Ranking)", url: "https://docs.oracle.com/cd/E80480_01/help/en/user/102189.htm", tags:["Portfolio Management"] },
-      { title: "Planisware — Portfolio Heat Maps & Bubble Charts", url: "https://www.planisware.com/resources/strategic-planning-alignment/aligning-your-projects-business-strategies-best-practices", tags:["Portfolio Management"] },
-      { title: "Expert Choice Comparion — AHP Portfolio Prioritization", url: "https://www.expertchoice.com/comparion", tags:["Portfolio Management"] },
-      { title: "D-Sight — MCDA Decision Portfolio Dashboards", url: "https://www.d-sight.com/", tags:["Portfolio Management"] },
-      { title: "1000minds — Results & Ranking Views (Priority Values)", url: "https://www.1000minds.com/tutorials/results", tags:["Portfolio Management"] },
-      { title: "ServiceNow — Application Assessments Dashboard (Portfolio Scoring)", url: "https://www.servicenow.com/docs/bundle/yokohama-application-portfolio-management/page/product/application-portfolio-management/task/use-appln-assessment-dashboard.html", tags:["Portfolio Management"] },
-      { title: "SAP LeanIX — Application Portfolio Management Dashboard", url: "https://help.sap.com/docs/leanix/ea/application-portfolio-management-dashboard", tags:["Portfolio Management"] },
-      { title: "Strategyzer — Business Portfolio Map (Risk × Return)", url: "https://www.strategyzer.com/library/business-model-portfolio-part-3-the-business-portfolio-map", tags:["Portfolio Management"] },
-      { title: "SmartOrg Portfolio Navigator — Efficient Frontier & Innovation Screens", url: "https://smartorg.com/portfolio-navigator/", tags:["Portfolio Management"] }
-    ];
-
-    // ======== Utility helpers ========
-    const $ = (sel, el=document) => el.querySelector(sel);
-    const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
-
-    const hostname = url => {
-      try{ return new URL(url).hostname.replace(/^www\./,''); } catch { return url; }
-    };
-
-    const screenshotURL = (url, width=640) =>
-      `https://s.wordpress.com/mshots/v1/${encodeURIComponent(url)}?w=${width}`;
-
-    const screenshotFallback = (url) =>
-      `https://image.thum.io/get/width/1200/crop/900/${url}`;
-
-    const faviconURL = (url) => {
-      const host = hostname(url);
-      return `https://www.google.com/s2/favicons?domain=${host}&sz=256`;
-    };
-
-    const proxiedReadableURL = (url) => {
-      // Use Jina reader proxy to bypass CORS and get readable content
-      const clean = url.replace(/^https?:\/\//,'');
-      return `https://r.jina.ai/http://${clean}`;
-    };
-
-    const truncate = (s, n=260) => (s && s.length > n) ? (s.slice(0, n-1) + "…") : s || "";
-
-    function createChip(tagText){
-      const chip = document.createElement('button');
-      chip.className = 'chip';
-      chip.textContent = tagText;
-      chip.type = 'button';
-      chip.dataset.tag = tagText;
-      chip.setAttribute('aria-pressed', 'false');
-      chip.addEventListener('click', () => {
-        const pressed = chip.getAttribute('aria-pressed') === 'true';
-        chip.setAttribute('aria-pressed', String(!pressed));
-        applyFilters();
-      });
-      return chip;
-    }
-
-    // ======== Build UI ========
-    const grid = $('#grid');
-    const chipsWrap = $('#chips');
-
-    // Dynamic tag chips (derived from SITES)
-    const allTags = Array.from(new Set(SITES.flatMap(s => s.tags))).sort();
-    allTags.forEach(t => chipsWrap.appendChild(createChip(t)));
-
-    function cardTemplate(item){
-      const host = hostname(item.url);
-      const elm = document.createElement('article');
-      elm.className = 'card';
-      elm.dataset.tags = (item.tags||[]).join('|').toLowerCase();
-      elm.dataset.title = (item.title||'').toLowerCase();
-      elm.dataset.domain = host.toLowerCase();
-      
-      // Add click handler for compare mode
-      elm.addEventListener('click', (e) => {
-        if (!e.target.closest('.btn') && !e.target.closest('.tag')) {
-          handleCardClick(elm, item);
+      async function loadSites() {
+        try {
+          const res = await fetch(SITES_ENDPOINT, { cache: "no-store" });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const payload = await res.json();
+          const items = Array.isArray(payload)
+            ? payload
+            : (payload && payload.sites) || [];
+          if (!Array.isArray(items) || items.length === 0) {
+            throw new Error("No sites found in configuration");
+          }
+          sites = items.map(normalizeSite);
+          populateTagControls(sites);
+          build();
+          applyFilters();
+        } catch (err) {
+          console.error("Failed to load site configuration", err);
+          showConfigError();
         }
-      });
+      }
 
-      elm.innerHTML = `
-        <div class="thumb">
-          <img alt="Thumbnail for ${escapeHtml(item.title)}" loading="lazy" decoding="async" data-src="${screenshotURL(item.url)}">
-          <span class="badge">${host}</span>
-        </div>
-        <div class="content">
-          <div class="title-row">
-            <h3>${escapeHtml(item.title)}</h3>
-          </div>
-          <div class="domain">${host}</div>
-          <div class="blurb">
-            <div class="skeleton text" style="width:85%; margin-bottom:8px;"></div>
-            <div class="skeleton text" style="width:70%; margin-bottom:8px;"></div>
-            <div class="skeleton text" style="width:60%;"></div>
-          </div>
-          <div class="tags">${(item.tags||[]).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>
-          <div class="actions">
-            <a class="btn primary" href="${item.url}" target="_blank" rel="noopener">Visit site ↗</a>
-            <a class="btn" href="${item.url}" target="_blank" rel="noopener">Open in new tab</a>
-          </div>
-        </div>
+      function normalizeSite(site = {}) {
+        const tags = Array.isArray(site.tags) ? site.tags.filter(Boolean) : [];
+        if (tags.length === 0) tags.push("Uncategorized");
+        return {
+          title: site.title || "Untitled dashboard",
+          url: site.url || "#",
+          tags,
+          description:
+            typeof site.description === "string" ? site.description.trim() : "",
+          techniques: Array.isArray(site.techniques)
+            ? site.techniques.filter(Boolean)
+            : [],
+        };
+      }
+
+      function showConfigError() {
+        grid.innerHTML = `
+        <article class="card">
+          <section class="content">
+            <h3>Unable to load showcase data</h3>
+            <p class="blurb">Check that <code>${escapeHtml(SITES_ENDPOINT)}</code> is reachable and correctly formatted.</p>
+          </section>
+        </article>
       `;
-      return elm;
-    }
-
-    function build(){
-      grid.innerHTML = '';
-      SITES.forEach((item, index) => {
-        const card = cardTemplate(item);
-        card.style.setProperty('--index', index);
-        grid.appendChild(card);
-      });
-      setupLazyImages();
-      hydrateBlurbs();
-    }
-
-    // ======== Blurbs (with caching) ========
-    const CACHE_KEY = 'pp-showcase-blurbs-v1';
-    const cache = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
-
-    function saveCache(){ localStorage.setItem(CACHE_KEY, JSON.stringify(cache)); }
-
-    async function fetchBlurb(url){
-      // Try cache first
-      const cached = cache[url];
-      if (cached && cached.text && Date.now() - cached.ts < 1000*60*60*24*7) { // 7 days
-        return cached.text;
       }
-      try{
-        const res = await fetch(proxiedReadableURL(url), { mode: 'cors' });
-        if(!res.ok) throw new Error('bad status');
-        const html = await res.text();
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        // Prefer first reasonable <p>
-        let text = "";
-        const ps = Array.from(doc.querySelectorAll('p'))
-          .map(p => (p.textContent||"").trim())
-          .filter(t => t.split(/\s+/).length >= 10 && !/cookie|javascript|enable|subscribe|sign in|accept/i.test(t));
-        if(ps.length) text = ps[0];
-        if(!text){
-          // fallback: first long text node from body
-          const raw = (doc.body && doc.body.textContent || "").trim();
-          const candidate = raw.split(/\n{2,}/).find(s => s.trim().length > 80);
-          text = candidate || "";
-        }
-        text = truncate(text, 280);
-        if(text){
-          cache[url] = { text, ts: Date.now() };
-          saveCache();
-        }
-        return text;
-      }catch(e){
-        return "";
-      }
-    }
 
-    async function hydrateBlurbs(){
-      const cards = $$('.card');
-      for (const card of cards){
-        const url = $('.btn.primary', card).getAttribute('href');
-        const blurbEl = $('.blurb', card);
-        const text = await fetchBlurb(url);
-        if (text){
-          blurbEl.textContent = text;
-        } else {
-          blurbEl.innerHTML = '<span class="notice">Blurb unavailable (site blocked or no readable text).</span>';
-        }
-      }
-    }
+      // ======== Utility helpers ========
 
-    // ======== Lazy-load screenshots with fallbacks ========
-    function setupLazyImages(){
-      const imgs = $$('img[data-src]');
-      const io = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if(entry.isIntersecting){
-            const img = entry.target;
-            img.src = img.dataset.src;
-            img.addEventListener('load', () => img.classList.add('loaded'));
-            img.addEventListener('error', () => {
-              // Fallback chain: thum.io → favicon
-              img.onerror = () => { img.src = faviconURL(img.closest('.card').querySelector('.btn.primary').href); };
-              img.src = screenshotFallback(img.closest('.card').querySelector('.btn.primary').href);
+      const $ = (sel, el = document) => el.querySelector(sel);
+      const $$ = (sel, el = document) => Array.from(el.querySelectorAll(sel));
+
+      const learningTemplate = document.getElementById(
+        "learning-panel-template",
+      );
+      if (learningTemplate) {
+        document.body.appendChild(learningTemplate.content.cloneNode(true));
+        learningTemplate.remove();
+      }
+
+      const ROLE_STORAGE_KEY = "pp-showcase-role";
+      const DEFAULT_ROLE = "student";
+      const ROLE_CONTENT = {
+        student: {
+          tip: "Participant tip: open Learning Mode to follow guided prompts and print your personal study sheet.",
+          buttonInactive: "📚 Participant Learning Mode",
+          buttonActive: "📚 Exit Participant Mode",
+          buttonAria: "Toggle participant learning mode overlay",
+          printLabel: "🖨️ Print participant guide",
+          printAria: "Print the participant review guide",
+          printTitle: "Participant Review Guide",
+          sections: [
+            {
+              title: "🎯 Study Rhythm",
+              description:
+                "Use this loop each time you explore a dashboard exemplar.",
+              items: [
+                "☐ Identify the audience and the single decision this view should unlock.",
+                "☐ Summarize the prioritization story in one sentence—does the evidence back it up?",
+                "☐ Trace each score or status back to its source; capture any data gaps.",
+                "☐ Note one design move to reuse and one caveat to watch for in your own work.",
+              ],
+            },
+            {
+              title: "🏙️ Public CIP Dashboards — Participant Lens",
+              description:
+                "Look for signals that help residents and leaders understand capital tradeoffs.",
+              items: [
+                "☐ Map funding phases to timeline and geography to confirm equity of coverage.",
+                "☐ Check whether project categories explain who benefits and when.",
+                "☐ Observe how risk, delays, and budget pressure surface in the story.",
+                "☐ List transparency cues you would expect if you were a community member.",
+              ],
+            },
+            {
+              title: "🏢 Portfolio & Product Tools — Participant Lens",
+              description:
+                "Study how product teams frame prioritization logic and scenario planning.",
+              items: [
+                "☐ Decode the scoring formula: inputs, weights, and refresh cadence.",
+                "☐ Watch for signals about capacity, dependencies, or sequencing choices.",
+                "☐ Evaluate how easy it is to compare options and spot tradeoffs quickly.",
+                "☐ Translate jargon—could your teammates understand this framing without help?",
+              ],
+            },
+            {
+              title: "📊 Visualization Patterns & Power BI",
+              description:
+                "Pay attention to interaction design and the path from question to action.",
+              items: [
+                "☐ Follow the eye path—does the layout guide question → insight → action?",
+                "☐ Test filters and tooltips to see if they reveal trustworthy context.",
+                "☐ Evaluate color, legend, and annotation clarity for accessibility.",
+                "☐ Check the view on smaller screens if responsiveness matters.",
+              ],
+            },
+            {
+              title: "🧠 Reflection Prompts",
+              description:
+                "Turn observations into experiments for your own coursework or projects.",
+              items: [
+                "• What surprised you about how this organization communicates priority?",
+                "• Which chart, phrase, or scoring idea would improve your storytelling immediately?",
+                "• Where would you ask for more evidence before making a decision?",
+                "• What follow-up research or partner conversation does this exemplar spark?",
+              ],
+            },
+          ],
+          notes: {
+            title: "✍️ Field Notes",
+            description:
+              "Capture observations, follow-up questions, and ideas to test with your team.",
+            placeholder:
+              "Capture observations, follow-up questions, next actions…",
+          },
+        },
+        coach: {
+          tip: "Coach tip: open Learning Mode to access facilitation checklists and a printable workshop playbook.",
+          buttonInactive: "📚 Coach Playbook Mode",
+          buttonActive: "📚 Exit Coach Mode",
+          buttonAria: "Toggle coach learning mode overlay",
+          printLabel: "🖨️ Print coach playbook",
+          printAria: "Print the coaching workshop guide",
+          printTitle: "Coaching Workshop Guide",
+          sections: [
+            {
+              title: "🎯 Facilitation Rhythm",
+              description:
+                "Use this sequence when guiding teams through an exemplar.",
+              items: [
+                "☐ Clarify the session objective and the decision skill you are reinforcing.",
+                "☐ Preview what good evidence looks like before the group explores the dashboard.",
+                "☐ Surface blind spots by asking whose needs or tradeoffs are implied.",
+                "☐ Close by translating insights into an experiment or commitment for the team.",
+              ],
+            },
+            {
+              title: "🏙️ Public CIP Dashboards — Coaching Focus",
+              description:
+                "Equip civic teams to communicate transparency and accountability.",
+              items: [
+                "☐ Compare budget, schedule, and geography—what must leaders explain in public?",
+                "☐ Highlight how risk, delays, or equity tradeoffs appear (or fail to appear).",
+                "☐ Capture questions residents, council members, or media would still ask.",
+                "☐ Plan a follow-up artifact to extend the conversation after the workshop.",
+              ],
+            },
+            {
+              title: "🏢 Portfolio & Product Tools — Coaching Focus",
+              description:
+                "Model how to translate vendor frameworks into your organization’s language.",
+              items: [
+                "☐ Reverse-engineer the scoring rubric and align it with your portfolio taxonomy.",
+                "☐ Demonstrate how to facilitate prioritization when data quality is uncertain.",
+                "☐ Identify opportunities to add scenario planning or dependency mapping discussions.",
+                "☐ Draft a prompt that ties metrics back to strategic outcomes for leadership.",
+              ],
+            },
+            {
+              title: "📊 Visualization Patterns — Workshop Callouts",
+              description:
+                "Prepare teaching moments that connect design choices to stakeholder impact.",
+              items: [
+                "☐ Spotlight design moves that make tradeoffs and risk unmistakable.",
+                "☐ Offer an alternative framing if the chart over-promises certainty.",
+                "☐ Note which visuals are easiest to repurpose for stakeholder briefings.",
+                "☐ Flag accessibility gaps your teams should avoid when templating dashboards.",
+              ],
+            },
+            {
+              title: "🧠 Coaching Prompts",
+              description:
+                "Guide facilitators as they adapt the exemplar to their teams.",
+              items: [
+                "• How will you adapt this exemplar for a live working session?",
+                "• Where might teams misinterpret the scoring story without facilitation?",
+                "• Which partners or datasets must you involve to mirror this level of rigor?",
+                "• What follow-on assignment keeps momentum after the workshop?",
+              ],
+            },
+          ],
+          notes: {
+            title: "🗂️ Facilitation Plan",
+            description:
+              "Outline logistics, owners, and follow-ups for your coaching sessions.",
+            placeholder:
+              "Outline facilitation moves, owners, and follow-up actions…",
+          },
+        },
+      };
+
+      function getRoleConfig(role) {
+        return ROLE_CONTENT[role] || ROLE_CONTENT[DEFAULT_ROLE];
+      }
+
+      function renderLearningSections(config) {
+        const container = $("#checklistContent");
+        if (!container) return;
+        container.innerHTML = "";
+
+        config.sections.forEach((section) => {
+          const sectionEl = document.createElement("div");
+          sectionEl.className = "learning-section";
+
+          const heading = document.createElement("h4");
+          heading.textContent = section.title;
+          sectionEl.appendChild(heading);
+
+          if (section.description) {
+            const para = document.createElement("p");
+            para.textContent = section.description;
+            sectionEl.appendChild(para);
+          }
+
+          if (Array.isArray(section.items) && section.items.length) {
+            const list = document.createElement("ul");
+            section.items.forEach((item) => {
+              const li = document.createElement("li");
+              li.textContent = item;
+              list.appendChild(li);
             });
-            io.unobserve(img);
+            sectionEl.appendChild(list);
+          }
+
+          container.appendChild(sectionEl);
+        });
+
+        if (config.notes) {
+          const notesSection = document.createElement("div");
+          notesSection.className = "learning-section";
+
+          const heading = document.createElement("h4");
+          heading.textContent = config.notes.title;
+          notesSection.appendChild(heading);
+
+          if (config.notes.description) {
+            const para = document.createElement("p");
+            para.textContent = config.notes.description;
+            notesSection.appendChild(para);
+          }
+
+          const textarea = document.createElement("textarea");
+          textarea.id = "reviewNotes";
+          textarea.placeholder = config.notes.placeholder || "";
+          notesSection.appendChild(textarea);
+
+          container.appendChild(notesSection);
+        }
+      }
+
+      const NOTES_KEY = "pp-showcase-notes";
+
+      function setupNotesPersistence() {
+        const notesEl = $("#reviewNotes");
+        if (!notesEl) return;
+        const storageKey = `${NOTES_KEY}-${currentRole}`;
+        notesEl.value = localStorage.getItem(storageKey) || "";
+        notesEl.addEventListener("input", () => {
+          localStorage.setItem(storageKey, notesEl.value);
+        });
+      }
+
+      function renderRole(role, learningModeActive) {
+        const config = getRoleConfig(role);
+        const tip = $("#learningTip");
+        if (tip) tip.textContent = config.tip;
+
+        if (printChecklistBtn) {
+          printChecklistBtn.textContent =
+            config.printLabel || printChecklistBtn.textContent;
+          if (config.printAria) {
+            printChecklistBtn.setAttribute("aria-label", config.printAria);
+          }
+        }
+
+        renderLearningSections(config);
+        setupNotesPersistence();
+        setLearningButtonState(learningModeActive);
+      }
+
+      function setLearningButtonState(active) {
+        if (!learningBtn) return;
+        const config = getRoleConfig(currentRole);
+        const inactiveLabel = config.buttonInactive || "📚 Learning Mode";
+        const activeLabel = config.buttonActive || "📚 Exit Learning Mode";
+        learningBtn.textContent = active ? activeLabel : inactiveLabel;
+        if (config.buttonAria) {
+          learningBtn.setAttribute("aria-label", config.buttonAria);
+        }
+        learningBtn.setAttribute("aria-expanded", String(active));
+      }
+
+      const hostname = (url) => {
+        try {
+          return new URL(url).hostname.replace(/^www\./, "");
+        } catch {
+          return url;
+        }
+      };
+
+      const screenshotURL = (url, width = 640) =>
+        `https://s.wordpress.com/mshots/v1/${encodeURIComponent(url)}?w=${width}`;
+
+      const screenshotFallback = (url) =>
+        `https://image.thum.io/get/width/1200/crop/900/${url}`;
+
+      const faviconURL = (url) => {
+        const host = hostname(url);
+        return `https://www.google.com/s2/favicons?domain=${host}&sz=256`;
+      };
+
+      const proxiedReadableURL = (url) => {
+        // Use Jina reader proxy to bypass CORS and get readable content
+        const clean = url.replace(/^https?:\/\//, "");
+        return `https://r.jina.ai/http://${clean}`;
+      };
+
+      const truncate = (s, n = 260) =>
+        s && s.length > n ? s.slice(0, n - 1) + "…" : s || "";
+
+      function createChip(tagText) {
+        const chip = document.createElement("button");
+        chip.className = "chip";
+        chip.textContent = tagText;
+        chip.type = "button";
+        chip.dataset.tag = tagText;
+        chip.setAttribute("aria-pressed", "false");
+        chip.addEventListener("click", () => {
+          const pressed = chip.getAttribute("aria-pressed") === "true";
+          chip.setAttribute("aria-pressed", String(!pressed));
+          applyFilters();
+        });
+        return chip;
+      }
+
+      // ======== Build UI ========
+      const grid = $("#grid");
+      const chipsWrap = $("#chips");
+
+      function populateTagControls(items) {
+        chipsWrap.innerHTML = "";
+        filterTag.innerHTML = "";
+
+        const allOption = document.createElement("option");
+        allOption.value = "all";
+        allOption.textContent = "All types";
+        filterTag.appendChild(allOption);
+
+        const tags = Array.from(
+          new Set(items.flatMap((site) => site.tags || [])),
+        ).sort((a, b) => a.localeCompare(b));
+
+        tags.forEach((tag) => {
+          chipsWrap.appendChild(createChip(tag));
+          const option = document.createElement("option");
+          option.value = tag;
+          option.textContent = tag;
+          filterTag.appendChild(option);
+        });
+
+        filterTag.value = "all";
+      }
+
+      function cardTemplate(item) {
+        const host = hostname(item.url);
+        const elm = document.createElement("article");
+        elm.className = "card";
+        elm.dataset.tags = (item.tags || []).join("|").toLowerCase();
+        elm.dataset.title = (item.title || "").toLowerCase();
+        elm.dataset.domain = host.toLowerCase();
+        elm.setAttribute("role", "article");
+        elm.setAttribute("tabindex", "0");
+
+        // Add click handler for compare mode
+        elm.addEventListener("click", (e) => {
+          if (
+            !e.target.closest(".btn") &&
+            !e.target.closest(".tag") &&
+            !e.target.closest(".technique-tag")
+          ) {
+            handleCardClick(elm, item, e);
           }
         });
-      }, { rootMargin: '200px' });
-      imgs.forEach(img => io.observe(img));
-    }
 
-    // ======== Search, filter, sort ========
-    const q = $('#q');
-    const filterTag = $('#filterTag');
-    const sortBy = $('#sortBy');
-    const refreshBtn = $('#refresh');
-    const learningBtn = $('#toggleLearning');
-    const compareBtn = $('#toggleCompare');
-    const learningPanel = $('#learningPanel');
-    const comparePanel = $('#comparePanel');
-    const closeLearning = $('#closeLearning');
-    const closeCompare = $('#closeCompare');
-    
-    // State management
-    let learningMode = false;
-    let compareMode = false;
-    let selectedForCompare = [];
-    
-    // Panel controls
-    learningBtn.addEventListener('click', () => {
-      learningMode = !learningMode;
-      learningPanel.style.display = learningMode ? 'block' : 'none';
-      document.body.classList.toggle('learning-mode', learningMode);
-      learningBtn.textContent = learningMode ? '📚 Exit Learning' : '📚 Learning Mode';
-    });
-    
-    compareBtn.addEventListener('click', () => {
-      compareMode = !compareMode;
-      comparePanel.style.display = compareMode ? 'block' : 'none';
-      document.body.classList.toggle('compare-mode', compareMode);
-      compareBtn.textContent = compareMode ? '🔍 Exit Compare' : '🔍 Compare Mode';
-      if (!compareMode) {
-        selectedForCompare = [];
-        updateCompareSlots();
+        const primaryTag = item.tags[0] || "Uncategorized";
+        const categoryIcon = getCategoryIcon(primaryTag);
+        const categoryAria = getCategoryAria(primaryTag);
+        const headingId = `card-title-${Math.random().toString(36).slice(2, 9)}`;
+        const description = escapeHtml(
+          item.description || "Loading description...",
+        );
+
+        elm.innerHTML = `
+        <header class="card-header">
+          <span class="category-badge" aria-label="${categoryAria}">
+            <span aria-hidden="true">${categoryIcon}</span>
+            ${escapeHtml(primaryTag)}
+          </span>
+          <span class="domain" aria-label="Domain: ${host}">${host}</span>
+        </header>
+        
+        <div class="thumb" role="img" aria-label="Screenshot of ${escapeHtml(item.title)}">
+          <img alt="" loading="lazy" decoding="async" data-src="${screenshotURL(item.url)}">
+          <div class="pattern-overlay" aria-hidden="true">
+            ${
+              item.techniques.length
+                ? item.techniques
+                    .slice(0, 3)
+                    .map(
+                      (t) =>
+                        `<span class="technique-badge">${escapeHtml(t)}</span>`,
+                    )
+                    .join("")
+                : ""
+            }
+          </div>
+          <span class="badge">${host}</span>
+        </div>
+        
+        <section class="content">
+          <h3 id="${headingId}">${escapeHtml(item.title)}</h3>
+          <p class="blurb">${description}</p>
+          ${
+            item.techniques.length
+              ? `
+            <div class="techniques" aria-label="Key techniques demonstrated">
+              ${item.techniques
+                .map(
+                  (t) => `<span class="technique-tag">${escapeHtml(t)}</span>`,
+                )
+                .join("")}
+            </div>
+          `
+              : ""
+          }
+        </section>
+        
+        <footer class="actions">
+          <a class="btn primary" href="${item.url}" target="_blank" rel="noopener" 
+             aria-describedby="${headingId}">Visit site ↗</a>
+          <a class="btn" href="${item.url}" target="_blank" rel="noopener"
+             aria-describedby="${headingId}">Open in new tab</a>
+        </footer>
+      `;
+        return elm;
+      }
+
+      function getCategoryIcon(tag) {
+        const icons = {
+          "Public CIP": "🏛️",
+          "Power BI": "📊",
+          "Portfolio Management": "💼",
+          "Visualization Patterns": "✨",
+        };
+        return icons[tag] || "📊";
+      }
+
+      function getCategoryAria(tag) {
+        return `Category: ${tag}`;
+      }
+
+      function build(data = sites) {
+        grid.innerHTML = "";
+        if (!Array.isArray(data) || data.length === 0) {
+          grid.innerHTML =
+            '<p class="meta notice">No dashboards configured yet.</p>';
+          return;
+        }
+        data.forEach((item, index) => {
+          const card = cardTemplate(item);
+          card.style.setProperty("--index", index);
+          grid.appendChild(card);
+        });
+        setupLazyImages();
+      }
+
+      // ======== Blurbs (with caching) ========
+      const CACHE_KEY = "pp-showcase-blurbs-v1";
+      const cache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
+
+      function saveCache() {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+      }
+
+      async function fetchBlurb(url) {
+        // Try cache first
+        const cached = cache[url];
+        if (
+          cached &&
+          cached.text &&
+          Date.now() - cached.ts < 1000 * 60 * 60 * 24 * 7
+        ) {
+          // 7 days
+          return cached.text;
+        }
+        try {
+          const res = await fetch(proxiedReadableURL(url), { mode: "cors" });
+          if (!res.ok) throw new Error("bad status");
+          const html = await res.text();
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          // Prefer first reasonable <p>
+          let text = "";
+          const ps = Array.from(doc.querySelectorAll("p"))
+            .map((p) => (p.textContent || "").trim())
+            .filter(
+              (t) =>
+                t.split(/\s+/).length >= 10 &&
+                !/cookie|javascript|enable|subscribe|sign in|accept/i.test(t),
+            );
+          if (ps.length) text = ps[0];
+          if (!text) {
+            // fallback: first long text node from body
+            const raw = ((doc.body && doc.body.textContent) || "").trim();
+            const candidate = raw
+              .split(/\n{2,}/)
+              .find((s) => s.trim().length > 80);
+            text = candidate || "";
+          }
+          text = truncate(text, 280);
+          if (text) {
+            cache[url] = { text, ts: Date.now() };
+            saveCache();
+          }
+          return text;
+        } catch (e) {
+          return "";
+        }
+      }
+
+      async function hydrateBlurbs() {
+        const cards = $$(".card");
+        for (const card of cards) {
+          const url = $(".btn.primary", card).getAttribute("href");
+          const blurbEl = $(".blurb", card);
+          const text = await fetchBlurb(url);
+          if (text) {
+            blurbEl.textContent = text;
+          } else {
+            blurbEl.innerHTML =
+              '<span class="notice">Blurb unavailable (site blocked or no readable text).</span>';
+          }
+        }
+      }
+
+      // ======== Lazy-load screenshots with fallbacks ========
+      function setupLazyImages() {
+        const imgs = $$("img[data-src]");
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.addEventListener("load", () => img.classList.add("loaded"));
+                img.addEventListener("error", () => {
+                  // Fallback chain: thum.io → favicon
+                  img.onerror = () => {
+                    img.src = faviconURL(
+                      img.closest(".card").querySelector(".btn.primary").href,
+                    );
+                  };
+                  img.src = screenshotFallback(
+                    img.closest(".card").querySelector(".btn.primary").href,
+                  );
+                });
+                io.unobserve(img);
+              }
+            });
+          },
+          { rootMargin: "200px" },
+        );
+        imgs.forEach((img) => io.observe(img));
+      }
+
+      // ======== Search, filter, sort ========
+      const q = $("#q");
+      const filterTag = $("#filterTag");
+      const sortBy = $("#sortBy");
+      const refreshBtn = $("#refresh");
+      const learningBtn = $("#toggleLearning");
+      const compareBtn = $("#toggleCompare");
+      const comparePanel = $("#comparePanel");
+      const closeCompare = $("#closeCompare");
+      const learningOverlay = $("#learningOverlay");
+      const learningPanel = $("#learningPanel");
+      const closeLearning = $("#closeLearning");
+      const printChecklistBtn = $("#printChecklist");
+      const checklistContent = $("#checklistContent");
+      const roleSelect = $("#roleSelect");
+
+      // State management
+      let learningMode = false;
+      let compareMode = false;
+      let selectedForCompare = [];
+      let lastFocusedElement = null;
+      let currentRole = localStorage.getItem(ROLE_STORAGE_KEY) || DEFAULT_ROLE;
+      if (!ROLE_CONTENT[currentRole]) currentRole = DEFAULT_ROLE;
+
+      const focusableSelector =
+        'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+
+      if (roleSelect) {
+        roleSelect.value = currentRole;
+        roleSelect.addEventListener("change", (event) => {
+          const nextRole = event.target.value;
+          currentRole = ROLE_CONTENT[nextRole] ? nextRole : DEFAULT_ROLE;
+          localStorage.setItem(ROLE_STORAGE_KEY, currentRole);
+          renderRole(currentRole, learningMode);
+        });
+      }
+
+      renderRole(currentRole, learningMode);
+
+      const focusFirstElement = () => {
+        if (!learningOverlay) return;
+        const focusable = $$(focusableSelector, learningOverlay).filter(
+          (el) =>
+            !el.hasAttribute("disabled") &&
+            el.getAttribute("tabindex") !== "-1" &&
+            el.getAttribute("aria-hidden") !== "true",
+        );
+        const target = focusable[0] || learningPanel;
+        if (target && typeof target.focus === "function") {
+          target.focus();
+        }
+      };
+
+      const handleLearningKeydown = (event) => {
+        if (!learningMode || !learningOverlay) return;
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeLearningPanel();
+          return;
+        }
+        if (event.key !== "Tab") return;
+
+        const focusable = $$(focusableSelector, learningOverlay).filter(
+          (el) =>
+            !el.hasAttribute("disabled") &&
+            el.getAttribute("aria-hidden") !== "true",
+        );
+
+        if (focusable.length === 0) {
+          event.preventDefault();
+          if (learningPanel) learningPanel.focus();
+          return;
+        }
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const current = document.activeElement;
+
+        if (event.shiftKey && current === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && current === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      };
+
+      const openLearningPanel = () => {
+        if (!learningOverlay || !learningPanel) return;
+        learningMode = true;
+        learningOverlay.hidden = false;
+        document.body.classList.add("learning-mode");
+        lastFocusedElement =
+          document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null;
+        focusFirstElement();
+        document.addEventListener("keydown", handleLearningKeydown);
+        setLearningButtonState(true);
+      };
+
+      const closeLearningPanel = () => {
+        if (!learningOverlay || !learningPanel) return;
+        learningMode = false;
+        learningOverlay.hidden = true;
+        document.body.classList.remove("learning-mode");
+        document.removeEventListener("keydown", handleLearningKeydown);
+        setLearningButtonState(false);
+        if (
+          lastFocusedElement &&
+          typeof lastFocusedElement.focus === "function"
+        ) {
+          lastFocusedElement.focus();
+        } else if (learningBtn) {
+          learningBtn.focus();
+        }
+        lastFocusedElement = null;
+      };
+
+      if (learningBtn) {
+        learningBtn.setAttribute("aria-haspopup", "dialog");
+        learningBtn.setAttribute("aria-expanded", "false");
+        learningBtn.setAttribute("aria-controls", "learningPanel");
+        learningBtn.addEventListener("click", () => {
+          learningMode ? closeLearningPanel() : openLearningPanel();
+        });
+        setLearningButtonState(false);
+      }
+
+      if (closeLearning) {
+        closeLearning.addEventListener("click", () => {
+          closeLearningPanel();
+        });
+      }
+
+      if (learningOverlay) {
+        learningOverlay.addEventListener("mousedown", (event) => {
+          if (event.target === learningOverlay) {
+            closeLearningPanel();
+          }
+        });
+      }
+
+      if (printChecklistBtn && checklistContent) {
+        printChecklistBtn.addEventListener("click", () => {
+          const config = getRoleConfig(currentRole);
+          const win = window.open("", "_blank");
+          if (!win) return;
+          const printable = checklistContent.cloneNode(true);
+          const textarea = printable.querySelector("textarea");
+          const notesField = $("#reviewNotes");
+          const notesValue = notesField ? notesField.value : "";
+          if (textarea) {
+            const notesHeading = config.notes
+              ? config.notes.title
+              : "Field Notes";
+            const safeNotes = notesValue
+              ? escapeHtml(notesValue).replace(/\\n/g, "<br>")
+              : "&nbsp;";
+            const notesContainer = document.createElement("div");
+            notesContainer.innerHTML = `<p><strong>${escapeHtml(notesHeading)}</strong></p><div class='notes'>${safeNotes}</div>`;
+            textarea.replaceWith(notesContainer);
+          }
+          const printableTitle =
+            config.printTitle || "Prioritization Visualization Review Guide";
+          win.document
+            .write(`<!DOCTYPE html><html><head><title>${escapeHtml(printableTitle)}</title>
+          <style>
+            body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; margin:40px; color:#1f2937;}
+            h1{font-size:22px; margin-bottom:12px;}
+            h4{margin:24px 0 8px; font-size:16px; color:#111827;}
+            ul{margin:0 0 12px 20px; padding:0;}
+            li{margin-bottom:6px; font-size:13px; line-height:1.4;}
+            p{font-size:13px; color:#4b5563; margin:0 0 12px;}
+            .notes{border:1px solid #d1d5db; border-radius:8px; padding:12px; min-height:160px;}
+          </style>
+        </head><body>
+          <h1>${escapeHtml(printableTitle)}</h1>
+          ${printable.innerHTML}
+        </body></html>`);
+          win.document.close();
+          win.focus();
+          win.print();
+        });
+      }
+
+      if (compareBtn) {
+        compareBtn.addEventListener("click", () => {
+          compareMode = !compareMode;
+          if (comparePanel) {
+            comparePanel.style.display = compareMode ? "block" : "none";
+          }
+          document.body.classList.toggle("compare-mode", compareMode);
+          compareBtn.textContent = compareMode
+            ? "🔍 Exit Compare"
+            : "🔍 Compare Mode";
+          if (!compareMode) {
+            selectedForCompare = [];
+            updateCompareSlots();
+            updateCardSelection();
+          }
+        });
+      }
+
+      if (closeCompare) {
+        closeCompare.addEventListener("click", () => {
+          compareMode = false;
+          if (comparePanel) {
+            comparePanel.style.display = "none";
+          }
+          document.body.classList.remove("compare-mode");
+          if (compareBtn) {
+            compareBtn.textContent = "🔍 Compare Mode";
+          }
+          selectedForCompare = [];
+          updateCompareSlots();
+          updateCardSelection();
+        });
+      }
+
+      // Compare functionality
+      function handleCardClick(card, item, evt) {
+        if (!compareMode) return;
+        if (evt && typeof evt.preventDefault === "function") {
+          evt.preventDefault();
+        }
+
+        const index = selectedForCompare.findIndex((s) => s.url === item.url);
+        if (index > -1) {
+          selectedForCompare.splice(index, 1);
+        } else if (selectedForCompare.length < 2) {
+          selectedForCompare.push(item);
+        }
+
         updateCardSelection();
+        updateCompareSlots();
       }
-    });
-    
-    closeLearning.addEventListener('click', () => {
-      learningMode = false;
-      learningPanel.style.display = 'none';
-      document.body.classList.remove('learning-mode');
-      learningBtn.textContent = '📚 Learning Mode';
-    });
-    
-    closeCompare.addEventListener('click', () => {
-      compareMode = false;
-      comparePanel.style.display = 'none';
-      document.body.classList.remove('compare-mode');
-      compareBtn.textContent = '🔍 Compare Mode';
-      selectedForCompare = [];
-      updateCompareSlots();
-      updateCardSelection();
-    });
-    
-    // Compare functionality
-    function handleCardClick(card, item) {
-      if (!compareMode) return;
-      
-      event.preventDefault();
-      
-      const index = selectedForCompare.findIndex(s => s.url === item.url);
-      if (index > -1) {
-        selectedForCompare.splice(index, 1);
-      } else if (selectedForCompare.length < 2) {
-        selectedForCompare.push(item);
+
+      function updateCardSelection() {
+        const cards = $$(".card");
+        cards.forEach((card) => {
+          const url = $(".btn.primary", card).getAttribute("href");
+          const isSelected = selectedForCompare.some((s) => s.url === url);
+          card.classList.toggle("selected-for-compare", isSelected);
+        });
       }
-      
-      updateCardSelection();
-      updateCompareSlots();
-    }
-    
-    function updateCardSelection() {
-      const cards = $$('.card');
-      cards.forEach(card => {
-        const url = $('.btn.primary', card).getAttribute('href');
-        const isSelected = selectedForCompare.some(s => s.url === url);
-        card.classList.toggle('selected-for-compare', isSelected);
-      });
-    }
-    
-    function updateCompareSlots() {
-      const slots = $$('.compare-slot');
-      slots.forEach((slot, index) => {
-        const item = selectedForCompare[index];
-        if (item) {
-          slot.textContent = item.title;
-          slot.classList.add('filled');
-        } else {
-          slot.textContent = `+ Select ${index === 0 ? 'first' : 'second'} dashboard`;
-          slot.classList.remove('filled');
+
+      function updateCompareSlots() {
+        const slots = $$(".compare-slot");
+        slots.forEach((slot, index) => {
+          const item = selectedForCompare[index];
+          if (item) {
+            slot.textContent = item.title;
+            slot.classList.add("filled");
+          } else {
+            slot.textContent = `+ Select ${index === 0 ? "first" : "second"} dashboard`;
+            slot.classList.remove("filled");
+          }
+        });
+
+        $("#startCompare").disabled = selectedForCompare.length !== 2;
+      }
+
+      $("#startCompare").addEventListener("click", () => {
+        if (selectedForCompare.length === 2) {
+          const [first, second] = selectedForCompare;
+          alert(
+            `Comparison Analysis:\n\n${first.title}\nvs\n${second.title}\n\nKey differences in design patterns, data density, and effectiveness would be displayed here in a full implementation.`,
+          );
         }
       });
-      
-      $('#startCompare').disabled = selectedForCompare.length !== 2;
-    }
-    
-    $('#startCompare').addEventListener('click', () => {
-      if (selectedForCompare.length === 2) {
-        const [first, second] = selectedForCompare;
-        alert(`Comparison Analysis:\n\n${first.title}\nvs\n${second.title}\n\nKey differences in design patterns, data density, and effectiveness would be displayed here in a full implementation.`);
+
+      function applyFilters() {
+        const query = q.value.trim().toLowerCase();
+        const selectTag = filterTag.value;
+        const pressedChips = $$('.chip[aria-pressed="true"]').map(
+          (c) => c.dataset.tag,
+        );
+
+        const cards = $$(".card");
+        cards.forEach((card) => {
+          const title = card.dataset.title;
+          const domain = card.dataset.domain;
+          const tags = card.dataset.tags.split("|").filter(Boolean);
+
+          const matchesQuery =
+            !query ||
+            title.includes(query) ||
+            domain.includes(query) ||
+            tags.some((t) => t.includes(query));
+          const matchesSelect =
+            selectTag === "all" || tags.includes(selectTag.toLowerCase());
+          const matchesChips =
+            pressedChips.length === 0 ||
+            pressedChips.every((t) => tags.includes(t.toLowerCase()));
+
+          card.style.display =
+            matchesQuery && matchesSelect && matchesChips ? "" : "none";
+        });
+
+        // Sorting
+        const visibleCards = $$(".card").filter(
+          (c) => c.style.display !== "none",
+        );
+        const container = grid;
+        const key = sortBy.value;
+        if (key !== "default") {
+          visibleCards.sort((a, b) => {
+            if (key === "title")
+              return a.dataset.title.localeCompare(b.dataset.title);
+            if (key === "domain")
+              return a.dataset.domain.localeCompare(b.dataset.domain);
+            return 0;
+          });
+          visibleCards.forEach((c) => container.appendChild(c));
+        }
       }
-    });
 
-    function applyFilters(){
-      const query = q.value.trim().toLowerCase();
-      const selectTag = filterTag.value;
-      const pressedChips = $$('.chip[aria-pressed="true"]').map(c => c.dataset.tag);
-
-      const cards = $$('.card');
-      cards.forEach(card => {
-        const title = card.dataset.title;
-        const domain = card.dataset.domain;
-        const tags = card.dataset.tags.split('|').filter(Boolean);
-
-        const matchesQuery = !query || title.includes(query) || domain.includes(query) || tags.some(t => t.includes(query));
-        const matchesSelect = (selectTag === 'all') || tags.includes(selectTag.toLowerCase());
-        const matchesChips = pressedChips.length === 0 || pressedChips.every(t => tags.includes(t.toLowerCase()));
-
-        card.style.display = (matchesQuery && matchesSelect && matchesChips) ? '' : 'none';
+      q.addEventListener("input", applyFilters);
+      filterTag.addEventListener("change", applyFilters);
+      sortBy.addEventListener("change", applyFilters);
+      refreshBtn.addEventListener("click", () => {
+        // Clear cache and re-hydrate
+        localStorage.removeItem(CACHE_KEY);
+        Object.keys(cache).forEach((k) => delete cache[k]);
+        hydrateBlurbs();
       });
 
-      // Sorting
-      const visibleCards = $$('.card').filter(c => c.style.display !== 'none');
-      const container = grid;
-      const key = sortBy.value;
-      if (key !== 'default'){
-        visibleCards.sort((a,b) => {
-          if (key === 'title') return a.dataset.title.localeCompare(b.dataset.title);
-          if (key === 'domain') return a.dataset.domain.localeCompare(b.dataset.domain);
-          return 0;
-        });
-        visibleCards.forEach(c => container.appendChild(c));
+      // ======== HTML escape helper ========
+      function escapeHtml(s = "") {
+        return s.replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[m],
+        );
       }
-    }
 
-    q.addEventListener('input', applyFilters);
-    filterTag.addEventListener('change', applyFilters);
-    sortBy.addEventListener('change', applyFilters);
-    refreshBtn.addEventListener('click', () => {
-      // Clear cache and re-hydrate
-      localStorage.removeItem(CACHE_KEY);
-      Object.keys(cache).forEach(k => delete cache[k]);
-      hydrateBlurbs();
-    });
-
-    // ======== HTML escape helper ========
-    function escapeHtml(s=''){
-      return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-    }
-
-    // ======== Init ========
-    build();
-    applyFilters();
-  </script>
-</body>
+      // ======== Init ========
+      loadSites();
+    </script>
+  </body>
 </html>
