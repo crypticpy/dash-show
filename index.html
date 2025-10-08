@@ -3017,6 +3017,8 @@
           filterTag.value = "all";
           $$('.chip[aria-pressed="true"]').forEach(chip => {
             chip.setAttribute('aria-pressed', 'false');
+            const icon = chip.querySelector('.chip-icon');
+            if (icon) icon.style.display = 'none';
           });
           updateFilterStates();
           applyFilters();
