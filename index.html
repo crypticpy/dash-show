@@ -254,6 +254,19 @@
         color: rgba(232, 234, 237, 0.92);
         font-size: 14px;
       }
+      .filter-count {
+        font-size: 0.9em;
+        color: var(--accent-2);
+        font-weight: 600;
+        margin-left: 6px;
+      }
+      #filterIndicator.active {
+        animation: fadeIn 0.3s ease-in;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-2px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
       .controls {
         display: flex;
         gap: 10px;
@@ -292,6 +305,25 @@
       }
       input[type="search"]:focus::placeholder {
         opacity: 0.5;
+      }
+      input[type="search"].has-value {
+        border-color: var(--accent);
+        background: rgba(59, 130, 246, 0.05);
+      }
+      select.active-filter {
+        border-color: var(--accent);
+        background: rgba(59, 130, 246, 0.05);
+        font-weight: 600;
+      }
+      .btn-clear {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+        font-weight: 600;
+      }
+      .btn-clear:hover {
+        background: var(--accent-2);
+        border-color: var(--accent-2);
       }
       select,
       button {
@@ -335,12 +367,17 @@
         color: var(--chip-fg);
         border-radius: 999px;
         font-size: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(59, 130, 246, 0.2);
         cursor: pointer;
         user-select: none;
         transition: var(--transition);
         position: relative;
         overflow: hidden;
+      }
+      .chip-icon {
+        margin-right: 2px;
+        font-weight: 700;
+        transition: var(--transition);
       }
       .chip::before {
         content: "";
@@ -378,6 +415,31 @@
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: var(--gap);
         margin-top: 20px;
+      }
+      .empty-state {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 80px 20px;
+        text-align: center;
+      }
+      .empty-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+        opacity: 0.5;
+      }
+      .empty-state h3 {
+        margin: 0 0 12px;
+        font-size: 24px;
+        color: var(--fg);
+      }
+      .empty-state p {
+        margin: 0 0 24px;
+        color: var(--muted);
+        font-size: 16px;
+        max-width: 400px;
       }
       .card {
         background: var(--card);
@@ -1474,7 +1536,7 @@
             <h1>Data Visualization Dashboard Showcase</h1>
             <p class="subtitle">
               <span class="subtitle-count"
-                ><strong id="siteCount">0</strong> dashboards curated</span
+                ><strong id="siteCount">0</strong><span id="filterIndicator"></span> dashboards curated</span
               >
               <span class="subtitle-detail"
                 >A curated collection for municipal professionals seeking inspiration and best practices in data visualization and dashboard design.</span
@@ -1511,6 +1573,7 @@
           </select>
           <button id="refresh" aria-label="Refresh dashboard descriptions">Refresh blurbs</button>
           <button id="toggleLearning" aria-label="Toggle learning mode">📚 Learning Mode</button>
+          <button id="clearFilters" class="btn-clear" aria-label="Clear all filters" style="display:none;">Clear filters ✕</button>
         </nav>
       </div>
     </header>
@@ -2150,13 +2213,26 @@
       function createChip(tagText) {
         const chip = document.createElement("button");
         chip.className = "chip";
-        chip.textContent = tagText;
         chip.type = "button";
         chip.dataset.tag = tagText;
         chip.setAttribute("aria-pressed", "false");
+
+        const icon = document.createElement("span");
+        icon.className = "chip-icon";
+        icon.textContent = "✓ ";
+        icon.style.display = "none";
+
+        const label = document.createElement("span");
+        label.textContent = tagText;
+
+        chip.appendChild(icon);
+        chip.appendChild(label);
+
         chip.addEventListener("click", () => {
           const pressed = chip.getAttribute("aria-pressed") === "true";
           chip.setAttribute("aria-pressed", String(!pressed));
+          icon.style.display = pressed ? "none" : "inline";
+          updateFilterStates();
           applyFilters();
         });
         return chip;
@@ -2191,11 +2267,23 @@
         filterTag.value = "all";
       }
 
-      function updateHeroSummary(totalSites = 0) {
+      function updateHeroSummary(totalSites = 0, visibleSites = null) {
         if (siteCountEl) {
           siteCountEl.textContent = Number.isFinite(totalSites)
             ? String(totalSites)
             : "0";
+        }
+
+        const filterIndicator = $("#filterIndicator");
+        if (!filterIndicator) return;
+
+        // If visibleSites is provided and different from total, show filter count
+        if (visibleSites !== null && visibleSites !== totalSites) {
+          filterIndicator.innerHTML = `<span class="filter-count">(showing ${visibleSites})</span>`;
+          filterIndicator.classList.add('active');
+        } else {
+          filterIndicator.innerHTML = '';
+          filterIndicator.classList.remove('active');
         }
       }
 
@@ -2842,10 +2930,33 @@
             matchesQuery && matchesSelect && matchesChips ? "" : "none";
         });
 
-        // Sorting
+        // Count visible cards and update header
         const visibleCards = $$(".card").filter(
           (c) => c.style.display !== "none",
         );
+        updateHeroSummary(sites.length, visibleCards.length);
+
+        // Show/hide empty state
+        let emptyState = $("#emptyState");
+        if (visibleCards.length === 0) {
+          if (!emptyState) {
+            emptyState = document.createElement("div");
+            emptyState.id = "emptyState";
+            emptyState.className = "empty-state";
+            emptyState.innerHTML = `
+              <div class="empty-icon">🔍</div>
+              <h3>No dashboards found</h3>
+              <p>Try adjusting your filters or search terms to see more results</p>
+              <button class="btn primary" onclick="document.getElementById('clearFilters').click()">Clear all filters</button>
+            `;
+            grid.appendChild(emptyState);
+          }
+          emptyState.style.display = "flex";
+        } else if (emptyState) {
+          emptyState.style.display = "none";
+        }
+
+        // Sorting
         const container = grid;
         const key = sortBy.value;
         if (key !== "default") {
@@ -2860,9 +2971,57 @@
         }
       }
 
-      q.addEventListener("input", applyFilters);
-      filterTag.addEventListener("change", applyFilters);
+      // Update active filter visual states
+      function updateFilterStates() {
+        // Highlight search if has value
+        if (q.value.trim()) {
+          q.classList.add('has-value');
+        } else {
+          q.classList.remove('has-value');
+        }
+
+        // Highlight dropdown if not "all"
+        if (filterTag.value !== "all") {
+          filterTag.classList.add('active-filter');
+        } else {
+          filterTag.classList.remove('active-filter');
+        }
+
+        // Show/hide clear filters button
+        const hasActiveFilters =
+          q.value.trim() !== "" ||
+          filterTag.value !== "all" ||
+          $$('.chip[aria-pressed="true"]').length > 0;
+
+        const clearFiltersBtn = $("#clearFilters");
+        if (clearFiltersBtn) {
+          clearFiltersBtn.style.display = hasActiveFilters ? "" : "none";
+        }
+      }
+
+      q.addEventListener("input", () => {
+        updateFilterStates();
+        applyFilters();
+      });
+      filterTag.addEventListener("change", () => {
+        updateFilterStates();
+        applyFilters();
+      });
       sortBy.addEventListener("change", applyFilters);
+
+      // Clear all filters button
+      const clearFiltersBtn = $("#clearFilters");
+      if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener("click", () => {
+          q.value = "";
+          filterTag.value = "all";
+          $$('.chip[aria-pressed="true"]').forEach(chip => {
+            chip.setAttribute('aria-pressed', 'false');
+          });
+          updateFilterStates();
+          applyFilters();
+        });
+      }
       refreshBtn.addEventListener("click", async () => {
         // Clear cache and re-hydrate
         localStorage.removeItem(CACHE_KEY);
