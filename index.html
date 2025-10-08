@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Project Prioritization Dashboard Showcase</title>
+    <title>Data Visualization Dashboard Showcase</title>
     <meta
       name="description"
       content="Curated showcase of municipal CIP, Power BI reports, and visualization patterns for project prioritization and ranking."
@@ -53,6 +53,48 @@
           --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
           --shadow-hover: 0 16px 40px rgba(37, 99, 235, 0.12);
         }
+        .subtitle {
+          background: rgba(255, 255, 255, 0.92);
+          border-color: rgba(37, 99, 235, 0.25);
+          box-shadow: 0 12px 28px rgba(37, 99, 235, 0.18);
+          color: var(--fg);
+        }
+        .subtitle-detail {
+          color: rgba(31, 41, 55, 0.78);
+        }
+        .detail-overlay {
+          background: rgba(15, 21, 33, 0.45);
+        }
+        .detail-modal {
+          background: rgba(255, 255, 255, 0.98);
+          border-color: rgba(229, 231, 235, 0.9);
+          box-shadow: 0 26px 60px rgba(37, 99, 235, 0.22);
+        }
+        .detail-media {
+          background: rgba(243, 246, 251, 0.95);
+          box-shadow: 0 16px 34px rgba(37, 99, 235, 0.16);
+        }
+        .detail-blurb {
+          background: rgba(37, 99, 235, 0.1);
+          border-color: rgba(37, 99, 235, 0.2);
+          color: rgba(31, 41, 55, 0.78);
+        }
+        .detail-chip {
+          background: rgba(255, 255, 255, 0.92);
+          border-color: rgba(229, 231, 235, 0.9);
+          color: var(--fg);
+        }
+        .detail-close {
+          background: rgba(243, 246, 251, 0.92);
+        }
+        .detail-close:hover,
+        .detail-close:focus-visible {
+          background: var(--accent);
+        }
+        .detail-category {
+          background: rgba(37, 99, 235, 0.12);
+          border-color: rgba(37, 99, 235, 0.25);
+        }
       }
       * {
         box-sizing: border-box;
@@ -83,6 +125,9 @@
           var(--bg);
         color: var(--fg);
         line-height: 1.5;
+      }
+      body.detail-open {
+        overflow: hidden;
       }
       a {
         color: var(--accent);
@@ -131,6 +176,11 @@
         gap: 14px;
         flex: 1 1 420px;
       }
+      .title-text {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
       .logo {
         width: 56px;
         height: 56px;
@@ -171,12 +221,37 @@
       }
       h1 {
         margin: 0;
-        font-size: clamp(22px, 3.2vw, 34px);
-        line-height: 1.15;
+        font-size: clamp(24px, 3.6vw, 38px);
+        line-height: 1.1;
       }
       .subtitle {
-        margin: 6px 0 0;
-        color: var(--muted);
+        margin: 10px 0 0;
+        display: inline-flex;
+        flex-direction: column;
+        gap: 6px;
+        align-items: flex-start;
+        padding: 16px 18px;
+        border-radius: var(--radius);
+        background: rgba(17, 20, 27, 0.82);
+        color: var(--fg);
+        font-size: 15px;
+        line-height: 1.55;
+        border: 1px solid rgba(59, 130, 246, 0.22);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.22);
+        max-width: 620px;
+      }
+      .subtitle-count {
+        font-size: clamp(16px, 2.4vw, 20px);
+        font-weight: 600;
+        color: var(--accent);
+        letter-spacing: 0.01em;
+      }
+      .subtitle-count strong {
+        font-weight: 700;
+        color: inherit;
+      }
+      .subtitle-detail {
+        color: rgba(232, 234, 237, 0.92);
         font-size: 14px;
       }
       .controls {
@@ -315,6 +390,7 @@
         min-height: 420px;
         transition: var(--transition);
         position: relative;
+        cursor: pointer;
       }
 
       /* Enhanced Card Header */
@@ -1025,19 +1101,222 @@
         box-shadow: 0 0 0 3px var(--accent-2);
         transform: scale(1.02);
       }
+
+      /* Detail Modal */
+      .detail-overlay {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 64px 16px;
+        background: rgba(10, 12, 16, 0.78);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        z-index: 260;
+        transition: opacity 0.25s ease;
+      }
+      .detail-overlay[hidden] {
+        display: none;
+      }
+      .detail-modal {
+        width: min(940px, 100%);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        box-shadow: 0 28px 68px rgba(0, 0, 0, 0.45);
+        display: flex;
+        flex-direction: column;
+        max-height: calc(100vh - 120px);
+        position: relative;
+        overflow: hidden;
+        animation: detailEnter 0.35s ease;
+      }
+      .detail-close {
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        background: var(--card-2);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        font-size: 20px;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition: var(--transition);
+      }
+      .detail-close:hover,
+      .detail-close:focus-visible {
+        background: var(--accent);
+        color: #fff;
+        border-color: transparent;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+      }
+      .detail-header {
+        padding: 36px 36px 0 36px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .detail-header h2 {
+        margin: 0;
+        font-size: clamp(24px, 3.2vw, 32px);
+        line-height: 1.2;
+      }
+      .detail-category {
+        align-self: flex-start;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: rgba(59, 130, 246, 0.16);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        color: var(--accent);
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-weight: 600;
+      }
+      .detail-domain {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .detail-body {
+        display: grid;
+        grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+        gap: 28px;
+        padding: 28px 36px 36px;
+        align-items: flex-start;
+        overflow-y: auto;
+      }
+      .detail-media {
+        margin: 0;
+        border-radius: 18px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        background: var(--card-2);
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+      }
+      .detail-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .detail-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      .detail-summary {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--fg);
+        line-height: 1.6;
+      }
+      .detail-blurb {
+        font-size: 13px;
+        line-height: 1.6;
+        color: rgba(232, 234, 237, 0.85);
+        background: rgba(59, 130, 246, 0.08);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 16px 18px;
+      }
+      .detail-meta {
+        display: grid;
+        gap: 18px;
+      }
+      .detail-meta-group h3 {
+        margin: 0 0 8px;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .detail-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .detail-chip {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--card-2);
+        color: var(--fg);
+        letter-spacing: 0.01em;
+      }
+      .detail-chip.technique {
+        border-style: dashed;
+      }
+      .detail-empty {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .detail-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 20px 36px 32px;
+        border-top: 1px solid var(--border);
+        background: var(--card-2);
+      }
+
+      @keyframes detailEnter {
+        from {
+          opacity: 0;
+          transform: translateY(28px) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @media (max-width: 900px) {
+        .detail-body {
+          grid-template-columns: 1fr;
+          padding: 24px;
+        }
+        .detail-header {
+          padding: 28px 24px 0;
+        }
+        .detail-actions {
+          padding: 20px 24px 28px;
+        }
+        .detail-modal {
+          max-height: calc(100vh - 72px);
+          border-radius: 16px;
+        }
+      }
     </style>
   </head>
   <body>
     <header>
       <div class="wrap hero">
         <div class="title">
-          <div class="logo" aria-hidden="true"><span>PP</span></div>
-          <div>
-            <h1>Project Prioritization Dashboard Showcase</h1>
+          <div class="logo" aria-hidden="true"><span>DV</span></div>
+          <div class="title-text">
+            <h1>Data Visualization Dashboard Showcase</h1>
             <p class="subtitle">
-              47 examples across municipal CIP, Power BI, portfolio management
-              tools, and data visualization patterns for teaching effective
-              dashboard design.
+              <span class="subtitle-count"
+                ><strong id="siteCount">0</strong> dashboards curated</span
+              >
+              <span class="subtitle-detail"
+                >Explore municipal CIPs, resource recovery portals, portfolio
+                tools, and visualization patterns built for decision
+                storytelling.</span
+              >
             </p>
           </div>
         </div>
@@ -1121,6 +1400,62 @@
         </div>
       </div>
     </main>
+
+    <div id="detailOverlay" class="detail-overlay" hidden>
+      <article
+        id="detailModal"
+        class="detail-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="detailTitle"
+        aria-describedby="detailSummary"
+        tabindex="-1"
+      >
+        <button
+          id="closeDetail"
+          class="detail-close"
+          type="button"
+          aria-label="Close showcase details"
+        >
+          ×
+        </button>
+        <header class="detail-header">
+          <span class="detail-category" id="detailCategory"></span>
+          <h2 id="detailTitle"></h2>
+          <p class="detail-domain">
+            <span aria-hidden="true">🔗</span>
+            <span id="detailDomain"></span>
+          </p>
+        </header>
+        <section class="detail-body" id="detailBody">
+          <figure class="detail-media">
+            <img id="detailScreenshot" alt="" loading="lazy" decoding="async" />
+          </figure>
+          <div class="detail-copy">
+            <p class="detail-summary" id="detailSummary"></p>
+            <div class="detail-blurb" id="detailBlurb"></div>
+            <div class="detail-meta">
+              <div class="detail-meta-group">
+                <h3>Focus tags</h3>
+                <div class="detail-chips" id="detailTags"></div>
+              </div>
+              <div class="detail-meta-group">
+                <h3>Techniques to watch</h3>
+                <div class="detail-chips" id="detailTechniques"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <footer class="detail-actions">
+          <a id="detailVisit" class="btn primary" target="_blank" rel="noopener"
+            >Visit site ↗</a
+          >
+          <a id="detailOpen" class="btn" target="_blank" rel="noopener"
+            >Open in new tab</a
+          >
+        </footer>
+      </article>
+    </div>
 
     <template id="learning-panel-template">
       <div class="learning-overlay" id="learningOverlay" hidden>
@@ -1318,6 +1653,7 @@
           }
           sites = items.map(normalizeSite);
           populateTagControls(sites);
+          updateHeroSummary(sites.length);
           build();
           applyFilters();
         } catch (err) {
@@ -1342,6 +1678,7 @@
       }
 
       function showConfigError() {
+        updateHeroSummary(0);
         grid.innerHTML = `
         <article class="card">
           <section class="content">
@@ -1663,6 +2000,7 @@
       // ======== Build UI ========
       const grid = $("#grid");
       const chipsWrap = $("#chips");
+      const siteCountEl = $("#siteCount");
 
       function populateTagControls(items) {
         chipsWrap.innerHTML = "";
@@ -1688,6 +2026,14 @@
         filterTag.value = "all";
       }
 
+      function updateHeroSummary(totalSites = 0) {
+        if (siteCountEl) {
+          siteCountEl.textContent = Number.isFinite(totalSites)
+            ? String(totalSites)
+            : "0";
+        }
+      }
+
       function cardTemplate(item) {
         const host = hostname(item.url);
         const elm = document.createElement("article");
@@ -1706,6 +2052,17 @@
             !e.target.closest(".technique-tag")
           ) {
             handleCardClick(elm, item, e);
+          }
+        });
+        elm.addEventListener("keydown", (event) => {
+          if (
+            (event.key === "Enter" || event.key === " ") &&
+            !event.target.closest(".btn") &&
+            !event.target.closest(".tag") &&
+            !event.target.closest(".technique-tag")
+          ) {
+            event.preventDefault();
+            handleCardClick(elm, item, event);
           }
         });
 
@@ -1772,12 +2129,179 @@
         return elm;
       }
 
+      function renderDetailChips(container, items, variant) {
+        if (!container) return;
+        container.innerHTML = "";
+        if (!Array.isArray(items) || items.length === 0) {
+          const empty = document.createElement("span");
+          empty.className = "detail-empty";
+          empty.textContent =
+            variant === "technique"
+              ? "Techniques will appear as annotations are added."
+              : "Tags will populate soon.";
+          container.appendChild(empty);
+          return;
+        }
+        items.forEach((value) => {
+          if (!value) return;
+          const chip = document.createElement("span");
+          chip.className = `detail-chip${variant === "technique" ? " technique" : ""}`;
+          chip.textContent = value;
+          container.appendChild(chip);
+        });
+      }
+
+      function focusDetailFirst() {
+        if (!detailOverlay) return;
+        const focusable = $$(focusableSelector, detailOverlay).filter(
+          (el) =>
+            !el.hasAttribute("disabled") &&
+            el.getAttribute("tabindex") !== "-1" &&
+            el.getAttribute("aria-hidden") !== "true",
+        );
+        const target = focusable[0] || detailModal;
+        if (target && typeof target.focus === "function") {
+          target.focus();
+        }
+      }
+
+      function handleDetailKeydown(event) {
+        if (!detailOverlay || detailOverlay.hidden) return;
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeDetailModal();
+          return;
+        }
+        if (event.key !== "Tab") return;
+
+        const focusable = $$(focusableSelector, detailOverlay).filter(
+          (el) =>
+            !el.hasAttribute("disabled") &&
+            el.getAttribute("aria-hidden") !== "true",
+        );
+
+        if (focusable.length === 0) {
+          event.preventDefault();
+          if (detailModal && typeof detailModal.focus === "function") {
+            detailModal.focus();
+          }
+          return;
+        }
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const current = document.activeElement;
+
+        if (event.shiftKey && current === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && current === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+
+      function openDetailModal(item, card) {
+        if (!detailOverlay || !detailModal) return;
+        detailLastFocused =
+          document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null;
+
+        const primaryTag =
+          Array.isArray(item.tags) && item.tags.length
+            ? item.tags[0]
+            : "Uncategorized";
+        const icon = getCategoryIcon(primaryTag);
+        if (detailCategory) {
+          detailCategory.textContent = `${icon ? `${icon} ` : ""}${primaryTag}`;
+        }
+
+        if (detailTitle) {
+          detailTitle.textContent = item.title || "Untitled dashboard";
+        }
+
+        const domainText = hostname(item.url);
+        if (detailDomain) {
+          detailDomain.textContent = domainText;
+        }
+
+        if (detailSummaryText) {
+          const summary =
+            item.description && item.description.trim().length
+              ? item.description
+              : "Curator notes will populate soon.";
+          detailSummaryText.textContent = summary;
+        }
+
+        if (detailBlurb) {
+          const blurbNode = card ? card.querySelector(".blurb") : null;
+          const blurbText = blurbNode ? blurbNode.textContent.trim() : "";
+          detailBlurb.textContent =
+            blurbText ||
+            "Live summary will load once site content is retrieved.";
+        }
+
+        renderDetailChips(detailTags, item.tags, "tag");
+        renderDetailChips(detailTechniques, item.techniques, "technique");
+
+        if (detailVisit) detailVisit.href = item.url || "#";
+        if (detailOpen) detailOpen.href = item.url || "#";
+
+        if (detailScreenshot) {
+          const cardImg = card ? card.querySelector(".thumb img") : null;
+          const candidateSrc =
+            cardImg && cardImg.src && cardImg.src.length
+              ? cardImg.src
+              : screenshotURL(item.url, 1200);
+          detailScreenshot.src = candidateSrc;
+          detailScreenshot.alt = `Screenshot of ${item.title}`;
+        }
+
+        if (detailBody) {
+          if (typeof detailBody.scrollTo === "function") {
+            detailBody.scrollTo({ top: 0, behavior: "auto" });
+          } else {
+            detailBody.scrollTop = 0;
+          }
+        }
+
+        detailOverlay.hidden = false;
+        document.body.classList.add("detail-open");
+        focusDetailFirst();
+        document.addEventListener("keydown", handleDetailKeydown);
+      }
+
+      function closeDetailModal() {
+        if (!detailOverlay || detailOverlay.hidden) return;
+        detailOverlay.hidden = true;
+        document.body.classList.remove("detail-open");
+        document.removeEventListener("keydown", handleDetailKeydown);
+        if (
+          detailLastFocused &&
+          typeof detailLastFocused.focus === "function"
+        ) {
+          detailLastFocused.focus();
+        }
+        detailLastFocused = null;
+      }
+
       function getCategoryIcon(tag) {
         const icons = {
           "Public CIP": "🏛️",
           "Power BI": "📊",
           "Portfolio Management": "💼",
           "Visualization Patterns": "✨",
+          "Resource Recovery": "♻️",
+          "Zero Waste": "♻️",
+          "C&D Waste": "🏗️",
+          "Green Halo": "🟢",
+          "Policy Reference": "📑",
+          Guidance: "🧭",
+          "International Benchmark": "🌍",
+          "National Policy": "🏛️",
+          "Reference Data": "📓",
+          "Municipal Program": "🏙️",
         };
         return icons[tag] || "📊";
       }
@@ -1914,12 +2438,27 @@
       const printChecklistBtn = $("#printChecklist");
       const checklistContent = $("#checklistContent");
       const roleSelect = $("#roleSelect");
+      const detailOverlay = $("#detailOverlay");
+      const detailModal = $("#detailModal");
+      const detailClose = $("#closeDetail");
+      const detailTitle = $("#detailTitle");
+      const detailDomain = $("#detailDomain");
+      const detailSummaryText = $("#detailSummary");
+      const detailBlurb = $("#detailBlurb");
+      const detailTags = $("#detailTags");
+      const detailTechniques = $("#detailTechniques");
+      const detailVisit = $("#detailVisit");
+      const detailOpen = $("#detailOpen");
+      const detailScreenshot = $("#detailScreenshot");
+      const detailCategory = $("#detailCategory");
+      const detailBody = $("#detailBody");
 
       // State management
       let learningMode = false;
       let compareMode = false;
       let selectedForCompare = [];
       let lastFocusedElement = null;
+      let detailLastFocused = null;
       let currentRole = localStorage.getItem(ROLE_STORAGE_KEY) || DEFAULT_ROLE;
       if (!ROLE_CONTENT[currentRole]) currentRole = DEFAULT_ROLE;
 
@@ -2042,6 +2581,20 @@
         });
       }
 
+      if (detailClose) {
+        detailClose.addEventListener("click", () => {
+          closeDetailModal();
+        });
+      }
+
+      if (detailOverlay) {
+        detailOverlay.addEventListener("mousedown", (event) => {
+          if (event.target === detailOverlay) {
+            closeDetailModal();
+          }
+        });
+      }
+
       if (printChecklistBtn && checklistContent) {
         printChecklistBtn.addEventListener("click", () => {
           const config = getRoleConfig(currentRole);
@@ -2088,6 +2641,9 @@
       if (compareBtn) {
         compareBtn.addEventListener("click", () => {
           compareMode = !compareMode;
+          if (compareMode) {
+            closeDetailModal();
+          }
           if (comparePanel) {
             comparePanel.style.display = compareMode ? "block" : "none";
           }
@@ -2121,20 +2677,25 @@
 
       // Compare functionality
       function handleCardClick(card, item, evt) {
-        if (!compareMode) return;
+        if (compareMode) {
+          if (evt && typeof evt.preventDefault === "function") {
+            evt.preventDefault();
+          }
+          const index = selectedForCompare.findIndex((s) => s.url === item.url);
+          if (index > -1) {
+            selectedForCompare.splice(index, 1);
+          } else if (selectedForCompare.length < 2) {
+            selectedForCompare.push(item);
+          }
+          updateCardSelection();
+          updateCompareSlots();
+          return;
+        }
+
         if (evt && typeof evt.preventDefault === "function") {
           evt.preventDefault();
         }
-
-        const index = selectedForCompare.findIndex((s) => s.url === item.url);
-        if (index > -1) {
-          selectedForCompare.splice(index, 1);
-        } else if (selectedForCompare.length < 2) {
-          selectedForCompare.push(item);
-        }
-
-        updateCardSelection();
-        updateCompareSlots();
+        openDetailModal(item, card);
       }
 
       function updateCardSelection() {
