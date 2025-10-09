@@ -300,15 +300,25 @@
                 </div>
               </div>
               <form method="dialog">
-                <button
-                  id="closeLearning"
-                  class="btn btn-sm btn-circle btn-ghost"
-                  aria-label="Close learning mode (Press Escape)"
-                  aria-keyshortcuts="Escape"
+              <button
+                id="closeLearning"
+                class="modal-close-button"
+                aria-label="Close learning mode (Press Escape)"
+                aria-keyshortcuts="Escape"
+                type="submit"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.8"
+                  stroke="currentColor"
+                  aria-hidden="true"
                 >
-                  ✕
-                </button>
-              </form>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6" />
+                </svg>
+              </button>
+            </form>
             </div>
             <div
               class="learning-panel__body custom-scrollbar"
@@ -368,11 +378,21 @@
             <form method="dialog">
               <button
                 id="closeDetail"
-                class="btn btn-sm btn-circle btn-ghost detail-panel__close"
+                class="modal-close-button detail-panel__close"
                 aria-label="Close detail view (Press Escape)"
                 aria-keyshortcuts="Escape"
+                type="submit"
               >
-                ✕
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.8"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6" />
+                </svg>
               </button>
             </form>
 
@@ -453,11 +473,21 @@
             <form method="dialog">
               <button
                 id="onboardingClose"
-                class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4"
+                class="modal-close-button absolute right-4 top-4"
                 aria-label="Close onboarding (Press Escape)"
                 aria-keyshortcuts="Escape"
+                type="submit"
               >
-                ✕
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.8"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6" />
+                </svg>
               </button>
             </form>
             <div id="onboardingContent" class="py-4"></div>
