@@ -599,6 +599,12 @@ function setupDetailModal() {
 
   detailHandlers = createDetailHandlers(elements);
 
+  elements.modal?.addEventListener("close", () => {
+    document.body.classList.remove("modal-open");
+    document.documentElement.classList.remove("modal-open");
+    disableDetailKeyboard(detailHandlers.keydownHandler);
+  });
+
   elements.closeBtn?.addEventListener("click", () => {
     closeDetailModal(elements);
     disableDetailKeyboard(detailHandlers.keydownHandler);

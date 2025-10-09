@@ -94,6 +94,13 @@
         rgba(34, 37, 78, 0.45) 100%
       );
   }
+
+  html.modal-open,
+  body.modal-open {
+    overflow: hidden;
+    height: 100%;
+    overscroll-behavior: none;
+  }
 }
 
 /* Custom utilities and animations */
@@ -577,6 +584,7 @@
     box-shadow: 0 32px 64px rgba(68, 73, 156, 0.18);
     overflow: hidden;
     position: relative;
+    overscroll-behavior: contain;
   }
 
   html[data-theme="austinDark"] .detail-panel {
@@ -687,6 +695,9 @@
     flex-direction: column;
     gap: 1.75rem;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
 
   html[data-theme="austinDark"] .detail-panel__body {

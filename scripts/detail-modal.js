@@ -30,6 +30,10 @@ export function openDetailModal(item, card, elements) {
       ? document.activeElement
       : null;
 
+  // Prevent background scrolling while detail modal is active
+  document.body.classList.add("modal-open");
+  document.documentElement.classList.add("modal-open");
+
   // Populate category
   const primaryTag =
     Array.isArray(item.tags) && item.tags.length
@@ -113,6 +117,9 @@ export function closeDetailModal(elements) {
 
   // Close modal using DaisyUI method
   modal.close();
+
+  document.body.classList.remove("modal-open");
+  document.documentElement.classList.remove("modal-open");
 
   // Restore focus with safety checks
   if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
