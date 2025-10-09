@@ -22,6 +22,7 @@ python -m http.server 8000
 - **Interactive**: Search, filter, sort functionality across 4 categories
 - **Automated**: Thumbnail generation and content extraction
 - **Performance**: Lazy loading, caching, optimized images
+- **Brand-aligned**: City of Austin palette with glassmorphism header and refined microinteractions
 - **Comprehensive**: 20 municipal CIP examples + 20 enterprise prioritization tools
 
 ## Content Categories

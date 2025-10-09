@@ -23,7 +23,7 @@ import {
   renderActiveFilters,
   populateFacetedFilters,
   setupFilterDrawer,
-} from "./filters.js";
+} from "./filters.js?v=3";
 import {
   cardTemplate,
   populateTagControls,
@@ -37,13 +37,14 @@ import {
   createDetailHandlers,
   enableDetailKeyboard,
   disableDetailKeyboard,
-} from "./detail-modal.js";
+} from "./detail-modal.js?v=2";
 import {
   renderRole,
   createLearningHandlers,
   printChecklist,
   createOnboardingHandlers,
 } from "./learning-mode.js";
+import { initTheme } from "./theme.js";
 
 // Configuration
 const SITES_ENDPOINT = "sites.json";
@@ -67,7 +68,8 @@ function normalizeSite(site = {}) {
     title: site.title || "Untitled dashboard",
     url: site.url || "#",
     tags,
-    description: typeof site.description === "string" ? site.description.trim() : "",
+    description:
+      typeof site.description === "string" ? site.description.trim() : "",
     techniques: Array.isArray(site.techniques)
       ? site.techniques.filter(Boolean)
       : [],
@@ -96,14 +98,14 @@ async function loadSites() {
 
     // Build set of valid tags (lowercase) for validation
     validTagsSet = new Set(
-      sites.flatMap((site) => site.tags || []).map((tag) => tag.toLowerCase())
+      sites.flatMap((site) => site.tags || []).map((tag) => tag.toLowerCase()),
     );
 
     const elements = getFilterElements();
 
     // Get all unique tags
     const allTags = Array.from(
-      new Set(sites.flatMap((site) => site.tags || []))
+      new Set(sites.flatMap((site) => site.tags || [])),
     ).sort((a, b) => a.localeCompare(b));
 
     // Use faceted filter population
@@ -113,6 +115,31 @@ async function loadSites() {
         syncURLWithFilters();
         updateFilterStates(elements);
         applyFilters({ ...elements, totalSites: sites.length });
+
+        // Auto-close drawer on mobile after filter selection
+        if (window.innerWidth < 1024) {
+          const drawerToggle = document.getElementById("filter-drawer");
+          if (drawerToggle && drawerToggle.checked) {
+            // Add visual feedback before closing
+            const filterSidebar = document.getElementById("filterSidebar");
+            if (filterSidebar) {
+              filterSidebar.style.opacity = "0.7";
+              setTimeout(() => {
+                // Only restore opacity if drawer is still open
+                if (drawerToggle.checked) {
+                  filterSidebar.style.opacity = "1";
+                }
+              }, 150);
+            }
+            // Reduced delay for faster response
+            setTimeout(() => {
+              // Only close if still checked (user might have closed manually)
+              if (drawerToggle.checked) {
+                drawerToggle.checked = false;
+              }
+            }, 200);
+          }
+        }
       });
     });
 
@@ -147,7 +174,18 @@ function buildGrid(data = sites) {
   grid.innerHTML = "";
 
   if (!Array.isArray(data) || data.length === 0) {
-    grid.innerHTML = '<p class="meta notice">No dashboards configured yet.</p>';
+    grid.innerHTML = `
+      <div class="hero min-h-[400px] bg-base-200 rounded-lg col-span-full">
+        <div class="hero-content text-center">
+          <div class="max-w-md">
+            <h2 class="text-3xl font-bold mb-4">📊 No Dashboards Found</h2>
+            <p class="text-base-content/70">
+              No dashboards match your current filters. Try adjusting your search or clearing filters to see more results.
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
     return;
   }
 
@@ -185,12 +223,20 @@ function showConfigError() {
   if (!grid) return;
 
   grid.innerHTML = `
-    <article class="card">
-      <section class="content">
-        <h3>Unable to load showcase data</h3>
-        <p class="blurb">Check that <code>${escapeHtml(SITES_ENDPOINT)}</code> is reachable and correctly formatted.</p>
-      </section>
-    </article>
+    <div class="hero min-h-[400px] bg-error/10 rounded-lg col-span-full">
+      <div class="hero-content text-center">
+        <div class="max-w-md">
+          <div class="text-5xl mb-4">⚠️</div>
+          <h2 class="text-3xl font-bold mb-4">Unable to Load Data</h2>
+          <p class="text-base-content/70 mb-4">
+            Could not load showcase data. Please check that <code class="bg-base-200 px-2 py-1 rounded">${escapeHtml(SITES_ENDPOINT)}</code> is reachable and correctly formatted.
+          </p>
+          <button class="btn btn-primary" onclick="location.reload()">
+            🔄 Retry
+          </button>
+        </div>
+      </div>
+    </div>
   `;
 }
 
@@ -225,7 +271,7 @@ function getFilterElements() {
  */
 function getDetailElements() {
   return {
-    overlay: $("#detailOverlay"),
+    overlay: $("#detailModal"),
     modal: $("#detailModal"),
     closeBtn: $("#closeDetail"),
     category: $("#detailCategory"),
@@ -238,7 +284,6 @@ function getDetailElements() {
     visitBtn: $("#detailVisit"),
     openBtn: $("#detailOpen"),
     screenshot: $("#detailScreenshot"),
-    body: $("#detailBody"),
   };
 }
 
@@ -253,9 +298,12 @@ function getLearningElements() {
     learningBtn: $("#toggleLearning"),
     closeBtn: $("#closeLearning"),
     printBtn: $("#printChecklist"),
+    printTooltip: $("#printTooltip"),
+    learningBtnTooltip: $("#learningBtnTooltip"),
     checklistContent: $("#checklistContent"),
     roleSelect: $("#roleSelect"),
     tip: $("#learningTip"),
+    roleSubtitle: $("#learningRoleSubtitle"),
   };
 }
 
@@ -310,14 +358,11 @@ function applyFilterStateToUI(state) {
   }
 
   // Apply selected tag chips
-  $$('.chip').forEach((chip) => {
+  $$(".chip").forEach((chip) => {
     const chipTag = chip.dataset.tag || "";
     const shouldBePressed = validatedState.selectedTags.includes(chipTag);
     chip.setAttribute("aria-pressed", String(shouldBePressed));
-    const icon = chip.querySelector(".chip-icon");
-    if (icon) {
-      icon.style.display = shouldBePressed ? "inline" : "none";
-    }
+    chip.dataset.state = shouldBePressed ? "active" : "inactive";
   });
 
   // Update filter states and apply filters
@@ -338,11 +383,10 @@ function handleRemoveFilter(type, value) {
     if (elements.searchInput) elements.searchInput.value = "";
   } else if (type === "tag") {
     // Find and unpress the chip
-    $$('.chip').forEach((chip) => {
+    $$(".chip").forEach((chip) => {
       if (chip.dataset.tag === value) {
         chip.setAttribute("aria-pressed", "false");
-        const icon = chip.querySelector(".chip-icon");
-        if (icon) icon.style.display = "none";
+        chip.dataset.state = "inactive";
       }
     });
   } else if (type === "dropdown") {
@@ -362,6 +406,77 @@ function handleRemoveFilter(type, value) {
  */
 function setupFilterListeners() {
   const elements = getFilterElements();
+  const drawerToggleInput = document.getElementById("filter-drawer");
+  const filterToggleButton = document.getElementById("filterToggleButton");
+  const filterToggleTooltip = document.getElementById("filterToggleTooltip");
+  const filterRevealZone = document.getElementById("filterRevealZone");
+
+  const lgMediaQuery = window.matchMedia("(min-width: 1024px)");
+
+  const updateFilterToggleState = () => {
+    if (!drawerToggleInput || !filterToggleButton) return;
+    const expanded = drawerToggleInput.checked;
+    filterToggleButton.setAttribute("aria-expanded", String(expanded));
+    filterToggleButton.setAttribute(
+      "aria-label",
+      expanded ? "Hide filters" : "Show filters",
+    );
+    filterToggleButton.setAttribute("aria-pressed", String(expanded));
+    if (filterToggleTooltip) {
+      filterToggleTooltip.setAttribute(
+        "data-tip",
+        expanded ? "Hide filters" : "Show filters",
+      );
+    }
+
+    if (filterRevealZone) {
+      const showReveal = !expanded && lgMediaQuery.matches;
+      filterRevealZone.classList.toggle("is-visible", showReveal);
+      // Update ARIA attributes when visibility changes
+      if (showReveal) {
+        filterRevealZone.setAttribute("aria-hidden", "false");
+        filterRevealZone.setAttribute("tabindex", "0");
+      } else {
+        filterRevealZone.setAttribute("aria-hidden", "true");
+        filterRevealZone.setAttribute("tabindex", "-1");
+      }
+    }
+  };
+
+  if (drawerToggleInput) {
+    drawerToggleInput.addEventListener("change", updateFilterToggleState);
+
+    const handleViewportChange = (event) => {
+      drawerToggleInput.checked = event.matches;
+      updateFilterToggleState();
+    };
+
+    handleViewportChange(lgMediaQuery);
+    if (typeof lgMediaQuery.addEventListener === "function") {
+      lgMediaQuery.addEventListener("change", handleViewportChange);
+    } else if (typeof lgMediaQuery.addListener === "function") {
+      lgMediaQuery.addListener(handleViewportChange);
+    }
+  }
+
+  if (filterRevealZone && drawerToggleInput) {
+    const openDrawer = () => {
+      if (!lgMediaQuery.matches) return;
+      drawerToggleInput.checked = true;
+      updateFilterToggleState();
+    };
+
+    filterRevealZone.addEventListener("pointerenter", openDrawer);
+    filterRevealZone.addEventListener("focus", openDrawer);
+    filterRevealZone.addEventListener("click", openDrawer);
+    filterRevealZone.addEventListener("keyup", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        openDrawer();
+      }
+    });
+  }
+
+  updateFilterToggleState();
 
   // Create debounced search handler (300ms delay)
   const debouncedSearchSync = debounce(() => {
@@ -370,9 +485,30 @@ function setupFilterListeners() {
   }, 300);
 
   // Search input - debounced URL sync with immediate visual feedback
+  const clearSearchBtn = document.getElementById("clearSearch");
+
+  const updateClearButtonVisibility = () => {
+    if (clearSearchBtn && elements.searchInput) {
+      clearSearchBtn.style.display = elements.searchInput.value.trim() ? "flex" : "none";
+    }
+  };
+
   elements.searchInput?.addEventListener("input", () => {
+    updateClearButtonVisibility();
     updateFilterStates(elements); // Immediate visual feedback
     debouncedSearchSync(); // Delayed filter + URL update
+  });
+
+  // Clear search button
+  clearSearchBtn?.addEventListener("click", () => {
+    if (elements.searchInput) {
+      elements.searchInput.value = "";
+      updateClearButtonVisibility();
+      updateFilterStates(elements);
+      syncURLWithFilters();
+      applyFilters({ ...elements, totalSites: sites.length });
+      elements.searchInput.focus(); // Return focus to input
+    }
   });
 
   // Dropdown filter - immediate URL sync
@@ -395,7 +531,10 @@ function setupFilterListeners() {
     updateURL(new URLSearchParams()); // Clear all URL params
     updateFilterStates(elements);
     applyFilters({ ...elements, totalSites: sites.length });
-    renderActiveFilters({ query: "", selectedTags: [], dropdown: "all", sort: "default" }, handleRemoveFilter);
+    renderActiveFilters(
+      { query: "", selectedTags: [], dropdown: "all", sort: "default" },
+      handleRemoveFilter,
+    );
   });
 }
 
@@ -405,12 +544,7 @@ function setupFilterListeners() {
 function setupLearningMode() {
   const elements = getLearningElements();
 
-  // Initialize learning template
-  const learningTemplate = document.getElementById("learning-panel-template");
-  if (learningTemplate) {
-    document.body.appendChild(learningTemplate.content.cloneNode(true));
-    learningTemplate.remove();
-  }
+  // Learning template removed per user request
 
   // Create handlers
   learningHandlers = createLearningHandlers(elements);
@@ -518,7 +652,7 @@ function setupKeyboardNavigation() {
     }
 
     const cards = Array.from(grid.querySelectorAll(".card")).filter(
-      (card) => card.style.display !== "none"
+      (card) => card.style.display !== "none",
     );
 
     const currentIndex = cards.indexOf(document.activeElement);
@@ -561,9 +695,22 @@ function setupBrowserHistory() {
 }
 
 /**
+ * Update copyright year to current year
+ */
+function updateCopyrightYear() {
+  const copyrightEl = document.getElementById("copyright");
+  if (copyrightEl) {
+    const currentYear = new Date().getFullYear();
+    copyrightEl.textContent = `© ${currentYear} City of Austin`;
+  }
+}
+
+/**
  * Initialize application
  */
 function init() {
+  initTheme();
+  updateCopyrightYear();
   setupFilterListeners();
   setupLearningMode();
   setupDetailModal();

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="austinDark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -15,213 +15,684 @@
       rel="stylesheet"
     />
 
-    <!-- Modular CSS -->
-    <link rel="stylesheet" href="styles/variables.css" />
-    <link rel="stylesheet" href="styles/base.css" />
-    <link rel="stylesheet" href="styles/layout.css" />
-    <link rel="stylesheet" href="styles/components.css" />
-    <link rel="stylesheet" href="styles/modals.css" />
+    <!-- DaisyUI + Tailwind CSS -->
+    <link rel="stylesheet" href="styles/output.css" />
   </head>
   <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- Mobile Filter Drawer Toggle -->
-    <button class="filter-drawer-toggle" id="filterDrawerToggle" aria-label="Open filters">
-      <span aria-hidden="true">☰</span>
-    </button>
+    <!-- DaisyUI Drawer -->
+    <div class="drawer">
+      <input id="filter-drawer" type="checkbox" class="drawer-toggle" />
 
-    <!-- Filter Drawer Overlay (Mobile) -->
-    <div class="filter-drawer-overlay" id="filterDrawerOverlay"></div>
+      <!-- Mobile Filter FAB (hidden on desktop) -->
+      <label
+        for="filter-drawer"
+        class="btn btn-primary drawer-button lg:hidden fixed bottom-6 right-6 z-40 btn-circle btn-lg shadow-elevated hover:shadow-floating transition-all duration-300 hover:scale-105"
+        aria-label="Toggle filters"
+        aria-controls="filterSidebar"
+      >
+        <svg
+          class="w-7 h-7"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 105.25 5.25a7.5 7.5 0 0011.4 11.4z"
+          />
+        </svg>
+      </label>
 
-    <!-- Faceted Filter Drawer -->
-    <aside class="filter-drawer" id="filterDrawer" aria-label="Filter controls">
-      <div class="filter-drawer-header">
-        <h2>Filters</h2>
-        <button class="filter-drawer-close" id="filterDrawerClose" aria-label="Close filters">
-          <span aria-hidden="true">✕</span>
-        </button>
-      </div>
+      <!-- Main content area (will be moved below) -->
+      <div class="drawer-content">
+        <!-- Content goes here -->
 
-      <div class="filter-drawer-content">
-        <!-- Search -->
-        <div class="filter-group">
-          <h3>Search</h3>
-          <div class="search-wrapper">
-            <input
-              id="q"
-              type="search"
-              placeholder="Search title, domain, tags…"
-              autocomplete="off"
-              aria-label="Search dashboards"
-            />
+        <!-- Apple-Inspired Header with Glass Morphism -->
+        <header class="site-header sticky top-0 z-50">
+          <div class="max-w-7xl mx-auto px-6 lg:px-8 py-6">
+            <div class="flex flex-col gap-6">
+              <!-- Top Row: Branding + Dashboard Count + Toolbar -->
+              <div class="flex flex-wrap items-center justify-between gap-6">
+                <!-- Left: Brand Identity -->
+                <div class="flex items-center gap-4">
+                  <div
+                    class="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg ring-4 ring-white/40 ring-offset-2 ring-offset-base-100"
+                  >
+                    <svg
+                      class="w-7 h-7 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h1
+                      class="text-2xl lg:text-3xl font-bold tracking-tight text-base-content"
+                    >
+                      Dashboard Showcase
+                    </h1>
+                    <p class="brand-subtitle mt-1">
+                      Brought to you by Austin Public Health
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Right: Dashboard Count + Toolbar -->
+                <div class="flex items-center gap-3">
+                  <div class="count-pill">
+                    <span class="text-3xl font-bold text-primary" id="siteCount"
+                      >0</span
+                    >
+                    <div class="text-left">
+                      <div
+                        class="text-xs text-base-content/60 uppercase tracking-[0.22em]"
+                      >
+                        Dashboards
+                      </div>
+                      <div
+                        class="text-xs font-medium text-primary"
+                        id="filterIndicator"
+                      ></div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div
+                      class="tooltip tooltip-primary"
+                      data-tip="Toggle filters"
+                      id="filterToggleTooltip"
+                    >
+                      <label
+                        for="filter-drawer"
+                        class="toolbar-button drawer-button"
+                        id="filterToggleButton"
+                        role="button"
+                        aria-label="Toggle filters"
+                        aria-controls="filterSidebar"
+                        aria-pressed="false"
+                        aria-expanded="false"
+                      >
+                        <span class="sr-only">Toggle filters</span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          class="w-5 h-5"
+                          aria-hidden="true"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 105.25 5.25a7.5 7.5 0 0011.4 11.4z"
+                          />
+                        </svg>
+                      </label>
+                    </div>
+                    <div
+                      class="tooltip tooltip-primary"
+                      data-tip="Print Learning Guide"
+                      id="learningBtnTooltip"
+                    >
+                      <button
+                        class="toolbar-button"
+                        id="toggleLearning"
+                        type="button"
+                        aria-pressed="false"
+                        aria-label="Print Learning Guide"
+                      >
+                        <span class="sr-only">Print Learning Guide</span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          class="w-5 h-5"
+                          aria-hidden="true"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <div
+                      class="tooltip tooltip-primary"
+                      data-tip="Toggle theme"
+                      id="themeToggleTooltip"
+                    >
+                      <button
+                        class="toolbar-button"
+                        id="themeToggle"
+                        type="button"
+                        title="Toggle theme"
+                        aria-pressed="false"
+                      >
+                        <span class="sr-only">Toggle color theme</span>
+                      <svg
+                        data-theme-icon="dark"
+                        class="w-5 h-5"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M12 18a6 6 0 110-12 6 6 0 010 12zm0 3a9 9 0 100-18 9 9 0 000 18z"
+                        />
+                      </svg>
+                      <svg
+                        data-theme-icon="light"
+                        class="w-5 h-5 hidden"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"
+                        />
+                      </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Row: Tagline -->
+              <p
+                class="hidden lg:block text-base text-base-content/70 max-w-3xl"
+              >
+                A curated collection for municipal professionals seeking
+                inspiration and best practices
+              </p>
+            </div>
           </div>
-        </div>
+        </header>
 
-        <!-- Platform Filter Group -->
-        <div class="filter-group">
-          <h3>Platform</h3>
-          <div id="chips-platform" class="chips"></div>
-        </div>
-
-        <!-- Use Case Filter Group -->
-        <div class="filter-group">
-          <h3>Use Case</h3>
-          <div id="chips-usecase" class="chips"></div>
-        </div>
-
-        <!-- Audience Filter Group -->
-        <div class="filter-group">
-          <h3>Audience</h3>
-          <div id="chips-audience" class="chips"></div>
-        </div>
-
-        <!-- Pattern Filter Group -->
-        <div class="filter-group">
-          <h3>Pattern</h3>
-          <div id="chips-pattern" class="chips"></div>
-        </div>
-
-        <!-- Other Tags Filter Group -->
-        <div class="filter-group">
-          <h3>Other Tags</h3>
-          <div id="chips-other" class="chips"></div>
-        </div>
-      </div>
-    </aside>
-
-    <header role="banner">
-      <div class="wrap hero">
-        <div class="title">
-          <div class="logo" aria-hidden="true"><span>DV</span></div>
-          <div class="title-text">
-            <h1>Data Visualization Dashboard Showcase</h1>
-            <p class="subtitle">
-              <span class="subtitle-count"
-                ><strong id="siteCount">0</strong><span id="filterIndicator"></span> dashboards curated</span
+        <main
+          role="main"
+          id="main-content"
+          class="max-w-7xl mx-auto px-6 lg:px-8 py-6"
+        >
+          <!-- Active Filters Row -->
+          <div
+            id="activeFilters"
+            class="active-filter-banner mb-6"
+            style="display: none"
+            role="status"
+            aria-live="polite"
+          >
+            <div class="shrink-0 text-primary">
+              <svg
+                class="w-5 h-5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
               >
-              <span class="subtitle-detail"
-                >A curated collection for municipal professionals seeking inspiration and best practices in data visualization and dashboard design.</span
-              >
+                <path
+                  fill-rule="evenodd"
+                  d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+            <div class="flex-1 space-y-2">
+              <div class="font-semibold text-sm" id="filterResultCount">
+                Filters Active
+              </div>
+              <div class="chip-tray" id="activeFilterChips">
+                <!-- Chips inserted by filters.js -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Grid -->
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-8"
+            id="grid"
+            aria-live="polite"
+            aria-label="Dashboard cards"
+          >
+            <!-- cards populated via JS -->
+          </div>
+
+          <!-- Meta Information -->
+          <div class="mt-8 space-y-2 text-sm text-base-content/60">
+            <p>
+              Thumbnails are generated from public URLs using snapshot services.
+              Blurbs are fetched automatically from each page's readable content
+              (proxied for CORS). If a site blocks snapshots or content, the
+              card will fall back gracefully.
+            </p>
+            <p id="learningTip">
+              Tip: Enable 📚 Learning Mode to follow guided prompts and print a
+              personal study guide.
             </p>
           </div>
-        </div>
-        <nav class="controls" aria-label="Filter and search controls">
-          <select
-            id="roleSelect"
-            title="Select learning perspective"
-            aria-label="Select learning perspective"
+        </main>
+
+        <!-- Learning Mode Modal -->
+        <dialog id="learningOverlay" class="modal" aria-keyshortcuts="Escape">
+          <div
+            class="modal-box learning-panel max-w-4xl h-[90vh] flex flex-col"
+            id="learningPanel"
           >
-            <option value="student">Participant view</option>
-            <option value="coach">Coach view</option>
-          </select>
-          <select id="sortBy" title="Sort">
-            <option value="default">Sort: Default</option>
-            <option value="title">Sort: Title (A→Z)</option>
-            <option value="domain">Sort: Domain (A→Z)</option>
-          </select>
-          <button id="toggleLearning" aria-label="Toggle learning mode">📚 Learning Mode</button>
-          <button id="clearFilters" class="btn-clear" aria-label="Clear all filters" style="display:none;">Clear filters ✕</button>
-        </nav>
-      </div>
-    </header>
-
-    <main role="main" id="main-content">
-      <div class="wrap">
-        <!-- Active Filters Row (NEW) -->
-        <div id="activeFilters" class="active-filters-row" style="display:none;" role="status" aria-live="polite" aria-label="Active filters">
-          <!-- Dynamically populated removable filter chips -->
-        </div>
-
-        <div class="grid" id="grid" aria-live="polite" aria-label="Dashboard cards">
-          <!-- cards populated via JS -->
-        </div>
-
-        <p class="meta notice">
-          Thumbnails are generated from public URLs using snapshot services.
-          Blurbs are fetched automatically from each page's readable content
-          (proxied for CORS). If a site blocks snapshots or content, the card
-          will fall back gracefully.
-        </p>
-        <p class="meta notice" id="learningTip">
-          Tip: Enable 📚 Learning Mode to follow guided prompts and print a
-          personal study guide.
-        </p>
-      </div>
-    </main>
-
-    <!-- Learning Mode Overlay -->
-    <div id="learningOverlay" class="learning-overlay" aria-modal="true" role="dialog" aria-labelledby="learningTitle">
-      <div class="learning-panel" id="learningPanel">
-        <header class="learning-header">
-          <h2 id="learningTitle">📚 Learning Mode</h2>
-          <button id="closeLearning" class="learning-close" aria-label="Close learning mode">✕</button>
-        </header>
-        <div class="learning-body">
-          <div id="checklistContent" class="learning-checklist"></div>
-        </div>
-        <footer class="learning-footer">
-          <button id="printChecklist" class="btn primary">Print Study Guide</button>
-        </footer>
-      </div>
-    </div>
-
-    <!-- Detail Modal -->
-    <div id="detailOverlay" class="detail-overlay" aria-modal="true" role="dialog" aria-labelledby="detailTitle">
-      <article class="detail-modal" id="detailModal">
-        <button id="closeDetail" class="detail-close" aria-label="Close detail view">✕</button>
-        <header class="detail-header">
-          <div class="detail-category" id="detailCategory"></div>
-          <h2 id="detailTitle" class="detail-title"></h2>
-          <p id="detailDomain" class="detail-domain"></p>
-        </header>
-        <div class="detail-body" id="detailBody">
-          <div class="detail-media" id="detailMedia">
-            <img id="detailScreenshot" alt="" loading="lazy" />
-          </div>
-          <div class="detail-copy">
-            <p id="detailSummary" class="detail-summary"></p>
-            <div id="detailBlurb" class="detail-blurb"></div>
-            <section class="detail-meta">
-              <div class="detail-meta-group">
-                <h3>Tags</h3>
-                <div id="detailTags" class="detail-chips"></div>
+            <div class="learning-panel__header">
+              <div class="learning-panel__title">
+                <span class="learning-panel__icon" aria-hidden="true">🎓</span>
+                <div>
+                  <h2 id="learningTitle">Learning Mode</h2>
+                  <p id="learningRoleSubtitle" class="learning-panel__subtitle">
+                    Guided prompts, notes, and takeaways
+                  </p>
+                </div>
               </div>
-              <div class="detail-meta-group">
-                <h3>Techniques</h3>
-                <div id="detailTechniques" class="detail-chips"></div>
+              <form method="dialog">
+                <button
+                  id="closeLearning"
+                  class="btn btn-sm btn-circle btn-ghost"
+                  aria-label="Close learning mode (Press Escape)"
+                  aria-keyshortcuts="Escape"
+                >
+                  ✕
+                </button>
+              </form>
+            </div>
+            <div
+              class="learning-panel__body custom-scrollbar"
+              role="region"
+              aria-live="polite"
+            >
+              <div id="checklistContent" class="learning-stack"></div>
+            </div>
+            <div class="learning-panel__footer">
+              <div class="learning-panel__footer-copy">
+                <span class="learning-panel__footer-title"
+                  >Need a takeaway?</span
+                >
+                <span class="learning-panel__footer-sub">
+                  Export this checklist as a printable guide.
+                </span>
               </div>
-            </section>
+              <div
+                class="tooltip tooltip-primary"
+                data-tip="Print Learning Guide"
+                id="printTooltip"
+              >
+                <button
+                  id="printChecklist"
+                  class="btn btn-primary btn-icon"
+                  aria-label="Print Learning Guide"
+                  type="button"
+                >
+                  <span class="sr-only">Print Learning Guide</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-5 h-5"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+          </form>
+        </dialog>
+
+        <!-- Detail Modal -->
+        <dialog id="detailModal" class="modal" aria-keyshortcuts="Escape">
+          <div class="modal-box detail-panel max-w-6xl">
+            <form method="dialog">
+              <button
+                id="closeDetail"
+                class="btn btn-sm btn-circle btn-ghost detail-panel__close"
+                aria-label="Close detail view (Press Escape)"
+                aria-keyshortcuts="Escape"
+              >
+                ✕
+              </button>
+            </form>
+
+            <div class="detail-panel__grid">
+              <!-- Image Section -->
+              <figure class="detail-panel__media">
+                <img
+                  id="detailScreenshot"
+                  alt=""
+                  loading="lazy"
+                  class="detail-panel__image"
+                />
+                <div
+                  id="detailCategory"
+                  class="detail-panel__category"
+                  aria-live="polite"
+                ></div>
+              </figure>
+
+              <!-- Content Section -->
+              <div class="detail-panel__body custom-scrollbar">
+                <header class="detail-panel__header">
+                  <div>
+                    <h2 id="detailTitle" class="detail-panel__title"></h2>
+                    <p id="detailDomain" class="detail-panel__domain"></p>
+                  </div>
+                </header>
+
+                <section class="detail-panel__section">
+                  <h3>Summary</h3>
+                  <p id="detailSummary" class="detail-panel__text"></p>
+                </section>
+
+                <section class="detail-panel__section detail-panel__callout">
+                  <div class="detail-panel__callout-icon" aria-hidden="true">
+                    ℹ️
+                  </div>
+                  <div
+                    id="detailBlurb"
+                    class="detail-panel__callout-text"
+                  ></div>
+                </section>
+
+                <section class="detail-panel__section">
+                  <h3>Tags</h3>
+                  <div id="detailTags" class="detail-panel__chiplist"></div>
+                </section>
+
+                <section class="detail-panel__section">
+                  <h3>Techniques</h3>
+                  <div
+                    id="detailTechniques"
+                    class="detail-panel__chiplist detail-panel__chiplist--muted"
+                  ></div>
+                </section>
+
+                <div class="detail-panel__actions">
+                  <a
+                    id="detailVisit"
+                    class="btn btn-primary detail-panel__cta"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Open Dashboard ↗
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+          </form>
+        </dialog>
+
+        <!-- Onboarding Modal -->
+        <dialog id="onboardingOverlay" class="modal" aria-keyshortcuts="Escape">
+          <div class="modal-box max-w-2xl">
+            <form method="dialog">
+              <button
+                id="onboardingClose"
+                class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4"
+                aria-label="Close onboarding (Press Escape)"
+                aria-keyshortcuts="Escape"
+              >
+                ✕
+              </button>
+            </form>
+            <div id="onboardingContent" class="py-4"></div>
+          </div>
+          <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+          </form>
+        </dialog>
+
+        <!-- Learning Mode Template - Removed per user request -->
+      </div>
+      <!-- End of drawer-content -->
+
+      <!-- Drawer Sidebar -->
+      <div class="drawer-side z-50" id="filterSidebar">
+        <label
+          for="filter-drawer"
+          aria-label="close sidebar"
+          class="drawer-overlay"
+        ></label>
+        <div class="menu p-4 w-72 min-h-full dashboard-drawer custom-scrollbar">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-bold">Filters</h2>
+            <label
+              for="filter-drawer"
+              class="btn btn-sm btn-circle btn-ghost lg:hidden"
+              >✕</label
+            >
+          </div>
+
+          <!-- Search -->
+          <div class="form-control mb-4">
+            <label class="filter-search">
+              <span class="sr-only">Search dashboards</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="filter-search__icon"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 105.25 5.25a7.5 7.5 0 0011.4 11.4z"
+                />
+              </svg>
+              <input
+                id="q"
+                type="search"
+                placeholder="Search dashboards…"
+                class="filter-search__input"
+                autocomplete="off"
+              />
+              <button
+                type="button"
+                id="clearSearch"
+                class="filter-search__clear"
+                aria-label="Clear search"
+                style="display: none;"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                </svg>
+              </button>
+            </label>
+          </div>
+
+          <!-- View Options Section -->
+          <div class="mb-6 space-y-3">
+            <h3 class="filter-heading">View Options</h3>
+
+            <!-- Sort Dropdown -->
+            <select
+              class="select select-bordered w-full select-sm"
+              id="sortBy"
+              title="Sort dashboards"
+            >
+              <option value="default">Default Order</option>
+              <option value="title">By Title (A→Z)</option>
+              <option value="domain">By Domain (A→Z)</option>
+            </select>
+
+            <!-- Role Selector -->
+            <select
+              class="select select-bordered w-full select-sm"
+              id="roleSelect"
+              title="Select learning perspective"
+            >
+              <option value="student">Participant View</option>
+              <option value="coach">Coach View</option>
+            </select>
+
+            <!-- Clear Filters Button -->
+            <button
+              class="btn btn-ghost btn-sm w-full gap-2"
+              id="clearFilters"
+              style="display: none"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              Clear All Filters
+            </button>
+          </div>
+
+          <div class="divider text-xs text-base-content/40 my-2">FILTER BY</div>
+
+          <!-- Filter Groups with Collapse -->
+          <div class="collapse collapse-arrow filter-section mb-3">
+            <input type="checkbox" checked />
+            <div class="collapse-title font-medium text-sm px-4">
+              Platform
+              <span
+                class="badge badge-ghost badge-sm ml-2"
+                id="platform-count"
+                style="display: none"
+              ></span>
+            </div>
+            <div class="collapse-content">
+              <div id="chips-platform" class="chip-tray"></div>
+            </div>
+          </div>
+
+          <div class="collapse collapse-arrow filter-section mb-3">
+            <input type="checkbox" />
+            <div class="collapse-title font-medium text-sm px-4">
+              Use Case
+              <span
+                class="badge badge-ghost badge-sm ml-2"
+                id="usecase-count"
+                style="display: none"
+              ></span>
+            </div>
+            <div class="collapse-content">
+              <div id="chips-usecase" class="chip-tray"></div>
+            </div>
+          </div>
+
+          <div class="collapse collapse-arrow filter-section mb-3">
+            <input type="checkbox" />
+            <div class="collapse-title font-medium text-sm px-4">
+              Audience
+              <span
+                class="badge badge-ghost badge-sm ml-2"
+                id="audience-count"
+                style="display: none"
+              ></span>
+            </div>
+            <div class="collapse-content">
+              <div id="chips-audience" class="chip-tray"></div>
+            </div>
+          </div>
+
+          <div class="collapse collapse-arrow filter-section mb-3">
+            <input type="checkbox" />
+            <div class="collapse-title font-medium text-sm px-4">
+              Pattern
+              <span
+                class="badge badge-ghost badge-sm ml-2"
+                id="pattern-count"
+                style="display: none"
+              ></span>
+            </div>
+            <div class="collapse-content">
+              <div id="chips-pattern" class="chip-tray"></div>
+            </div>
+          </div>
+
+          <div class="collapse collapse-arrow filter-section">
+            <input type="checkbox" />
+            <div class="collapse-title font-medium text-sm px-4">
+              Other Tags
+              <span
+                class="badge badge-ghost badge-sm ml-2"
+                id="other-count"
+                style="display: none"
+              ></span>
+            </div>
+            <div class="collapse-content">
+              <div id="chips-other" class="chip-tray"></div>
+            </div>
           </div>
         </div>
-        <footer class="detail-actions">
-          <a id="detailVisit" class="btn primary" target="_blank" rel="noopener"
-            >Open Dashboard ↗</a
-          >
-        </footer>
-      </article>
-    </div>
-
-    <!-- Onboarding Overlay -->
-    <div id="onboardingOverlay" class="onboarding-overlay" aria-modal="true" role="dialog" aria-labelledby="onboardingTitle" hidden>
-      <div class="onboarding-modal">
-        <button id="onboardingClose" class="onboarding-close" aria-label="Close onboarding">✕</button>
-        <div id="onboardingContent" class="onboarding-content"></div>
       </div>
+      <!-- End of drawer-side -->
     </div>
+    <!-- End of drawer -->
 
-    <!-- Learning Mode Template -->
-    <template id="learning-panel-template">
-      <div class="learning-section">
-        <h4></h4>
-        <div class="learning-content"></div>
-        <div class="learning-notes">
-          <h4>Your Notes</h4>
-          <textarea id="reviewNotes" placeholder="Take notes as you explore…" aria-label="Learning notes"></textarea>
+    <!-- Austin Public Health Footer -->
+    <footer class="bg-base-200 border-t border-base-300 py-8 mt-12">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex flex-col items-center gap-4">
+          <img
+            src="Austin-Public-Health-Logo-Official.png"
+            alt="Austin Public Health Logo"
+            class="h-16 w-auto object-contain"
+          />
+          <p class="text-sm text-base-content/70 text-center">
+            Brought to you by
+            <span class="font-semibold austin-gradient-text"
+              >Austin Public Health</span
+            >
+          </p>
+          <div class="flex gap-4 text-xs text-base-content/50">
+            <span id="copyright">&copy; 2024 City of Austin</span>
+            <span>|</span>
+            <a
+              href="https://www.austintexas.gov/department/austin-public-health"
+              target="_blank"
+              rel="noopener"
+              class="hover:text-primary transition-colors"
+            >
+              austintexas.gov/aph
+            </a>
+          </div>
         </div>
       </div>
-    </template>
+    </footer>
 
     <!-- Modular JavaScript (ES6 Modules) -->
-    <script type="module" src="scripts/main.js"></script>
+    <script type="module" src="scripts/main.js?v=4"></script>
+    <label
+      for="filter-drawer"
+      class="filter-reveal-zone drawer-button"
+      id="filterRevealZone"
+      aria-label="Show filters"
+      aria-hidden="true"
+      tabindex="-1"
+    ></label>
   </body>
 </html>

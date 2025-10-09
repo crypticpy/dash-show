@@ -4,9 +4,8 @@
  * Handles opening, closing, keyboard navigation, and focus management.
  */
 
-import { hostname, screenshotURL, getCategoryIcon } from "./cards.js";
-import { renderDetailChips } from "./cards.js";
-import { $, $$ } from "./utils.js";
+import { getCategoryIcon, renderDetailChips } from "./cards.js";
+import { $, $$, hostname, screenshotURL, escapeHtml } from "./utils.js";
 
 // Focusable selector for keyboard navigation
 const FOCUSABLE_SELECTOR =
@@ -22,23 +21,8 @@ let lastFocusedElement = null;
  * @param {Object} elements - Modal DOM elements
  */
 export function openDetailModal(item, card, elements) {
-  const {
-    overlay,
-    modal,
-    category,
-    title,
-    domain,
-    summaryText,
-    blurb,
-    tags,
-    techniques,
-    visitBtn,
-    openBtn,
-    screenshot,
-    body,
-  } = elements;
-
-  if (!overlay || !modal) return;
+  const modal = $("#detailModal");
+  if (!modal) return;
 
   // Store last focused element
   lastFocusedElement =
@@ -47,34 +31,43 @@ export function openDetailModal(item, card, elements) {
       : null;
 
   // Populate category
-  const primaryTag = Array.isArray(item.tags) && item.tags.length
-    ? item.tags[0]
-    : "Uncategorized";
+  const primaryTag =
+    Array.isArray(item.tags) && item.tags.length
+      ? item.tags[0]
+      : "Uncategorized";
   const icon = getCategoryIcon(primaryTag);
+  const category = $("#detailCategory");
   if (category) {
-    category.textContent = `${icon ? `${icon} ` : ""}${primaryTag}`;
+    category.setAttribute("aria-label", `Category: ${primaryTag}`);
+    category.innerHTML = `
+      <span class="category-icon" aria-hidden="true">${icon}</span>
+      ${escapeHtml(primaryTag)}
+    `;
   }
 
   // Populate title and domain
+  const title = $("#detailTitle");
   if (title) {
     title.textContent = item.title || "Untitled dashboard";
   }
 
   const domainText = hostname(item.url);
+  const domain = $("#detailDomain");
   if (domain) {
     domain.textContent = domainText;
   }
 
   // Populate summary (curator notes)
+  const summaryText = $("#detailSummary");
   if (summaryText) {
-    const summary =
-      item.description?.trim()
-        ? item.description
-        : "Curator notes will populate soon.";
+    const summary = item.description?.trim()
+      ? item.description
+      : "Curator notes will populate soon.";
     summaryText.textContent = summary;
   }
 
   // Populate blurb (fetched content)
+  const blurb = $("#detailBlurb");
   if (blurb) {
     const blurbNode = card?.querySelector(".blurb");
     const blurbText = blurbNode?.textContent.trim() || "";
@@ -83,16 +76,19 @@ export function openDetailModal(item, card, elements) {
   }
 
   // Render tags and techniques
+  const tags = $("#detailTags");
+  const techniques = $("#detailTechniques");
   renderDetailChips(tags, item.tags, "tag");
   renderDetailChips(techniques, item.techniques, "technique");
 
   // Set action button URLs
+  const visitBtn = $("#detailVisit");
   if (visitBtn) visitBtn.href = item.url || "#";
-  if (openBtn) openBtn.href = item.url || "#";
 
   // Load screenshot
+  const screenshot = $("#detailScreenshot");
   if (screenshot) {
-    const cardImg = card?.querySelector(".thumb img");
+    const cardImg = card?.querySelector("img[data-src], img.loaded");
     const candidateSrc =
       cardImg?.src && cardImg.src.length
         ? cardImg.src
@@ -101,19 +97,10 @@ export function openDetailModal(item, card, elements) {
     screenshot.alt = `Screenshot of ${item.title}`;
   }
 
-  // Scroll to top
-  if (body) {
-    if (typeof body.scrollTo === "function") {
-      body.scrollTo({ top: 0, behavior: "auto" });
-    } else {
-      body.scrollTop = 0;
-    }
-  }
-
-  // Show modal
-  overlay.hidden = false;
-  document.body.classList.add("detail-open");
-  focusFirstElement(overlay, modal);
+  // Show modal using DaisyUI method
+  modal.showModal();
+  const modalSurface = modal.querySelector(".modal-box") || modal;
+  focusFirstElement(modalSurface);
 }
 
 /**
@@ -121,19 +108,51 @@ export function openDetailModal(item, card, elements) {
  * @param {Object} elements - Modal DOM elements
  */
 export function closeDetailModal(elements) {
-  const { overlay } = elements;
+  const modal = $("#detailModal");
+  if (!modal || !modal.open) return;
 
-  if (!overlay || overlay.hidden) return;
+  // Close modal using DaisyUI method
+  modal.close();
 
-  overlay.hidden = true;
-  document.body.classList.remove("detail-open");
-
-  // Restore focus
+  // Restore focus with safety checks
   if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
-    lastFocusedElement.focus();
+    // Check if element still exists in DOM
+    if (document.contains(lastFocusedElement)) {
+      // Check if element is focusable (not disabled, visible)
+      const isDisabled = lastFocusedElement.hasAttribute("disabled");
+      const isVisible = lastFocusedElement.offsetParent !== null;
+
+      if (!isDisabled && isVisible) {
+        lastFocusedElement.focus();
+      } else {
+        // Fallback to first focusable card or body
+        focusFallbackElement();
+      }
+    } else {
+      // Element was removed, find fallback
+      focusFallbackElement();
+    }
+  } else {
+    focusFallbackElement();
   }
 
   lastFocusedElement = null;
+}
+
+/**
+ * Focus fallback element when previous focus target is unavailable
+ * @private
+ */
+function focusFallbackElement() {
+  // Try to focus the first visible card
+  const firstCard = document.querySelector('.dashboard-card:not([style*="display: none"])');
+  if (firstCard && typeof firstCard.focus === "function") {
+    firstCard.focus();
+    return;
+  }
+
+  // Ultimate fallback: focus body
+  document.body.focus();
 }
 
 /**
@@ -141,17 +160,17 @@ export function closeDetailModal(elements) {
  * @param {HTMLElement} overlay - Modal overlay element
  * @param {HTMLElement} modal - Modal content element
  */
-function focusFirstElement(overlay, modal) {
-  if (!overlay) return;
+function focusFirstElement(container) {
+  if (!container) return;
 
-  const focusable = $$(FOCUSABLE_SELECTOR, overlay).filter(
+  const focusable = $$(FOCUSABLE_SELECTOR, container).filter(
     (el) =>
       !el.hasAttribute("disabled") &&
       el.getAttribute("tabindex") !== "-1" &&
-      el.getAttribute("aria-hidden") !== "true"
+      el.getAttribute("aria-hidden") !== "true",
   );
 
-  const target = focusable[0] || modal;
+  const target = focusable[0] || container;
   if (target && typeof target.focus === "function") {
     target.focus();
   }
@@ -163,9 +182,10 @@ function focusFirstElement(overlay, modal) {
  * @param {Object} elements - Modal DOM elements
  */
 export function handleDetailKeydown(event, elements) {
-  const { overlay, modal } = elements;
+  const modal = elements.modal || $("#detailModal");
+  if (!modal || !modal.open) return;
 
-  if (!overlay || overlay.hidden) return;
+  const container = modal.querySelector(".modal-box") || modal;
 
   // Close on Escape
   if (event.key === "Escape") {
@@ -176,27 +196,25 @@ export function handleDetailKeydown(event, elements) {
 
   // Handle Tab navigation
   if (event.key === "Tab") {
-    trapFocus(event, overlay, modal);
+    trapFocus(event, container);
   }
 }
 
 /**
  * Trap focus within modal using Tab key
  * @param {KeyboardEvent} event - Keyboard event
- * @param {HTMLElement} overlay - Modal overlay
- * @param {HTMLElement} modal - Modal content
+ * @param {HTMLElement} container - Modal focus container
  */
-function trapFocus(event, overlay, modal) {
-  const focusable = $$(FOCUSABLE_SELECTOR, overlay).filter(
+function trapFocus(event, container) {
+  const focusable = $$(FOCUSABLE_SELECTOR, container).filter(
     (el) =>
-      !el.hasAttribute("disabled") &&
-      el.getAttribute("aria-hidden") !== "true"
+      !el.hasAttribute("disabled") && el.getAttribute("aria-hidden") !== "true",
   );
 
   if (focusable.length === 0) {
     event.preventDefault();
-    if (modal && typeof modal.focus === "function") {
-      modal.focus();
+    if (container && typeof container.focus === "function") {
+      container.focus();
     }
     return;
   }
@@ -222,11 +240,13 @@ function trapFocus(event, overlay, modal) {
  */
 export function createDetailHandlers(elements) {
   const keydownHandler = (event) => handleDetailKeydown(event, elements);
-
   const closeHandler = () => closeDetailModal(elements);
 
+  const modalElement = elements.modal || $("#detailModal");
+  const overlayElement = elements.overlay || modalElement;
+
   const overlayClickHandler = (event) => {
-    if (event.target === elements.overlay) {
+    if (overlayElement && event.target === overlayElement) {
       closeDetailModal(elements);
     }
   };
@@ -244,14 +264,16 @@ export function createDetailHandlers(elements) {
  * @param {Object} handlers - Event handler functions
  */
 export function attachDetailListeners(elements, handlers) {
-  const { overlay, closeBtn } = elements;
+  const closeBtn = elements.closeBtn;
+  const overlayElement =
+    elements.overlay || elements.modal || $("#detailModal");
 
   if (closeBtn) {
     closeBtn.addEventListener("click", handlers.closeHandler);
   }
 
-  if (overlay) {
-    overlay.addEventListener("mousedown", handlers.overlayClickHandler);
+  if (overlayElement) {
+    overlayElement.addEventListener("mousedown", handlers.overlayClickHandler);
   }
 
   // Keydown handler is attached when modal opens

@@ -5,7 +5,12 @@
  */
 
 import { $, $$, escapeHtml } from "./utils.js";
-import { getCurrentRole, setCurrentRole, getNotes, saveNotes } from "./state.js";
+import {
+  getCurrentRole,
+  setCurrentRole,
+  getNotes,
+  saveNotes,
+} from "./state.js";
 import { hasSeenOnboarding, markOnboardingSeen } from "./state.js";
 
 // Focusable selector for keyboard navigation
@@ -25,7 +30,8 @@ const ROLE_CONTENT = {
     sections: [
       {
         title: "🎯 Study Rhythm",
-        description: "Use this loop each time you explore a dashboard exemplar.",
+        description:
+          "Use this loop each time you explore a dashboard exemplar.",
         items: [
           "☐ Identify the audience and the single decision this view should unlock.",
           "☐ Summarize the prioritization story in one sentence—does the evidence back it up?",
@@ -35,7 +41,8 @@ const ROLE_CONTENT = {
       },
       {
         title: "🏙️ Public CIP Dashboards — Participant Lens",
-        description: "Look for signals that help residents and leaders understand capital tradeoffs.",
+        description:
+          "Look for signals that help residents and leaders understand capital tradeoffs.",
         items: [
           "☐ Map funding phases to timeline and geography to confirm equity of coverage.",
           "☐ Check whether project categories explain who benefits and when.",
@@ -45,7 +52,8 @@ const ROLE_CONTENT = {
       },
       {
         title: "🏢 Portfolio & Product Tools — Participant Lens",
-        description: "Study how product teams frame prioritization logic and scenario planning.",
+        description:
+          "Study how product teams frame prioritization logic and scenario planning.",
         items: [
           "☐ Decode the scoring formula: inputs, weights, and refresh cadence.",
           "☐ Watch for signals about capacity, dependencies, or sequencing choices.",
@@ -55,7 +63,8 @@ const ROLE_CONTENT = {
       },
       {
         title: "📊 Visualization Patterns & Power BI",
-        description: "Pay attention to interaction design and the path from question to action.",
+        description:
+          "Pay attention to interaction design and the path from question to action.",
         items: [
           "☐ Follow the eye path—does the layout guide question → insight → action?",
           "☐ Test filters and tooltips to see if they reveal trustworthy context.",
@@ -65,7 +74,8 @@ const ROLE_CONTENT = {
       },
       {
         title: "🧠 Reflection Prompts",
-        description: "Turn observations into experiments for your own coursework or projects.",
+        description:
+          "Turn observations into experiments for your own coursework or projects.",
         items: [
           "• What surprised you about how this organization communicates priority?",
           "• Which chart, phrase, or scoring idea would improve your storytelling immediately?",
@@ -76,7 +86,8 @@ const ROLE_CONTENT = {
     ],
     notes: {
       title: "✍️ Field Notes",
-      description: "Capture observations, follow-up questions, and ideas to test with your team.",
+      description:
+        "Capture observations, follow-up questions, and ideas to test with your team.",
       placeholder: "Capture observations, follow-up questions, next actions…",
     },
   },
@@ -91,7 +102,8 @@ const ROLE_CONTENT = {
     sections: [
       {
         title: "🎯 Facilitation Rhythm",
-        description: "Use this sequence when guiding teams through an exemplar.",
+        description:
+          "Use this sequence when guiding teams through an exemplar.",
         items: [
           "☐ Clarify the session objective and the decision skill you are reinforcing.",
           "☐ Preview what good evidence looks like before the group explores the dashboard.",
@@ -101,7 +113,8 @@ const ROLE_CONTENT = {
       },
       {
         title: "🏙️ Public CIP Dashboards — Coaching Focus",
-        description: "Equip civic teams to communicate transparency and accountability.",
+        description:
+          "Equip civic teams to communicate transparency and accountability.",
         items: [
           "☐ Compare budget, schedule, and geography—what must leaders explain in public?",
           "☐ Highlight how risk, delays, or equity tradeoffs appear (or fail to appear).",
@@ -111,7 +124,8 @@ const ROLE_CONTENT = {
       },
       {
         title: "🏢 Portfolio & Product Tools — Coaching Focus",
-        description: "Model how to translate vendor frameworks into your organization's language.",
+        description:
+          "Model how to translate vendor frameworks into your organization's language.",
         items: [
           "☐ Reverse-engineer the scoring rubric and align it with your portfolio taxonomy.",
           "☐ Demonstrate how to facilitate prioritization when data quality is uncertain.",
@@ -121,7 +135,8 @@ const ROLE_CONTENT = {
       },
       {
         title: "📊 Visualization Patterns — Workshop Callouts",
-        description: "Prepare teaching moments that connect design choices to stakeholder impact.",
+        description:
+          "Prepare teaching moments that connect design choices to stakeholder impact.",
         items: [
           "☐ Spotlight design moves that make tradeoffs and risk unmistakable.",
           "☐ Offer an alternative framing if the chart over-promises certainty.",
@@ -131,7 +146,8 @@ const ROLE_CONTENT = {
       },
       {
         title: "🧠 Coaching Prompts",
-        description: "Guide facilitators as they adapt the exemplar to their teams.",
+        description:
+          "Guide facilitators as they adapt the exemplar to their teams.",
         items: [
           "• How will you adapt this exemplar for a live working session?",
           "• Where might teams misinterpret the scoring story without facilitation?",
@@ -142,7 +158,8 @@ const ROLE_CONTENT = {
     ],
     notes: {
       title: "🗂️ Facilitation Plan",
-      description: "Outline logistics, owners, and follow-ups for your coaching sessions.",
+      description:
+        "Outline logistics, owners, and follow-ups for your coaching sessions.",
       placeholder: "Outline facilitation moves, owners, and follow-up actions…",
     },
   },
@@ -171,10 +188,7 @@ export function renderLearningSections(config, container) {
     container.appendChild(sectionEl);
   });
 
-  if (config.notes) {
-    const notesSection = createNotesSection(config.notes);
-    container.appendChild(notesSection);
-  }
+  // Notes section removed per user request
 }
 
 /**
@@ -184,22 +198,26 @@ export function renderLearningSections(config, container) {
  */
 function createSectionElement(section) {
   const sectionEl = document.createElement("div");
-  sectionEl.className = "learning-section";
+  sectionEl.className = "learning-card";
 
   const heading = document.createElement("h4");
+  heading.className = "learning-card__title";
   heading.textContent = section.title;
   sectionEl.appendChild(heading);
 
   if (section.description) {
     const para = document.createElement("p");
+    para.className = "learning-card__subtitle";
     para.textContent = section.description;
     sectionEl.appendChild(para);
   }
 
   if (Array.isArray(section.items) && section.items.length) {
     const list = document.createElement("ul");
+    list.className = "learning-card__list";
     section.items.forEach((item) => {
       const li = document.createElement("li");
+      li.className = "learning-card__item";
       li.textContent = item;
       list.appendChild(li);
     });
@@ -216,20 +234,23 @@ function createSectionElement(section) {
  */
 function createNotesSection(notesConfig) {
   const notesSection = document.createElement("div");
-  notesSection.className = "learning-section";
+  notesSection.className = "learning-card learning-notes";
 
   const heading = document.createElement("h4");
+  heading.className = "learning-card__title";
   heading.textContent = notesConfig.title;
   notesSection.appendChild(heading);
 
   if (notesConfig.description) {
     const para = document.createElement("p");
+    para.className = "learning-card__subtitle";
     para.textContent = notesConfig.description;
     notesSection.appendChild(para);
   }
 
   const textarea = document.createElement("textarea");
   textarea.id = "reviewNotes";
+  textarea.className = "learning-notes__field";
   textarea.placeholder = notesConfig.placeholder || "";
   notesSection.appendChild(textarea);
 
@@ -241,13 +262,8 @@ function createNotesSection(notesConfig) {
  * @param {string} role - Current role
  */
 export function setupNotesPersistence(role) {
-  const notesEl = $("#reviewNotes");
-  if (!notesEl) return;
-
-  notesEl.value = getNotes(role);
-  notesEl.addEventListener("input", () => {
-    saveNotes(role, notesEl.value);
-  });
+  // Notes feature removed per user request
+  return;
 }
 
 /**
@@ -264,15 +280,31 @@ export function renderRole(role, learningModeActive, elements) {
   }
 
   if (elements.printBtn) {
-    elements.printBtn.textContent = config.printLabel || elements.printBtn.textContent;
-    if (config.printAria) {
-      elements.printBtn.setAttribute("aria-label", config.printAria);
-    }
+    const ariaLabel = config.printAria || "Print Learning Guide";
+    elements.printBtn.setAttribute("aria-label", ariaLabel);
+    elements.printBtn.title = config.printTooltip || ariaLabel;
+  }
+
+  if (elements.printTooltip) {
+    elements.printTooltip.setAttribute(
+      "data-tip",
+      config.printTooltip || "Print Learning Guide",
+    );
+  }
+
+  if (elements.roleSubtitle) {
+    elements.roleSubtitle.textContent =
+      config.panelSubtitle || config.printTitle || "Learning Guide";
   }
 
   renderLearningSections(config, elements.checklistContent);
   setupNotesPersistence(role);
-  setLearningButtonState(learningModeActive, role, elements.learningBtn);
+  setLearningButtonState(
+    learningModeActive,
+    role,
+    elements.learningBtn,
+    elements.learningBtnTooltip,
+  );
 }
 
 /**
@@ -281,20 +313,17 @@ export function renderRole(role, learningModeActive, elements) {
  * @param {string} role - Current role
  * @param {HTMLElement} button - Learning button element
  */
-function setLearningButtonState(active, role, button) {
+function setLearningButtonState(active, role, button, tooltip) {
   if (!button) return;
 
-  const config = getRoleConfig(role);
-  const inactiveLabel = config.buttonInactive || "📚 Learning Mode";
-  const activeLabel = config.buttonActive || "📚 Exit Learning Mode";
-
-  button.textContent = active ? activeLabel : inactiveLabel;
-
-  if (config.buttonAria) {
-    button.setAttribute("aria-label", config.buttonAria);
-  }
-
+  const ariaLabel = "Print Learning Guide";
+  button.setAttribute("aria-label", ariaLabel);
+  button.setAttribute("title", ariaLabel);
   button.setAttribute("aria-expanded", String(active));
+
+  if (tooltip) {
+    tooltip.setAttribute("data-tip", ariaLabel);
+  }
 }
 
 /**
@@ -308,23 +337,12 @@ export function printChecklist(role, checklistContent) {
   if (!win) return;
 
   const printable = checklistContent.cloneNode(true);
-  const textarea = printable.querySelector("textarea");
-  const notesField = $("#reviewNotes");
-  const notesValue = notesField ? notesField.value : "";
 
-  if (textarea) {
-    const notesHeading = config.notes?.title || "Field Notes";
-    const safeNotes = notesValue
-      ? escapeHtml(notesValue).replace(/\n/g, "<br>")
-      : "&nbsp;";
-    const notesContainer = document.createElement("div");
-    notesContainer.innerHTML = `<p><strong>${escapeHtml(notesHeading)}</strong></p><div class='notes'>${safeNotes}</div>`;
-    textarea.replaceWith(notesContainer);
-  }
+  const printableTitle =
+    config.printTitle || "Prioritization Visualization Review Guide";
 
-  const printableTitle = config.printTitle || "Prioritization Visualization Review Guide";
-
-  win.document.write(`<!DOCTYPE html><html><head><title>${escapeHtml(printableTitle)}</title>
+  win.document
+    .write(`<!DOCTYPE html><html><head><title>${escapeHtml(printableTitle)}</title>
     <style>
       body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; margin:40px; color:#1f2937;}
       h1{font-size:22px; margin-bottom:12px;}
@@ -332,7 +350,6 @@ export function printChecklist(role, checklistContent) {
       ul{margin:0 0 12px 20px; padding:0;}
       li{margin-bottom:6px; font-size:13px; line-height:1.4;}
       p{font-size:13px; color:#4b5563; margin:0 0 12px;}
-      .notes{border:1px solid #d1d5db; border-radius:8px; padding:12px; min-height:160px;}
     </style>
   </head><body>
     <h1>${escapeHtml(printableTitle)}</h1>
@@ -360,7 +377,7 @@ export function createLearningHandlers(elements) {
       (el) =>
         !el.hasAttribute("disabled") &&
         el.getAttribute("tabindex") !== "-1" &&
-        el.getAttribute("aria-hidden") !== "true"
+        el.getAttribute("aria-hidden") !== "true",
     );
 
     const target = focusable[0] || elements.panel;
@@ -387,31 +404,44 @@ export function createLearningHandlers(elements) {
     if (!elements.overlay || !elements.panel) return;
 
     learningMode = true;
-    elements.overlay.hidden = false;
-    document.body.classList.add("learning-mode");
 
     lastFocusedElement =
       document.activeElement instanceof HTMLElement
         ? document.activeElement
         : null;
 
+    // Use DaisyUI modal API
+    elements.overlay.showModal();
+
     focusFirstElement();
     document.addEventListener("keydown", handleKeydown);
 
     const role = getCurrentRole();
-    setLearningButtonState(true, role, elements.learningBtn);
+    setLearningButtonState(
+      true,
+      role,
+      elements.learningBtn,
+      elements.learningBtnTooltip,
+    );
   };
 
   const closeLearningPanel = () => {
-    if (!elements.overlay || !elements.panel) return;
+    if (!elements.overlay || !elements.panel || !elements.overlay.open) return;
 
     learningMode = false;
-    elements.overlay.hidden = true;
-    document.body.classList.remove("learning-mode");
+
+    // Use DaisyUI modal API
+    elements.overlay.close();
+
     document.removeEventListener("keydown", handleKeydown);
 
     const role = getCurrentRole();
-    setLearningButtonState(false, role, elements.learningBtn);
+    setLearningButtonState(
+      false,
+      role,
+      elements.learningBtn,
+      elements.learningBtnTooltip,
+    );
 
     if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
       lastFocusedElement.focus();
@@ -443,8 +473,7 @@ export function createLearningHandlers(elements) {
 function trapFocus(event, container, fallback) {
   const focusable = $$(FOCUSABLE_SELECTOR, container).filter(
     (el) =>
-      !el.hasAttribute("disabled") &&
-      el.getAttribute("aria-hidden") !== "true"
+      !el.hasAttribute("disabled") && el.getAttribute("aria-hidden") !== "true",
   );
 
   if (focusable.length === 0) {
@@ -495,7 +524,8 @@ const ONBOARDING_STEPS = [
       {
         icon: "🎯",
         title: "Detailed Analysis",
-        description: "Click any dashboard for in-depth information and insights",
+        description:
+          "Click any dashboard for in-depth information and insights",
       },
     ],
   },
@@ -514,6 +544,25 @@ const ONBOARDING_STEPS = [
  */
 export function createOnboardingHandlers(elements) {
   let currentStep = 1;
+  let touchStartX = 0;
+  let touchEndX = 0;
+  const SWIPE_THRESHOLD = 75; // Minimum swipe distance in pixels
+
+  const handleSwipe = () => {
+    const swipeDistance = touchStartX - touchEndX;
+
+    // Swipe left - go to next step
+    if (swipeDistance > SWIPE_THRESHOLD && currentStep < ONBOARDING_STEPS.length) {
+      currentStep++;
+      renderStep(currentStep);
+    }
+
+    // Swipe right - go to previous step
+    if (swipeDistance < -SWIPE_THRESHOLD && currentStep > 1) {
+      currentStep--;
+      renderStep(currentStep);
+    }
+  };
 
   const renderStep = (step) => {
     if (!elements.content) return;
@@ -523,20 +572,19 @@ export function createOnboardingHandlers(elements) {
 
     elements.content.innerHTML = buildOnboardingHTML(stepData, step);
     attachStepListeners();
+    attachSwipeListeners();
   };
 
   const showOnboarding = () => {
     if (!elements.overlay) return;
     currentStep = 1;
     renderStep(1);
-    elements.overlay.hidden = false;
-    document.body.style.overflow = "hidden";
+    elements.overlay.showModal();
   };
 
   const hideOnboarding = (markAsSeen = true) => {
-    if (!elements.overlay) return;
-    elements.overlay.hidden = true;
-    document.body.style.overflow = "";
+    if (!elements.overlay || !elements.overlay.open) return;
+    elements.overlay.close();
     if (markAsSeen) {
       markOnboardingSeen();
     }
@@ -571,6 +619,27 @@ export function createOnboardingHandlers(elements) {
     }
   };
 
+  const attachSwipeListeners = () => {
+    if (!elements.content) return;
+
+    // Remove existing listeners to prevent duplicates
+    elements.content.removeEventListener("touchstart", handleTouchStart);
+    elements.content.removeEventListener("touchend", handleTouchEnd);
+
+    // Add new listeners
+    elements.content.addEventListener("touchstart", handleTouchStart, { passive: true });
+    elements.content.addEventListener("touchend", handleTouchEnd, { passive: true });
+  };
+
+  const handleTouchStart = (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  };
+
+  const handleTouchEnd = (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  };
+
   return {
     showOnboarding,
     hideOnboarding,
@@ -585,21 +654,23 @@ export function createOnboardingHandlers(elements) {
  */
 function buildOnboardingHTML(stepData, step) {
   let html = `
-    <div class="onboarding-step" data-step="${step}">
-      <div class="onboarding-icon">${stepData.icon}</div>
-      <h2>${stepData.title}</h2>
-      <p>${stepData.description}</p>
+    <div class="space-y-6" data-step="${step}">
+      <div class="text-center">
+        <div class="text-6xl mb-4">${stepData.icon}</div>
+        <h2 class="text-2xl font-bold mb-3">${stepData.title}</h2>
+        <p class="text-base-content/70">${stepData.description}</p>
+      </div>
   `;
 
   if (stepData.features) {
-    html += '<div class="onboarding-features">';
+    html += '<div class="space-y-4 mt-6">';
     stepData.features.forEach((feature) => {
       html += `
-        <div class="onboarding-feature">
-          <div class="onboarding-feature-icon">${feature.icon}</div>
-          <div class="onboarding-feature-content">
-            <h3>${feature.title}</h3>
-            <p>${feature.description}</p>
+        <div class="flex gap-4 items-start bg-base-200 rounded-lg p-4">
+          <div class="text-3xl">${feature.icon}</div>
+          <div class="flex-1">
+            <h3 class="font-semibold mb-1">${feature.title}</h3>
+            <p class="text-sm text-base-content/70">${feature.description}</p>
           </div>
         </div>
       `;
@@ -607,21 +678,38 @@ function buildOnboardingHTML(stepData, step) {
     html += "</div>";
   }
 
-  html += '<div class="onboarding-step-indicator">';
+  html += '<div class="flex justify-center gap-2 mt-6">';
   for (let i = 1; i <= ONBOARDING_STEPS.length; i++) {
-    html += `<div class="onboarding-dot ${i === step ? "active" : ""}"></div>`;
+    html += `<div class="w-2 h-2 rounded-full ${i === step ? "bg-primary" : "bg-base-300"}"></div>`;
   }
   html += "</div>";
 
-  html += '<div class="onboarding-footer">';
+  // Add swipe hint for mobile
+  html += '<div class="text-center mt-4 text-xs text-base-content/60 lg:hidden">';
+  if (step > 1 && step < ONBOARDING_STEPS.length) {
+    html += '← Swipe to navigate →';
+  } else if (step === 1) {
+    html += 'Swipe left to continue →';
+  } else {
+    html += '← Swipe to go back';
+  }
+  html += '</div>';
+
+  html += '<div class="flex justify-between gap-2 mt-8">';
   if (step > 1) {
-    html += '<button class="btn" id="onboardingPrev">← Back</button>';
+    html += '<button class="btn btn-ghost min-h-[44px] min-w-[44px] px-6" id="onboardingPrev" aria-label="Go to previous step">← Back</button>';
+  } else {
+    html += "<div></div>";
   }
   if (step < ONBOARDING_STEPS.length) {
-    html += '<button class="btn" id="onboardingSkip">Skip</button>';
-    html += '<button class="btn primary" id="onboardingNext">Next →</button>';
+    html += '<div class="flex gap-2">';
+    html += '<button class="btn btn-ghost min-h-[44px] min-w-[44px] px-6" id="onboardingSkip" aria-label="Skip onboarding">Skip</button>';
+    html +=
+      '<button class="btn btn-primary min-h-[44px] min-w-[44px] px-6" id="onboardingNext" aria-label="Go to next step">Next →</button>';
+    html += "</div>";
   } else {
-    html += '<button class="btn primary" id="onboardingStart">Get Started!</button>';
+    html +=
+      '<button class="btn btn-primary min-h-[44px] min-w-[100px] px-6" id="onboardingStart" aria-label="Close onboarding and get started">Get Started!</button>';
   }
   html += "</div></div>";
 

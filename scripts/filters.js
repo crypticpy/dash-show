@@ -17,10 +17,18 @@ import { $$, $ } from "./utils.js";
  * @param {HTMLElement} options.grid - Card grid container
  * @param {number} options.totalSites - Total number of sites
  */
-export function applyFilters({ searchInput, tagSelect, sortSelect, grid, totalSites }) {
-  const query = searchInput.value.trim().toLowerCase();
-  const selectTag = tagSelect.value;
-  const pressedChips = $$('.chip[aria-pressed="true"]').map((c) => c.dataset.tag);
+export function applyFilters({
+  searchInput,
+  tagSelect,
+  sortSelect,
+  grid,
+  totalSites,
+}) {
+  const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
+  const selectTag = tagSelect ? tagSelect.value : "all";
+  const pressedChips = $$('.chip[aria-pressed="true"]').map(
+    (c) => c.dataset.tag,
+  );
 
   const cards = $$(".card", grid);
   const visibleCards = [];
@@ -46,7 +54,7 @@ export function applyFilters({ searchInput, tagSelect, sortSelect, grid, totalSi
 
   updateHeroSummary(totalSites, visibleCards.length);
   updateEmptyState(grid, visibleCards.length);
-  applySorting(sortSelect.value, visibleCards, grid);
+  applySorting(sortSelect ? sortSelect.value : "default", visibleCards, grid);
 }
 
 /**
@@ -99,14 +107,24 @@ function updateHeroSummary(totalSites, visibleSites) {
   }
 
   const filterIndicator = $("#filterIndicator");
-  if (!filterIndicator) return;
+  if (filterIndicator) {
+    if (visibleSites !== totalSites) {
+      filterIndicator.innerHTML = `<span class="filter-count">(showing ${visibleSites})</span>`;
+      filterIndicator.classList.add("active");
+    } else {
+      filterIndicator.innerHTML = "";
+      filterIndicator.classList.remove("active");
+    }
+  }
 
-  if (visibleSites !== totalSites) {
-    filterIndicator.innerHTML = `<span class="filter-count">(showing ${visibleSites})</span>`;
-    filterIndicator.classList.add("active");
-  } else {
-    filterIndicator.innerHTML = "";
-    filterIndicator.classList.remove("active");
+  // Update filter result count in active filters banner
+  const filterResultCount = $("#filterResultCount");
+  if (filterResultCount) {
+    if (visibleSites !== totalSites) {
+      filterResultCount.textContent = `Showing ${visibleSites} of ${totalSites} dashboards`;
+    } else {
+      filterResultCount.textContent = "Filters Active";
+    }
   }
 }
 
@@ -137,12 +155,31 @@ function createEmptyStateElement() {
   const emptyState = document.createElement("div");
   emptyState.id = "emptyState";
   emptyState.className = "empty-state";
-  emptyState.innerHTML = `
-    <div class="empty-icon">🔍</div>
-    <h3>No dashboards found</h3>
-    <p>Try adjusting your filters or search terms to see more results</p>
-    <button class="btn primary" onclick="document.getElementById('clearFilters').click()">Clear all filters</button>
-  `;
+
+  const icon = document.createElement("div");
+  icon.className = "empty-icon";
+  icon.textContent = "🔍";
+
+  const heading = document.createElement("h3");
+  heading.textContent = "No dashboards found";
+
+  const text = document.createElement("p");
+  text.textContent = "Try adjusting your filters or search terms to see more results";
+
+  const clearBtn = document.createElement("button");
+  clearBtn.className = "btn btn-primary";
+  clearBtn.textContent = "Clear all filters";
+  clearBtn.setAttribute("aria-label", "Clear all filters to show all dashboards");
+  clearBtn.addEventListener("click", () => {
+    const clearFiltersBtn = document.getElementById("clearFilters");
+    if (clearFiltersBtn) clearFiltersBtn.click();
+  });
+
+  emptyState.appendChild(icon);
+  emptyState.appendChild(heading);
+  emptyState.appendChild(text);
+  emptyState.appendChild(clearBtn);
+
   return emptyState;
 }
 
@@ -177,29 +214,63 @@ function applySorting(sortKey, cards, container) {
  */
 export function updateFilterStates({ searchInput, tagSelect }) {
   // Highlight search if has value
-  if (searchInput.value.trim()) {
+  if (searchInput && searchInput.value.trim()) {
     searchInput.classList.add("has-value");
-  } else {
+  } else if (searchInput) {
     searchInput.classList.remove("has-value");
   }
 
-  // Highlight dropdown if not "all"
-  if (tagSelect.value !== "all") {
-    tagSelect.classList.add("active-filter");
-  } else {
-    tagSelect.classList.remove("active-filter");
+  // Highlight dropdown if not "all" (may not exist in faceted design)
+  if (tagSelect) {
+    if (tagSelect.value !== "all") {
+      tagSelect.classList.add("active-filter");
+    } else {
+      tagSelect.classList.remove("active-filter");
+    }
   }
 
   // Show/hide clear filters button
   const hasActiveFilters =
-    searchInput.value.trim() !== "" ||
-    tagSelect.value !== "all" ||
+    (searchInput && searchInput.value.trim() !== "") ||
+    (tagSelect && tagSelect.value !== "all") ||
     $$('.chip[aria-pressed="true"]').length > 0;
 
   const clearFiltersBtn = $("#clearFilters");
   if (clearFiltersBtn) {
     clearFiltersBtn.style.display = hasActiveFilters ? "" : "none";
   }
+
+  // Update category filter counts
+  updateCategoryFilterCounts();
+}
+
+/**
+ * Update filter count badges for each category
+ * Shows number of active filters in each section
+ */
+export function updateCategoryFilterCounts() {
+  const categories = ["platform", "usecase", "audience", "pattern", "other"];
+
+  categories.forEach((category) => {
+    const container = $(`#chips-${category}`);
+    const countBadge = $(`#${category}-count`);
+
+    if (!container || !countBadge) return;
+
+    const activeChips = container.querySelectorAll(
+      '.badge[aria-pressed="true"]',
+    );
+    const count = activeChips.length;
+
+    if (count > 0) {
+      countBadge.textContent = `${count}`;
+      countBadge.style.display = "";
+      countBadge.classList.add("badge-primary");
+    } else {
+      countBadge.style.display = "none";
+      countBadge.classList.remove("badge-primary");
+    }
+  });
 }
 
 /**
@@ -213,9 +284,14 @@ export function clearAllFilters({ searchInput, tagSelect }) {
 
   $$('.chip[aria-pressed="true"]').forEach((chip) => {
     chip.setAttribute("aria-pressed", "false");
-    const icon = chip.querySelector(".chip-icon");
-    if (icon) icon.style.display = "none";
+    chip.classList.remove("badge-primary", "font-semibold", "shadow-md");
+    chip.classList.add("badge-outline");
+    const icon = chip.querySelector("[data-checkmark]");
+    if (icon) icon.classList.add("hidden");
   });
+
+  // Reset category counts
+  updateCategoryFilterCounts();
 }
 
 /**
@@ -239,7 +315,7 @@ export function debounce(func, wait = 300) {
   };
 
   // Add cancel method to debounced function
-  debounced.cancel = function() {
+  debounced.cancel = function () {
     clearTimeout(timeout);
   };
 
@@ -258,14 +334,44 @@ export function categorizeTags(tags) {
     useCase: [],
     audience: [],
     pattern: [],
-    other: []
+    other: [],
   };
 
   // Define keyword patterns for each category
-  const platformKeywords = ["power bi", "tableau", "arcgis", "saas", "platform", "excel", "dashboard"];
-  const useCaseKeywords = ["cip", "municipal", "policy", "program", "budget", "capital", "infrastructure"];
-  const audienceKeywords = ["public", "executive", "staff", "citizen", "resident", "internal"];
-  const patternKeywords = ["visualization", "report", "matrix", "scorecard", "ranking", "prioritization"];
+  const platformKeywords = [
+    "power bi",
+    "tableau",
+    "arcgis",
+    "saas",
+    "platform",
+    "excel",
+    "dashboard",
+  ];
+  const useCaseKeywords = [
+    "cip",
+    "municipal",
+    "policy",
+    "program",
+    "budget",
+    "capital",
+    "infrastructure",
+  ];
+  const audienceKeywords = [
+    "public",
+    "executive",
+    "staff",
+    "citizen",
+    "resident",
+    "internal",
+  ];
+  const patternKeywords = [
+    "visualization",
+    "report",
+    "matrix",
+    "scorecard",
+    "ranking",
+    "prioritization",
+  ];
 
   tags.forEach((tag) => {
     const tagLower = tag.toLowerCase();
@@ -311,11 +417,12 @@ export function categorizeTags(tags) {
  * @param {Function} onRemove - Callback when chip is removed (type, value)
  */
 export function renderActiveFilters(filterState, onRemove) {
-  const container = $("#activeFilters");
-  if (!container) return;
+  const banner = $("#activeFilters");
+  const tray = $("#activeFilterChips");
+  if (!banner || !tray) return;
 
-  container.innerHTML = "";
   let hasFilters = false;
+  tray.innerHTML = "";
 
   // Search query chip
   if (filterState.query && filterState.query.length > 0) {
@@ -323,7 +430,7 @@ export function renderActiveFilters(filterState, onRemove) {
     const chip = createRemovableChip("Search", filterState.query, () => {
       onRemove("query", "");
     });
-    container.appendChild(chip);
+    tray.appendChild(chip);
   }
 
   // Selected tag chips
@@ -333,7 +440,7 @@ export function renderActiveFilters(filterState, onRemove) {
       const chip = createRemovableChip("Tag", tag, () => {
         onRemove("tag", tag);
       });
-      container.appendChild(chip);
+      tray.appendChild(chip);
     });
   }
 
@@ -347,7 +454,7 @@ export function renderActiveFilters(filterState, onRemove) {
     const chip = createRemovableChip("Category", displayValue, () => {
       onRemove("dropdown", "all");
     });
-    container.appendChild(chip);
+    tray.appendChild(chip);
   }
 
   // Sort order chip (only if not default)
@@ -357,11 +464,11 @@ export function renderActiveFilters(filterState, onRemove) {
     const chip = createRemovableChip("Sort", sortLabel, () => {
       onRemove("sort", "default");
     });
-    container.appendChild(chip);
+    tray.appendChild(chip);
   }
 
   // Show/hide container based on filter presence
-  container.style.display = hasFilters ? "flex" : "none";
+  banner.style.display = hasFilters ? "flex" : "none";
 }
 
 /**
@@ -428,7 +535,8 @@ export function populateFacetedFilters(tags, createChipFn) {
     container.innerHTML = "";
 
     if (categorized[key].length === 0) {
-      container.innerHTML = '<p class="filter-empty">No filters in this category</p>';
+      container.innerHTML =
+        '<p class="filter-empty">No filters in this category</p>';
       return;
     }
 

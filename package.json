@@ -1,0 +1,29 @@
+{
+  "name": "dash-show",
+  "version": "1.0.0",
+  "description": "Curated showcase of **40+ examples** across four categories:",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx tailwindcss -i ./styles/input.css -o ./styles/output.css --watch",
+    "build": "npx tailwindcss -i ./styles/input.css -o ./styles/output.css --minify",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crypticpy/dash-show.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/crypticpy/dash-show/issues"
+  },
+  "homepage": "https://github.com/crypticpy/dash-show#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "daisyui": "^5.1.29",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.18"
+  }
+}
