@@ -275,6 +275,7 @@ function getDetailElements() {
     overlay: $("#detailModal"),
     modal: $("#detailModal"),
     closeBtn: $("#closeDetail"),
+    inlineCloseBtn: $("#detailCloseInline"),
     category: $("#detailCategory"),
     title: $("#detailTitle"),
     domain: $("#detailDomain"),
@@ -606,6 +607,11 @@ function setupDetailModal() {
   });
 
   elements.closeBtn?.addEventListener("click", () => {
+    closeDetailModal(elements);
+    disableDetailKeyboard(detailHandlers.keydownHandler);
+  });
+
+  elements.inlineCloseBtn?.addEventListener("click", () => {
     closeDetailModal(elements);
     disableDetailKeyboard(detailHandlers.keydownHandler);
   });

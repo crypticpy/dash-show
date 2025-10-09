@@ -927,10 +927,42 @@ html[data-theme="austinDark"] .modal-close-button:hover {
     margin-top: auto;
     display: flex;
     justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
 
   .detail-panel__cta {
     min-width: 12rem;
+  }
+
+  .detail-panel__cta--secondary {
+    min-width: auto;
+    padding-inline: 1.5rem;
+    border: 1px solid rgba(68, 73, 156, 0.35);
+    background: rgba(247, 246, 245, 0.75);
+    color: rgba(34, 37, 78, 0.85);
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .detail-panel__cta--secondary:hover {
+    transform: translateY(-1px);
+    border-color: rgba(68, 73, 156, 0.55);
+    box-shadow: 0 12px 24px rgba(68, 73, 156, 0.18);
+  }
+
+  html[data-theme="austinDark"] .detail-panel__cta--secondary {
+    border-color: rgba(0, 156, 222, 0.45);
+    background: rgba(27, 31, 59, 0.68);
+    color: rgba(220, 242, 253, 0.85);
+  }
+
+  html[data-theme="austinDark"] .detail-panel__cta--secondary:hover {
+    border-color: rgba(0, 156, 222, 0.7);
+    box-shadow: 0 16px 28px rgba(0, 0, 0, 0.38);
   }
 
   .dashboard-drawer {
