@@ -94,3 +94,91 @@ export const proxiedReadableURL = (url) => {
   const clean = url.replace(/^https?:\/\//, "");
   return `https://r.jina.ai/http://${clean}`;
 };
+
+/**
+ * Enable swipe-to-dismiss gesture on touch devices
+ * @param {HTMLElement|null} target - Element to attach listeners to
+ * @param {Function} onDismiss - Callback invoked when swipe threshold met
+ * @param {Object} [options]
+ * @param {number} [options.threshold=80] - Minimum horizontal distance in px
+ * @param {number} [options.verticalLimit=50] - Max vertical drift allowed
+ * @param {HTMLElement|null} [options.surface] - Optional child surface to bind events
+ * @returns {Function|undefined} Cleanup function
+ */
+export function enableSwipeDismiss(target, onDismiss, options = {}) {
+  if (!target || typeof onDismiss !== "function") return undefined;
+
+  const {
+    threshold = 80,
+    verticalLimit = 50,
+    surface = target,
+  } = options;
+
+  if (!surface) return undefined;
+
+  let startX = 0;
+  let startY = 0;
+  let lastX = 0;
+  let tracking = false;
+  let horizontalIntent = false;
+
+  const handleTouchStart = (event) => {
+    if (event.touches.length !== 1) return;
+    const touch = event.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+    lastX = startX;
+    tracking = true;
+    horizontalIntent = false;
+  };
+
+  const handleTouchMove = (event) => {
+    if (!tracking) return;
+    const touch = event.touches[0];
+    const deltaX = touch.clientX - startX;
+    const deltaY = touch.clientY - startY;
+    lastX = touch.clientX;
+
+    if (!horizontalIntent) {
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        tracking = false;
+        return;
+      }
+      if (Math.abs(deltaX) > 16) {
+        horizontalIntent = true;
+      }
+    }
+
+    if (horizontalIntent && Math.abs(deltaY) > verticalLimit) {
+      tracking = false;
+    }
+  };
+
+  const handleTouchFinish = () => {
+    if (!tracking || !horizontalIntent) {
+      tracking = false;
+      horizontalIntent = false;
+      return;
+    }
+
+    const deltaX = lastX - startX;
+    if (Math.abs(deltaX) >= threshold) {
+      onDismiss();
+    }
+
+    tracking = false;
+    horizontalIntent = false;
+  };
+
+  surface.addEventListener("touchstart", handleTouchStart, { passive: true });
+  surface.addEventListener("touchmove", handleTouchMove, { passive: true });
+  surface.addEventListener("touchend", handleTouchFinish);
+  surface.addEventListener("touchcancel", handleTouchFinish);
+
+  return () => {
+    surface.removeEventListener("touchstart", handleTouchStart);
+    surface.removeEventListener("touchmove", handleTouchMove);
+    surface.removeEventListener("touchend", handleTouchFinish);
+    surface.removeEventListener("touchcancel", handleTouchFinish);
+  };
+}

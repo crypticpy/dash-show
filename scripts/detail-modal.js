@@ -5,7 +5,14 @@
  */
 
 import { getCategoryIcon, renderDetailChips } from "./cards.js";
-import { $, $$, hostname, screenshotURL, escapeHtml } from "./utils.js";
+import {
+  $,
+  $$,
+  hostname,
+  screenshotURL,
+  escapeHtml,
+  enableSwipeDismiss,
+} from "./utils.js";
 
 // Focusable selector for keyboard navigation
 const FOCUSABLE_SELECTOR =
@@ -289,6 +296,15 @@ export function createDetailHandlers(elements) {
 
   const modalElement = elements.modal || $("#detailModal");
   const overlayElement = elements.overlay || modalElement;
+  const swipeCleanup = enableSwipeDismiss(
+    modalElement,
+    () => closeDetailModal(elements),
+    {
+      surface: modalElement?.querySelector(".modal-box") || modalElement,
+      threshold: 80,
+      verticalLimit: 50,
+    },
+  );
 
   const overlayClickHandler = (event) => {
     if (overlayElement && event.target === overlayElement) {
@@ -300,6 +316,7 @@ export function createDetailHandlers(elements) {
     keydownHandler,
     closeHandler,
     overlayClickHandler,
+    swipeCleanup,
   };
 }
 

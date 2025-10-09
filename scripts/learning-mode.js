@@ -4,7 +4,7 @@
  * Handles role switching, notes persistence, printing, and onboarding flow.
  */
 
-import { $, $$, escapeHtml } from "./utils.js";
+import { $, $$, escapeHtml, enableSwipeDismiss } from "./utils.js";
 import {
   getCurrentRole,
   setCurrentRole,
@@ -369,6 +369,7 @@ export function printChecklist(role, checklistContent) {
 export function createLearningHandlers(elements) {
   let learningMode = false;
   let lastFocusedElement = null;
+  let swipeCleanup = null;
 
   const focusFirstElement = () => {
     if (!elements.overlay) return;
@@ -423,6 +424,8 @@ export function createLearningHandlers(elements) {
       elements.learningBtn,
       elements.learningBtnTooltip,
     );
+
+    ensureSwipeGesture();
   };
 
   const closeLearningPanel = () => {
@@ -454,6 +457,15 @@ export function createLearningHandlers(elements) {
 
   const toggleLearningPanel = () => {
     learningMode ? closeLearningPanel() : openLearningPanel();
+  };
+
+  const ensureSwipeGesture = () => {
+    if (swipeCleanup || !elements.overlay) return;
+    const surface = elements.panel || elements.overlay;
+    swipeCleanup = enableSwipeDismiss(surface, closeLearningPanel, {
+      threshold: 80,
+      verticalLimit: 60,
+    });
   };
 
   return {
