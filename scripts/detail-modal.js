@@ -12,7 +12,64 @@ const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
 // Track last focused element for restoration
-let lastFocusedElement = null;
+let lastFocusedElement = undefined;
+let scrollLockPosition = 0;
+let scrollLockActive = false;
+
+/**
+ * Apply scroll lock to prevent background movement
+ */
+function applyScrollLock() {
+  if (scrollLockActive) return;
+
+  scrollLockPosition = window.scrollY || window.pageYOffset || 0;
+  document.body.classList.add("modal-open");
+  document.documentElement.classList.add("modal-open");
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${scrollLockPosition}px`;
+  document.body.style.width = "100%";
+  scrollLockActive = true;
+}
+
+/**
+ * Release scroll lock and restore previous position
+ */
+function releaseScrollLock() {
+  if (!scrollLockActive) return;
+
+  document.body.classList.remove("modal-open");
+  document.documentElement.classList.remove("modal-open");
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.width = "";
+  window.scrollTo(0, scrollLockPosition);
+  scrollLockPosition = 0;
+  scrollLockActive = false;
+}
+
+/**
+ * Cleanup state after modal closes and restore focus
+ */
+function finalizeModalClose() {
+  const focusTarget = lastFocusedElement;
+
+  releaseScrollLock();
+
+  if (focusTarget instanceof HTMLElement) {
+    const isDisabled = focusTarget.hasAttribute("disabled");
+    const isVisible = focusTarget.offsetParent !== null;
+
+    if (document.contains(focusTarget) && !isDisabled && isVisible) {
+      focusTarget.focus();
+    } else {
+      focusFallbackElement();
+    }
+  } else if (focusTarget === null) {
+    focusFallbackElement();
+  }
+
+  lastFocusedElement = undefined;
+}
 
 /**
  * Open detail modal with site data
@@ -31,8 +88,7 @@ export function openDetailModal(item, card, elements) {
       : null;
 
   // Prevent background scrolling while detail modal is active
-  document.body.classList.add("modal-open");
-  document.documentElement.classList.add("modal-open");
+  applyScrollLock();
 
   // Populate category
   const primaryTag =
@@ -118,32 +174,7 @@ export function closeDetailModal(elements) {
   // Close modal using DaisyUI method
   modal.close();
 
-  document.body.classList.remove("modal-open");
-  document.documentElement.classList.remove("modal-open");
-
-  // Restore focus with safety checks
-  if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
-    // Check if element still exists in DOM
-    if (document.contains(lastFocusedElement)) {
-      // Check if element is focusable (not disabled, visible)
-      const isDisabled = lastFocusedElement.hasAttribute("disabled");
-      const isVisible = lastFocusedElement.offsetParent !== null;
-
-      if (!isDisabled && isVisible) {
-        lastFocusedElement.focus();
-      } else {
-        // Fallback to first focusable card or body
-        focusFallbackElement();
-      }
-    } else {
-      // Element was removed, find fallback
-      focusFallbackElement();
-    }
-  } else {
-    focusFallbackElement();
-  }
-
-  lastFocusedElement = null;
+  finalizeModalClose();
 }
 
 /**
@@ -238,6 +269,13 @@ function trapFocus(event, container) {
     event.preventDefault();
     first.focus();
   }
+}
+
+/**
+ * Ensure modal cleanup when closed natively
+ */
+export function finalizeDetailModalClose() {
+  finalizeModalClose();
 }
 
 /**

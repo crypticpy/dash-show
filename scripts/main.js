@@ -37,6 +37,7 @@ import {
   createDetailHandlers,
   enableDetailKeyboard,
   disableDetailKeyboard,
+  finalizeDetailModalClose,
 } from "./detail-modal.js?v=2";
 import {
   renderRole,
@@ -600,8 +601,7 @@ function setupDetailModal() {
   detailHandlers = createDetailHandlers(elements);
 
   elements.modal?.addEventListener("close", () => {
-    document.body.classList.remove("modal-open");
-    document.documentElement.classList.remove("modal-open");
+    finalizeDetailModalClose();
     disableDetailKeyboard(detailHandlers.keydownHandler);
   });
 
