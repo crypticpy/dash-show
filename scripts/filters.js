@@ -55,6 +55,14 @@ export function applyFilters({
   updateHeroSummary(totalSites, visibleCards.length);
   updateEmptyState(grid, visibleCards.length);
   applySorting(sortSelect ? sortSelect.value : "default", visibleCards, grid);
+
+  // Announce filter results to screen readers
+  announceFilterResults(totalSites, visibleCards.length);
+
+  // Update aria-busy state on grid
+  if (grid) {
+    grid.setAttribute("aria-busy", "false");
+  }
 }
 
 /**
@@ -93,6 +101,29 @@ function cardMatchesSelect(selectTag, tags) {
 function cardMatchesChips(pressedChips, tags) {
   if (pressedChips.length === 0) return true;
   return pressedChips.every((t) => tags.includes(t.toLowerCase()));
+}
+
+/**
+ * Announce filter results to screen readers
+ * @param {number} totalSites - Total sites in catalog
+ * @param {number} visibleSites - Number of visible sites after filters
+ */
+function announceFilterResults(totalSites, visibleSites) {
+  const announcement = $("#filterAnnouncement");
+  if (!announcement) return;
+
+  // Create announcement text
+  let message = "";
+  if (visibleSites === totalSites) {
+    message = `Showing all ${totalSites} dashboards`;
+  } else if (visibleSites === 0) {
+    message = `No dashboards match your filters`;
+  } else {
+    message = `Showing ${visibleSites} of ${totalSites} dashboards`;
+  }
+
+  // Update announcement (screen readers will detect the change)
+  announcement.textContent = message;
 }
 
 /**
@@ -164,12 +195,16 @@ function createEmptyStateElement() {
   heading.textContent = "No dashboards found";
 
   const text = document.createElement("p");
-  text.textContent = "Try adjusting your filters or search terms to see more results";
+  text.textContent =
+    "Try adjusting your filters or search terms to see more results";
 
   const clearBtn = document.createElement("button");
   clearBtn.className = "btn btn-primary";
   clearBtn.textContent = "Clear all filters";
-  clearBtn.setAttribute("aria-label", "Clear all filters to show all dashboards");
+  clearBtn.setAttribute(
+    "aria-label",
+    "Clear all filters to show all dashboards",
+  );
   clearBtn.addEventListener("click", () => {
     const clearFiltersBtn = document.getElementById("clearFilters");
     if (clearFiltersBtn) clearFiltersBtn.click();
@@ -258,7 +293,7 @@ export function updateCategoryFilterCounts() {
     if (!container || !countBadge) return;
 
     const activeChips = container.querySelectorAll(
-      '.badge[aria-pressed="true"]',
+      '.chip[aria-pressed="true"]',
     );
     const count = activeChips.length;
 
@@ -279,8 +314,12 @@ export function updateCategoryFilterCounts() {
  * @param {Object} elements - Filter UI elements
  */
 export function clearAllFilters({ searchInput, tagSelect }) {
-  searchInput.value = "";
-  tagSelect.value = "all";
+  if (searchInput) {
+    searchInput.value = "";
+  }
+  if (tagSelect) {
+    tagSelect.value = "all";
+  }
 
   $$('.chip[aria-pressed="true"]').forEach((chip) => {
     chip.setAttribute("aria-pressed", "false");
@@ -346,6 +385,7 @@ export function categorizeTags(tags) {
     "platform",
     "excel",
     "dashboard",
+    "data",
   ];
   const useCaseKeywords = [
     "cip",
@@ -355,6 +395,14 @@ export function categorizeTags(tags) {
     "budget",
     "capital",
     "infrastructure",
+    "portfolio",
+    "waste",
+    "recovery",
+    "management",
+    "benchmark",
+    "reference",
+    "resource",
+    "guidance",
   ];
   const audienceKeywords = [
     "public",
@@ -363,6 +411,7 @@ export function categorizeTags(tags) {
     "citizen",
     "resident",
     "internal",
+    "community",
   ];
   const patternKeywords = [
     "visualization",
@@ -371,37 +420,62 @@ export function categorizeTags(tags) {
     "scorecard",
     "ranking",
     "prioritization",
+    "pattern",
+    "playbook",
   ];
+
+  /**
+   * Explicit overrides ensure important tags surface in the most helpful buckets.
+   * Keys are stored in lowercase for simple lookups.
+   */
+  const explicitOverrides = new Map([
+    ["public cip", ["useCase", "audience"]],
+    ["portfolio management", ["useCase"]],
+    ["resource recovery", ["useCase"]],
+    ["zero waste", ["useCase"]],
+    ["c&d waste", ["useCase"]],
+    ["green halo", ["useCase"]],
+    ["national policy", ["useCase"]],
+    ["international benchmark", ["useCase"]],
+    ["policy reference", ["useCase"]],
+    ["reference data", ["platform", "useCase"]],
+    ["open data", ["platform", "useCase"]],
+    ["guidance", ["audience"]],
+  ]);
 
   tags.forEach((tag) => {
     const tagLower = tag.toLowerCase();
-    let categorized = false;
+    const tagCategories = new Set(explicitOverrides.get(tagLower) || []);
 
-    // Check each category in priority order
-    if (!categorized && platformKeywords.some((kw) => tagLower.includes(kw))) {
-      categories.platform.push(tag);
-      categorized = true;
+    // Allow tags to appear in multiple categories if they match multiple heuristics
+    if (platformKeywords.some((kw) => tagLower.includes(kw))) {
+      tagCategories.add("platform");
+    }
+    if (useCaseKeywords.some((kw) => tagLower.includes(kw))) {
+      tagCategories.add("useCase");
+    }
+    if (audienceKeywords.some((kw) => tagLower.includes(kw))) {
+      tagCategories.add("audience");
+    }
+    if (patternKeywords.some((kw) => tagLower.includes(kw))) {
+      tagCategories.add("pattern");
     }
 
-    if (!categorized && useCaseKeywords.some((kw) => tagLower.includes(kw))) {
-      categories.useCase.push(tag);
-      categorized = true;
+    if (tagCategories.size === 0) {
+      tagCategories.add("other");
     }
 
-    if (!categorized && audienceKeywords.some((kw) => tagLower.includes(kw))) {
-      categories.audience.push(tag);
-      categorized = true;
-    }
-
-    if (!categorized && patternKeywords.some((kw) => tagLower.includes(kw))) {
-      categories.pattern.push(tag);
-      categorized = true;
-    }
-
-    if (!categorized) {
-      categories.other.push(tag);
-    }
+    tagCategories.forEach((category) => {
+      if (!categories[category].includes(tag)) {
+        categories[category].push(tag);
+      }
+    });
   });
+
+  // Keep chip lists sorted for predictable UI
+  Object.values(categories).forEach((list) =>
+    list.sort((a, b) => a.localeCompare(b)),
+  );
 
   return categories;
 }
@@ -548,7 +622,9 @@ function createRemovableChip(label, value, onRemove) {
  * @param {Function} createChipFn - Function to create chip elements
  */
 export function populateFacetedFilters(tags, createChipFn) {
+  console.log("[populateFacetedFilters] Starting with", tags.length, "tags");
   const categorized = categorizeTags(tags);
+  console.log("[populateFacetedFilters] Categorized:", categorized);
 
   // Clear all chip containers
   const containers = {
@@ -559,79 +635,39 @@ export function populateFacetedFilters(tags, createChipFn) {
     other: $("#chips-other"),
   };
 
+  console.log("[populateFacetedFilters] Container check:", {
+    platform: !!containers.platform,
+    useCase: !!containers.useCase,
+    audience: !!containers.audience,
+    pattern: !!containers.pattern,
+    other: !!containers.other,
+  });
+
   // Populate each category
   Object.entries(containers).forEach(([key, container]) => {
-    if (!container) return;
+    if (!container) {
+      console.warn(`[populateFacetedFilters] Container ${key} not found!`);
+      return;
+    }
 
     container.innerHTML = "";
 
     if (categorized[key].length === 0) {
+      console.log(`[populateFacetedFilters] No tags for ${key}`);
       container.innerHTML =
         '<p class="filter-empty">No filters in this category</p>';
       return;
     }
 
+    console.log(
+      `[populateFacetedFilters] Adding ${categorized[key].length} chips to ${key}:`,
+      categorized[key],
+    );
     categorized[key].forEach((tag) => {
       const chip = createChipFn(tag);
       container.appendChild(chip);
     });
   });
-}
 
-/**
- * Setup faceted filter drawer interactions (mobile toggle, overlay, etc.)
- */
-export function setupFilterDrawer() {
-  const drawer = $("#filterDrawer");
-  const toggle = $("#filterDrawerToggle");
-  const overlay = $("#filterDrawerOverlay");
-  const closeBtn = $("#filterDrawerClose");
-
-  if (!drawer || !toggle || !overlay || !closeBtn) return;
-
-  // Open drawer
-  const openDrawer = () => {
-    drawer.classList.add("active");
-    drawer.removeAttribute("aria-hidden");
-    overlay.classList.add("active");
-    toggle.setAttribute("aria-expanded", "true");
-    document.body.style.overflow = "hidden"; // Prevent scroll
-  };
-
-  // Close drawer
-  const closeDrawer = () => {
-    drawer.classList.remove("active");
-    drawer.setAttribute("aria-hidden", "true");
-    overlay.classList.remove("active");
-    toggle.setAttribute("aria-expanded", "false");
-    document.body.style.overflow = "";
-  };
-
-  // Event listeners
-  toggle.addEventListener("click", openDrawer);
-  closeBtn.addEventListener("click", closeDrawer);
-  overlay.addEventListener("click", closeDrawer);
-
-  // ESC key to close
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && drawer.classList.contains("active")) {
-      closeDrawer();
-    }
-  });
-
-  // Touch swipe to close (simple swipe left detection)
-  let touchStartX = 0;
-  drawer.addEventListener("touchstart", (e) => {
-    touchStartX = e.touches[0].clientX;
-  });
-
-  drawer.addEventListener("touchend", (e) => {
-    const touchEndX = e.changedTouches[0].clientX;
-    const swipeDistance = touchStartX - touchEndX;
-
-    // If swiped left more than 100px, close drawer
-    if (swipeDistance > 100) {
-      closeDrawer();
-    }
-  });
+  console.log("[populateFacetedFilters] Complete");
 }

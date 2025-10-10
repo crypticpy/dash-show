@@ -2,42 +2,57 @@
 <html lang="en" data-theme="austinDark">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <title>Data Visualization Dashboard Showcase</title>
     <meta
       name="description"
       content="Curated showcase of municipal CIP, Power BI reports, and visualization patterns for project prioritization and ranking."
     />
+    <!-- Resource Hints for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://api.apiflash.com" />
+    <link rel="dns-prefetch" href="https://r.jina.ai" />
+
+    <!-- Critical CSS - Preload for faster rendering -->
+    <link rel="preload" href="styles/output.css" as="style" />
+    <link rel="stylesheet" href="styles/output.css" />
+
+    <!-- Preload critical JavaScript modules -->
+    <link rel="modulepreload" href="scripts/main.js?v=4" />
+    <link rel="modulepreload" href="scripts/utils.js" />
+    <link rel="modulepreload" href="scripts/theme.js" />
+    <link rel="modulepreload" href="scripts/state.js" />
+
+    <!-- Fonts with optimized loading strategy -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
-
-    <!-- DaisyUI + Tailwind CSS -->
-    <link rel="stylesheet" href="styles/output.css" />
-    <style>
-      /* Prevent the filter drawer overlay from dimming main content */
-      .drawer-toggle:checked ~ .drawer-side > .drawer-overlay {
-        background-color: transparent;
-        backdrop-filter: none;
-      }
-    </style>
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
   </head>
   <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- DaisyUI Drawer -->
-    <div class="drawer">
-      <input id="filter-drawer" type="checkbox" class="drawer-toggle" />
-
+    <!-- Custom Drawer -->
+    <div class="custom-drawer">
       <!-- Mobile Filter FAB (hidden on desktop) -->
-      <label
-        for="filter-drawer"
-        class="btn btn-primary drawer-button lg:hidden fixed bottom-6 right-6 z-40 btn-circle btn-lg shadow-elevated hover:shadow-floating transition-all duration-300 hover:scale-105"
+      <button
+        id="mobileFilterToggle"
+        class="btn btn-primary lg:hidden fixed bottom-6 right-6 z-40 btn-circle btn-lg shadow-elevated hover:shadow-floating transition-all duration-300 hover:scale-105"
         aria-label="Toggle filters"
         aria-controls="filterSidebar"
+        aria-expanded="false"
       >
         <svg
           class="w-7 h-7"
@@ -54,10 +69,10 @@
             d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 105.25 5.25a7.5 7.5 0 0011.4 11.4z"
           />
         </svg>
-      </label>
+      </button>
 
-      <!-- Main content area (will be moved below) -->
-      <div class="drawer-content">
+      <!-- Main content area -->
+      <div class="custom-drawer__content" id="mainContent">
         <!-- Content goes here -->
 
         <!-- Apple-Inspired Header with Glass Morphism -->
@@ -118,11 +133,10 @@
                       data-tip="Toggle filters"
                       id="filterToggleTooltip"
                     >
-                      <label
-                        for="filter-drawer"
-                        class="toolbar-button drawer-button"
+                      <button
+                        class="toolbar-button"
                         id="filterToggleButton"
-                        role="button"
+                        type="button"
                         aria-label="Toggle filters"
                         aria-controls="filterSidebar"
                         aria-pressed="false"
@@ -144,7 +158,7 @@
                             d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 105.25 5.25a7.5 7.5 0 0011.4 11.4z"
                           />
                         </svg>
-                      </label>
+                      </button>
                     </div>
                     <div
                       class="tooltip tooltip-primary"
@@ -265,11 +279,20 @@
             </div>
           </div>
 
+          <!-- Screen Reader Announcements -->
+          <div
+            id="filterAnnouncement"
+            class="sr-only"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          ></div>
+
           <!-- Card Grid -->
           <div
             class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-8"
             id="grid"
-            aria-live="polite"
+            aria-busy="false"
             aria-label="Dashboard cards"
           >
             <!-- cards populated via JS -->
@@ -441,16 +464,6 @@
                   <p id="detailSummary" class="detail-panel__text"></p>
                 </section>
 
-                <section class="detail-panel__section detail-panel__callout">
-                  <div class="detail-panel__callout-icon" aria-hidden="true">
-                    ℹ️
-                  </div>
-                  <div
-                    id="detailBlurb"
-                    class="detail-panel__callout-text"
-                  ></div>
-                </section>
-
                 <section class="detail-panel__section">
                   <h3>Tags</h3>
                   <div id="detailTags" class="detail-panel__chiplist"></div>
@@ -526,23 +539,20 @@
 
         <!-- Learning Mode Template - Removed per user request -->
       </div>
-      <!-- End of drawer-content -->
+      <!-- End of custom-drawer__content -->
 
       <!-- Drawer Sidebar -->
-      <div class="drawer-side z-50" id="filterSidebar">
-        <label
-          for="filter-drawer"
-          aria-label="close sidebar"
-          class="drawer-overlay"
-        ></label>
+      <div class="custom-drawer__sidebar" id="filterSidebar">
         <div class="menu p-4 w-72 min-h-full dashboard-drawer custom-scrollbar">
           <div class="flex justify-between items-center mb-4">
             <h2 class="text-lg font-bold">Filters</h2>
-            <label
-              for="filter-drawer"
+            <button
+              id="closeFilterMobile"
               class="btn btn-sm btn-circle btn-ghost lg:hidden"
-              >✕</label
+              aria-label="Close filters"
             >
+              ✕
+            </button>
           </div>
 
           <!-- Search -->
@@ -597,10 +607,11 @@
             <h3 class="filter-heading">View Options</h3>
 
             <!-- Sort Dropdown -->
+            <label for="sortBy" class="sr-only">Sort dashboards</label>
             <select
               class="select select-bordered w-full select-sm"
               id="sortBy"
-              title="Sort dashboards"
+              autocomplete="off"
             >
               <option value="default">Default Order</option>
               <option value="title">By Title (A→Z)</option>
@@ -608,10 +619,13 @@
             </select>
 
             <!-- Role Selector -->
+            <label for="roleSelect" class="sr-only"
+              >Select learning perspective</label
+            >
             <select
               class="select select-bordered w-full select-sm"
               id="roleSelect"
-              title="Select learning perspective"
+              autocomplete="off"
             >
               <option value="student">Participant View</option>
               <option value="coach">Coach View</option>
@@ -653,7 +667,7 @@
           </div>
 
           <div class="collapse collapse-arrow filter-section mb-3">
-            <input type="checkbox" />
+            <input type="checkbox" checked />
             <div class="collapse-title font-medium text-sm px-4">
               Use Case
               <span
@@ -668,7 +682,7 @@
           </div>
 
           <div class="collapse collapse-arrow filter-section mb-3">
-            <input type="checkbox" />
+            <input type="checkbox" checked />
             <div class="collapse-title font-medium text-sm px-4">
               Audience
               <span
@@ -683,7 +697,7 @@
           </div>
 
           <div class="collapse collapse-arrow filter-section mb-3">
-            <input type="checkbox" />
+            <input type="checkbox" checked />
             <div class="collapse-title font-medium text-sm px-4">
               Pattern
               <span
@@ -698,7 +712,7 @@
           </div>
 
           <div class="collapse collapse-arrow filter-section">
-            <input type="checkbox" />
+            <input type="checkbox" checked />
             <div class="collapse-title font-medium text-sm px-4">
               Other Tags
               <span
@@ -713,9 +727,9 @@
           </div>
         </div>
       </div>
-      <!-- End of drawer-side -->
+      <!-- End of custom-drawer__sidebar -->
     </div>
-    <!-- End of drawer -->
+    <!-- End of custom-drawer -->
 
     <!-- Austin Public Health Footer -->
     <footer class="bg-base-200 border-t border-base-300 py-8 mt-12">
@@ -750,13 +764,5 @@
 
     <!-- Modular JavaScript (ES6 Modules) -->
     <script type="module" src="scripts/main.js?v=4"></script>
-    <label
-      for="filter-drawer"
-      class="filter-reveal-zone drawer-button"
-      id="filterRevealZone"
-      aria-label="Show filters"
-      aria-hidden="true"
-      tabindex="-1"
-    ></label>
   </body>
 </html>

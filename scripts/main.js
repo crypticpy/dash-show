@@ -22,8 +22,7 @@ import {
   debounce,
   renderActiveFilters,
   populateFacetedFilters,
-  setupFilterDrawer,
-} from "./filters.js?v=3";
+} from "./filters.js?v=4";
 import {
   cardTemplate,
   populateTagControls,
@@ -46,6 +45,7 @@ import {
   createOnboardingHandlers,
 } from "./learning-mode.js";
 import { initTheme } from "./theme.js";
+import { initPullToRefresh } from "./pull-to-refresh.js";
 
 // Configuration
 const SITES_ENDPOINT = "sites.json";
@@ -110,17 +110,23 @@ async function loadSites() {
     ).sort((a, b) => a.localeCompare(b));
 
     // Use faceted filter population
+    console.log('[main.js] Populating filters with', allTags.length, 'tags:', allTags);
     populateFacetedFilters(allTags, (tagText) => {
       return createChip(tagText, () => {
+        // Set aria-busy before filtering
+        const grid = $("#grid");
+        if (grid) {
+          grid.setAttribute('aria-busy', 'true');
+          grid.classList.add("filter-updating");
+        }
+
         // Chip toggle handler - sync URL immediately
         syncURLWithFilters();
         updateFilterStates(elements);
         applyFilters({ ...elements, totalSites: sites.length });
 
-        // Add visual feedback for filter update
-        const grid = $("#grid");
+        // Remove visual feedback after filtering completes
         if (grid) {
-          grid.classList.add("filter-updating");
           setTimeout(() => {
             grid.classList.remove("filter-updating");
           }, 400);
@@ -130,9 +136,7 @@ async function loadSites() {
         // Only close on mobile if explicitly requested (optional enhancement)
       });
     });
-
-    // Setup filter drawer interactions
-    setupFilterDrawer();
+    console.log('[main.js] Filter population complete');
 
     updateHeroSummary(sites.length);
     buildGrid();
@@ -267,7 +271,6 @@ function getDetailElements() {
     title: $("#detailTitle"),
     domain: $("#detailDomain"),
     summaryText: $("#detailSummary"),
-    blurb: $("#detailBlurb"),
     tags: $("#detailTags"),
     techniques: $("#detailTechniques"),
     visitBtn: $("#detailVisit"),
@@ -395,128 +398,222 @@ function handleRemoveFilter(type, value) {
  */
 function setupFilterListeners() {
   const elements = getFilterElements();
-  const drawerToggleInput = document.getElementById("filter-drawer");
+  const filterSidebar = document.getElementById("filterSidebar");
+  const mainContent = document.getElementById("mainContent");
   const filterToggleButton = document.getElementById("filterToggleButton");
+  const mobileFilterToggle = document.getElementById("mobileFilterToggle");
+  const closeFilterMobile = document.getElementById("closeFilterMobile");
   const filterToggleTooltip = document.getElementById("filterToggleTooltip");
-  const filterRevealZone = document.getElementById("filterRevealZone");
 
-  const lgMediaQuery = window.matchMedia("(min-width: 1024px)");
+  const lgMediaQuery = window.matchMedia("(min-width: 1280px)");
 
-  const updateFilterToggleState = () => {
-    if (!drawerToggleInput || !filterToggleButton) return;
-    const expanded = drawerToggleInput.checked;
-    filterToggleButton.setAttribute("aria-expanded", String(expanded));
-    filterToggleButton.setAttribute(
-      "aria-label",
-      expanded ? "Hide filters" : "Show filters",
+  // Track drawer open state and previous focus
+  let isDrawerOpen = false;
+  let previousFocusElement = null;
+
+  // Get all focusable elements within the drawer
+  const getFocusableElements = () => {
+    if (!filterSidebar) return [];
+    const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    return Array.from(filterSidebar.querySelectorAll(focusableSelectors)).filter(
+      el => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden')
     );
-    filterToggleButton.setAttribute("aria-pressed", String(expanded));
-    if (filterToggleTooltip) {
-      filterToggleTooltip.setAttribute(
-        "data-tip",
-        expanded ? "Hide filters" : "Show filters",
-      );
+  };
+
+  // Focus trap handler
+  const handleFocusTrap = (event) => {
+    if (!isDrawerOpen || !filterSidebar) return;
+
+    const focusableElements = getFocusableElements();
+    if (focusableElements.length === 0) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    // Trap focus within drawer
+    if (event.key === 'Tab') {
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
     }
 
-    if (filterRevealZone) {
-      const showReveal = !expanded && lgMediaQuery.matches;
-      filterRevealZone.classList.toggle("is-visible", showReveal);
-      // Update ARIA attributes when visibility changes
-      if (showReveal) {
-        filterRevealZone.setAttribute("aria-hidden", "false");
-        filterRevealZone.setAttribute("tabindex", "0");
-      } else {
-        filterRevealZone.setAttribute("aria-hidden", "true");
-        filterRevealZone.setAttribute("tabindex", "-1");
-      }
+    // Close on Escape key
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeDrawer();
     }
   };
 
-  if (drawerToggleInput) {
-    drawerToggleInput.addEventListener("change", updateFilterToggleState);
+  const openDrawer = () => {
+    // Store current focus before opening
+    previousFocusElement = document.activeElement;
 
-    const handleViewportChange = (event) => {
-      drawerToggleInput.checked = event.matches;
-      updateFilterToggleState();
-    };
-
-    handleViewportChange(lgMediaQuery);
-    if (typeof lgMediaQuery.addEventListener === "function") {
-      lgMediaQuery.addEventListener("change", handleViewportChange);
-    } else if (typeof lgMediaQuery.addListener === "function") {
-      lgMediaQuery.addListener(handleViewportChange);
+    isDrawerOpen = true;
+    filterSidebar?.classList.add("is-open");
+    if (lgMediaQuery.matches) {
+      mainContent?.classList.add("drawer-open");
     }
+    filterToggleButton?.setAttribute("aria-expanded", "true");
+    filterToggleButton?.setAttribute("aria-pressed", "true");
+    filterToggleButton?.setAttribute("aria-label", "Hide filters");
+    mobileFilterToggle?.setAttribute("aria-expanded", "true");
+    if (filterToggleTooltip) {
+      filterToggleTooltip.setAttribute("data-tip", "Hide filters");
+    }
+
+    // On mobile, move focus to search input and enable focus trap
+    if (!lgMediaQuery.matches) {
+      // Add focus trap listener
+      document.addEventListener('keydown', handleFocusTrap);
+
+      // Move focus to first focusable element (search input)
+      setTimeout(() => {
+        const searchInput = elements.searchInput;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100); // Small delay to allow drawer animation
+    }
+  };
+
+  const closeDrawer = () => {
+    isDrawerOpen = false;
+    filterSidebar?.classList.remove("is-open");
+    mainContent?.classList.remove("drawer-open");
+    filterToggleButton?.setAttribute("aria-expanded", "false");
+    filterToggleButton?.setAttribute("aria-pressed", "false");
+    filterToggleButton?.setAttribute("aria-label", "Show filters");
+    mobileFilterToggle?.setAttribute("aria-expanded", "false");
+    if (filterToggleTooltip) {
+      filterToggleTooltip.setAttribute("data-tip", "Show filters");
+    }
+
+    // Remove focus trap listener
+    document.removeEventListener('keydown', handleFocusTrap);
+
+    // Return focus to the element that opened the drawer
+    if (previousFocusElement && typeof previousFocusElement.focus === 'function') {
+      setTimeout(() => {
+        previousFocusElement.focus();
+      }, 100); // Small delay to allow drawer animation
+    }
+  };
+
+  const toggleDrawer = () => {
+    if (isDrawerOpen) {
+      closeDrawer();
+    } else {
+      openDrawer();
+    }
+  };
+
+  // Handle viewport changes - auto-open on desktop, auto-close on mobile
+  const handleViewportChange = (event) => {
+    if (event.matches) {
+      // Desktop: open drawer by default
+      openDrawer();
+    } else {
+      // Mobile: close drawer
+      closeDrawer();
+    }
+  };
+
+  // Initialize drawer state based on viewport
+  handleViewportChange(lgMediaQuery);
+
+  // Listen for viewport changes
+  if (typeof lgMediaQuery.addEventListener === "function") {
+    lgMediaQuery.addEventListener("change", handleViewportChange);
+  } else if (typeof lgMediaQuery.addListener === "function") {
+    lgMediaQuery.addListener(handleViewportChange);
   }
 
-  if (filterRevealZone && drawerToggleInput) {
-    const openDrawer = () => {
-      if (!lgMediaQuery.matches) return;
-      drawerToggleInput.checked = true;
-      updateFilterToggleState();
+  // Setup toggle button click handlers
+  filterToggleButton?.addEventListener("click", toggleDrawer);
+  mobileFilterToggle?.addEventListener("click", toggleDrawer);
+  closeFilterMobile?.addEventListener("click", closeDrawer);
+
+  // Click-outside-to-close functionality for mobile
+  const handleClickOutside = (event) => {
+    // Only close on mobile when clicking outside
+    if (!isDrawerOpen || lgMediaQuery.matches) return;
+
+    const isClickInsideDrawer = filterSidebar?.contains(event.target);
+    const isClickOnToggleButton = filterToggleButton?.contains(event.target) ||
+                                  mobileFilterToggle?.contains(event.target);
+
+    if (!isClickInsideDrawer && !isClickOnToggleButton) {
+      closeDrawer();
+    }
+  };
+
+  document.addEventListener('click', handleClickOutside);
+
+  // Add swipe-to-close gesture for mobile
+  let touchStartX = 0;
+
+  if (filterSidebar) {
+    filterSidebar.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+
+    filterSidebar.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const swipeDistance = touchStartX - touchEndX;
+
+      // Swipe left to close drawer
+      if (swipeDistance > 50 && isDrawerOpen) {
+        closeDrawer();
+      }
+    }, { passive: true });
+  }
+
+  // Custom accordion toggles now that DaisyUI is removed
+  const collapsibleSections = filterSidebar ? $$(".collapse", filterSidebar) : [];
+  collapsibleSections.forEach((section, index) => {
+    const toggleInput = section.querySelector('input[type="checkbox"]');
+    const title = section.querySelector(".collapse-title");
+    const content = section.querySelector(".collapse-content");
+    if (!toggleInput || !title || !content) return;
+
+    // Create unique IDs for aria-controls relationship
+    const contentId = `collapse-content-${index}`;
+    content.id = contentId;
+
+    const setOpenState = (isOpen) => {
+      toggleInput.checked = isOpen;
+      section.classList.toggle("is-open", isOpen);
+      title.setAttribute("aria-expanded", String(isOpen));
     };
 
-    filterRevealZone.addEventListener("pointerenter", openDrawer);
-    filterRevealZone.addEventListener("focus", openDrawer);
-    filterRevealZone.addEventListener("click", openDrawer);
-    filterRevealZone.addEventListener("keyup", (event) => {
+    // Initialize state and semantics
+    setOpenState(toggleInput.checked);
+    title.setAttribute("role", "button");
+    title.setAttribute("aria-controls", contentId);
+    if (!title.hasAttribute("tabindex")) {
+      title.setAttribute("tabindex", "0");
+    }
+
+    const toggleSection = () => {
+      setOpenState(!toggleInput.checked);
+    };
+
+    title.addEventListener("click", (event) => {
+      event.preventDefault();
+      toggleSection();
+    });
+
+    title.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
-        openDrawer();
+        event.preventDefault();
+        toggleSection();
       }
     });
-  }
-
-  updateFilterToggleState();
-
-  // Click-outside-to-close functionality for desktop and mobile
-  const handleClickOutside = (event) => {
-    // Check if drawer is open
-    if (!drawerToggleInput.checked) return;
-
-    // Check if click is outside the drawer side and not on filter toggle buttons
-    const drawerSide = document.getElementById("filterSidebar");
-    const isClickInsideDrawer = drawerSide?.contains(event.target);
-    const isClickOnFilterButton = filterToggleButton?.contains(event.target) ||
-                                 filterRevealZone?.contains(event.target);
-
-    if (!isClickInsideDrawer && !isClickOnFilterButton) {
-      drawerToggleInput.checked = false;
-      updateFilterToggleState();
-    }
-  };
-
-  // Add event listeners with mobile consideration
-  if (drawerToggleInput) {
-    // On desktop, use click events
-    if (lgMediaQuery.matches) {
-      document.addEventListener('click', handleClickOutside);
-    }
-
-    // On mobile, use touch events for better UX
-    else {
-      document.addEventListener('touchstart', handleClickOutside);
-
-      // Add swipe-to-close gesture for mobile
-      let touchStartX = 0;
-      const drawerSide = document.getElementById("filterSidebar");
-
-      if (drawerSide) {
-        drawerSide.addEventListener('touchstart', (e) => {
-          touchStartX = e.touches[0].clientX;
-        }, { passive: true });
-
-        drawerSide.addEventListener('touchend', (e) => {
-          const touchEndX = e.changedTouches[0].clientX;
-          const swipeDistance = touchStartX - touchEndX;
-
-          // Swipe left to close drawer
-          if (swipeDistance > 50 && drawerToggleInput.checked) {
-            drawerToggleInput.checked = false;
-            updateFilterToggleState();
-          }
-        }, { passive: true });
-      }
-    }
-  }
+  });
 
   // Create debounced search handler (300ms delay)
   const debouncedSearchSync = debounce(() => {
@@ -532,6 +629,7 @@ function setupFilterListeners() {
       clearSearchBtn.style.display = elements.searchInput.value.trim() ? "flex" : "none";
     }
   };
+  updateClearButtonVisibility();
 
   elements.searchInput?.addEventListener("input", () => {
     updateClearButtonVisibility();
@@ -690,11 +788,37 @@ function setupOnboarding() {
 }
 
 /**
- * Setup keyboard navigation for card grid
+ * Setup keyboard navigation for card grid with dynamic column calculation
  */
 function setupKeyboardNavigation() {
   const grid = $("#grid");
   if (!grid) return;
+
+  /**
+   * Calculate actual number of columns based on card positions
+   * More accurate than parsing grid-template-columns for responsive grids
+   */
+  const calculateGridColumns = (cards) => {
+    if (cards.length < 2) return 1;
+
+    // Get the top position of the first and second cards
+    const firstCardTop = cards[0].getBoundingClientRect().top;
+    let columnsCount = 1;
+
+    // Count how many cards are on the first row
+    for (let i = 1; i < cards.length; i++) {
+      const cardTop = cards[i].getBoundingClientRect().top;
+      // Allow 5px tolerance for rounding errors
+      if (Math.abs(cardTop - firstCardTop) < 5) {
+        columnsCount++;
+      } else {
+        // Once we find a card on a different row, we know the column count
+        break;
+      }
+    }
+
+    return columnsCount;
+  };
 
   grid.addEventListener("keydown", (e) => {
     if (!["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"].includes(e.key)) {
@@ -708,9 +832,8 @@ function setupKeyboardNavigation() {
     const currentIndex = cards.indexOf(document.activeElement);
     if (currentIndex === -1) return;
 
-    // Calculate grid columns
-    const gridStyle = window.getComputedStyle(grid);
-    const gridColumns = gridStyle.gridTemplateColumns.split(" ").length;
+    // Calculate actual grid columns based on layout
+    const gridColumns = calculateGridColumns(cards);
 
     let nextIndex = currentIndex;
 
@@ -745,6 +868,28 @@ function setupBrowserHistory() {
 }
 
 /**
+ * Setup pull-to-refresh for mobile devices
+ */
+function setupPullToRefresh() {
+  const mainContent = document.getElementById("mainContent");
+  if (!mainContent) return;
+
+  // Initialize pull-to-refresh
+  initPullToRefresh({
+    element: mainContent,
+    onRefresh: async () => {
+      // Re-apply current filters to refresh the view
+      const elements = getFilterElements();
+      updateFilterStates(elements);
+      applyFilters({ ...elements, totalSites: sites.length });
+
+      // Small delay to make the refresh feel more substantial
+      await new Promise(resolve => setTimeout(resolve, 400));
+    }
+  });
+}
+
+/**
  * Update copyright year to current year
  */
 function updateCopyrightYear() {
@@ -767,6 +912,7 @@ function init() {
   setupOnboarding();
   setupKeyboardNavigation();
   setupBrowserHistory();
+  setupPullToRefresh();
   loadSites();
 }
 

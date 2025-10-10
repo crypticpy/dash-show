@@ -133,15 +133,6 @@ export function openDetailModal(item, card, elements) {
     summaryText.textContent = summary;
   }
 
-  // Populate blurb (fetched content)
-  const blurb = $("#detailBlurb");
-  if (blurb) {
-    const blurbNode = card?.querySelector(".blurb");
-    const blurbText = blurbNode?.textContent.trim() || "";
-    blurb.textContent =
-      blurbText || "Live summary will load once site content is retrieved.";
-  }
-
   // Render tags and techniques
   const tags = $("#detailTags");
   const techniques = $("#detailTechniques");
