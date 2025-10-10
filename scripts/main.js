@@ -117,30 +117,17 @@ async function loadSites() {
         updateFilterStates(elements);
         applyFilters({ ...elements, totalSites: sites.length });
 
-        // Auto-close drawer on mobile after filter selection
-        if (window.innerWidth < 1024) {
-          const drawerToggle = document.getElementById("filter-drawer");
-          if (drawerToggle && drawerToggle.checked) {
-            // Add visual feedback before closing
-            const filterSidebar = document.getElementById("filterSidebar");
-            if (filterSidebar) {
-              filterSidebar.style.opacity = "0.7";
-              setTimeout(() => {
-                // Only restore opacity if drawer is still open
-                if (drawerToggle.checked) {
-                  filterSidebar.style.opacity = "1";
-                }
-              }, 150);
-            }
-            // Reduced delay for faster response
-            setTimeout(() => {
-              // Only close if still checked (user might have closed manually)
-              if (drawerToggle.checked) {
-                drawerToggle.checked = false;
-              }
-            }, 200);
-          }
+        // Add visual feedback for filter update
+        const grid = $("#grid");
+        if (grid) {
+          grid.classList.add("filter-updating");
+          setTimeout(() => {
+            grid.classList.remove("filter-updating");
+          }, 400);
         }
+
+        // Don't auto-close drawer - let users see their results update in real-time
+        // Only close on mobile if explicitly requested (optional enhancement)
       });
     });
 
@@ -479,6 +466,57 @@ function setupFilterListeners() {
   }
 
   updateFilterToggleState();
+
+  // Click-outside-to-close functionality for desktop and mobile
+  const handleClickOutside = (event) => {
+    // Check if drawer is open
+    if (!drawerToggleInput.checked) return;
+
+    // Check if click is outside the drawer side and not on filter toggle buttons
+    const drawerSide = document.getElementById("filterSidebar");
+    const isClickInsideDrawer = drawerSide?.contains(event.target);
+    const isClickOnFilterButton = filterToggleButton?.contains(event.target) ||
+                                 filterRevealZone?.contains(event.target);
+
+    if (!isClickInsideDrawer && !isClickOnFilterButton) {
+      drawerToggleInput.checked = false;
+      updateFilterToggleState();
+    }
+  };
+
+  // Add event listeners with mobile consideration
+  if (drawerToggleInput) {
+    // On desktop, use click events
+    if (lgMediaQuery.matches) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    // On mobile, use touch events for better UX
+    else {
+      document.addEventListener('touchstart', handleClickOutside);
+
+      // Add swipe-to-close gesture for mobile
+      let touchStartX = 0;
+      const drawerSide = document.getElementById("filterSidebar");
+
+      if (drawerSide) {
+        drawerSide.addEventListener('touchstart', (e) => {
+          touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+
+        drawerSide.addEventListener('touchend', (e) => {
+          const touchEndX = e.changedTouches[0].clientX;
+          const swipeDistance = touchStartX - touchEndX;
+
+          // Swipe left to close drawer
+          if (swipeDistance > 50 && drawerToggleInput.checked) {
+            drawerToggleInput.checked = false;
+            updateFilterToggleState();
+          }
+        }, { passive: true });
+      }
+    }
+  }
 
   // Create debounced search handler (300ms delay)
   const debouncedSearchSync = debounce(() => {

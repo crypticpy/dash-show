@@ -467,6 +467,37 @@ export function renderActiveFilters(filterState, onRemove) {
     tray.appendChild(chip);
   }
 
+  // Add clear filters button in main content area if there are filters
+  let clearMainBtn = document.getElementById("clearFiltersMain");
+  if (hasFilters && !clearMainBtn) {
+    // Create clear filters button for main area
+    clearMainBtn = document.createElement("button");
+    clearMainBtn.id = "clearFiltersMain";
+    clearMainBtn.className = "clear-filters-main";
+    clearMainBtn.setAttribute("type", "button");
+    clearMainBtn.setAttribute("aria-label", "Clear all filters");
+
+    // Add icon and text
+    clearMainBtn.innerHTML = `
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+      </svg>
+      Clear All Filters
+    `;
+
+    // Add click handler
+    clearMainBtn.addEventListener("click", () => {
+      const clearFiltersBtn = document.getElementById("clearFilters");
+      if (clearFiltersBtn) clearFiltersBtn.click();
+    });
+
+    // Insert after the active filters banner
+    banner.parentNode.insertBefore(clearMainBtn, banner.nextSibling);
+  } else if (!hasFilters && clearMainBtn) {
+    // Remove the clear filters button if no filters
+    clearMainBtn.remove();
+  }
+
   // Show/hide container based on filter presence
   banner.style.display = hasFilters ? "flex" : "none";
 }

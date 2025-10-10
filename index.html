@@ -17,6 +17,13 @@
 
     <!-- DaisyUI + Tailwind CSS -->
     <link rel="stylesheet" href="styles/output.css" />
+    <style>
+      /* Prevent the filter drawer overlay from dimming main content */
+      .drawer-toggle:checked ~ .drawer-side > .drawer-overlay {
+        background-color: transparent;
+        backdrop-filter: none;
+      }
+    </style>
   </head>
   <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -182,28 +189,28 @@
                         aria-pressed="false"
                       >
                         <span class="sr-only">Toggle color theme</span>
-                      <svg
-                        data-theme-icon="dark"
-                        class="w-5 h-5"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          d="M12 18a6 6 0 110-12 6 6 0 010 12zm0 3a9 9 0 100-18 9 9 0 000 18z"
-                        />
-                      </svg>
-                      <svg
-                        data-theme-icon="light"
-                        class="w-5 h-5 hidden"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"
-                        />
-                      </svg>
+                        <svg
+                          data-theme-icon="dark"
+                          class="w-5 h-5"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M12 18a6 6 0 110-12 6 6 0 010 12zm0 3a9 9 0 100-18 9 9 0 000 18z"
+                          />
+                        </svg>
+                        <svg
+                          data-theme-icon="light"
+                          class="w-5 h-5 hidden"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"
+                          />
+                        </svg>
                       </button>
                     </div>
                   </div>
@@ -315,7 +322,11 @@
                     stroke="currentColor"
                     aria-hidden="true"
                   >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6" />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M6 6l12 12M6 18L18 6"
+                    />
                   </svg>
                 </button>
               </form>
@@ -391,7 +402,11 @@
                   stroke="currentColor"
                   aria-hidden="true"
                 >
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 6l12 12M6 18L18 6"
+                  />
                 </svg>
               </button>
             </form>
@@ -494,7 +509,11 @@
                   stroke="currentColor"
                   aria-hidden="true"
                 >
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 6l12 12M6 18L18 6"
+                  />
                 </svg>
               </button>
             </form>
@@ -557,10 +576,17 @@
                 id="clearSearch"
                 class="filter-search__clear"
                 aria-label="Clear search"
-                style="display: none;"
+                style="display: none"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
-                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  class="w-4 h-4"
+                >
+                  <path
+                    d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"
+                  />
                 </svg>
               </button>
             </label>
